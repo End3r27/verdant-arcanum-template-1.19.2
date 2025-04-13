@@ -57,7 +57,17 @@ public class BlinkSpell implements Spell {
             world.playSound(null, player.getX(), player.getY(), player.getZ(),
                     SoundEvents.ENTITY_ENDERMAN_TELEPORT, SoundCategory.PLAYERS,
                     0.5F, 1.0F);
+
+            return; // Successful teleport
         }
+
+        // If we get here, no valid destination was found
+        world.playSound(null, player.getX(), player.getY(), player.getZ(),
+                SoundEvents.BLOCK_FIRE_EXTINGUISH, SoundCategory.PLAYERS,
+                0.5F, 1.2F);
+
+        // Signal that the spell failed and mana should be refunded
+        throw new SpellCastException("No valid teleport location found");
     }
 
     private BlockPos findTeleportDestination(World world, Vec3d startPos, Vec3d direction, int maxDistance) {
@@ -111,6 +121,22 @@ public class BlinkSpell implements Spell {
                     (world.random.nextDouble() - 0.5) * 2.0,
                     -world.random.nextDouble(),
                     (world.random.nextDouble() - 0.5) * 2.0
+            );
+        }
+    }
+
+    @Override
+    public void playFailureEffects(World world, PlayerEntity player) {
+        // Spawn smoke particles to indicate failure
+        for (int i = 0; i < 10; i++) {
+            world.addParticle(
+                    ParticleTypes.SMOKE,
+                    player.getX() + (world.random.nextDouble() - 0.5) * 1.0,
+                    player.getY() + player.getStandingEyeHeight() - 0.1,
+                    player.getZ() + (world.random.nextDouble() - 0.5) * 1.0,
+                    world.random.nextGaussian() * 0.02,
+                    world.random.nextGaussian() * 0.02,
+                    world.random.nextGaussian() * 0.02
             );
         }
     }

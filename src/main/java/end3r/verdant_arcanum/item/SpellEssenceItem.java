@@ -49,9 +49,26 @@ public class SpellEssenceItem extends Item {
             return TypedActionResult.pass(itemStack);
         }
 
-        // Get the spell for this essence type
+        // Try case-insensitive lookup first
         Spell spell = SpellRegistry.getSpell(essenceType);
+
+        // If not found, try with first letter capitalized (this is for backward compatibility)
+        if (spell == null && essenceType.length() > 0) {
+            String capitalizedType = essenceType.substring(0, 1).toUpperCase() +
+                    (essenceType.length() > 1 ? essenceType.substring(1) : "");
+            spell = SpellRegistry.getSpell(capitalizedType);
+        }
+
+        // If still not found, try all uppercase
         if (spell == null) {
+            spell = SpellRegistry.getSpell(essenceType.toUpperCase());
+        }
+
+        if (spell == null) {
+            // For debugging: print what we're searching for
+            if (!world.isClient) {
+                System.out.println("Could not find spell for essence type: " + essenceType);
+            }
             return TypedActionResult.pass(itemStack);
         }
 
@@ -72,6 +89,8 @@ public class SpellEssenceItem extends Item {
 
                 // Increment the player's "used item" statistic
                 player.incrementStat(Stats.USED.getOrCreateStat(this));
+
+                return TypedActionResult.success(itemStack);
             } else {
                 // Not enough mana - play failure sound
                 world.playSound(null, player.getX(), player.getY(), player.getZ(),

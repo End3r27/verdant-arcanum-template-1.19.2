@@ -23,6 +23,7 @@ public interface Spell {
      * Cast the spell (server-side effect).
      * @param world The world
      * @param player The player casting the spell
+     * @throws SpellCastException If the spell cast fails in a way that should not consume mana
      */
     void cast(World world, PlayerEntity player);
 
@@ -32,4 +33,14 @@ public interface Spell {
      * @param player The player casting the spell
      */
     void playClientEffects(World world, PlayerEntity player);
+
+    /**
+     * Play client-side visual effects when the spell fails.
+     * Default implementation does nothing.
+     * @param world The world
+     * @param player The player casting the spell
+     */
+    default void playFailureEffects(World world, PlayerEntity player) {
+        // Default implementation does nothing
+    }
 }
