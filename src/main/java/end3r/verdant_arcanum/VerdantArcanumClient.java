@@ -1,11 +1,12 @@
-// VerdantArcanumClient.java
 package end3r.verdant_arcanum;
 
 import end3r.verdant_arcanum.item.LivingStaffItem;
 import end3r.verdant_arcanum.magic.ManaSystem;
+import end3r.verdant_arcanum.magic.ManaParticleSystem;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
@@ -37,9 +38,16 @@ public class VerdantArcanumClient implements ClientModInitializer {
     private static final int MANA_BAR_FILL_COLOR = 0xFF0080FF; // Light blue
     private static final int MANA_TEXT_COLOR = 0xFFFFFFFF; // White
 
+    // Low mana warning effect
+    private static final int LOW_MANA_FILL_COLOR = 0xFFFF3030; // Red
+    private static final float LOW_MANA_THRESHOLD = 0.25f; // 25% or less
+
     @Override
     public void onInitializeClient() {
         LOGGER.info("Initializing Verdant Arcanum Client...");
+
+        // Ensure ManaParticleSystem is initialized
+        ManaParticleSystem.getInstance();
 
         // Register HUD rendering callback
         HudRenderCallback.EVENT.register((matrixStack, tickDelta) -> {
@@ -68,6 +76,14 @@ public class VerdantArcanumClient implements ClientModInitializer {
                 if (spellItem != null && player.getItemCooldownManager().isCoolingDown(spellItem)) {
                     renderSpellCooldown(matrixStack, client, player, spellItem);
                 }
+            }
+        });
+
+        // Register client tick event for particle updates
+        ClientTickEvents.END_CLIENT_TICK.register(client -> {
+            if (client.player != null && client.world != null) {
+                // Particles will be handled in ManaSystem's update method
+                ManaSystem.getInstance().updateManaRegen(client.player);
             }
         });
 
@@ -135,15 +151,18 @@ public class VerdantArcanumClient implements ClientModInitializer {
                 y + MANA_BAR_HEIGHT,
                 MANA_BAR_BACKGROUND_COLOR);
 
-        // Draw filled portion of mana bar
+        // Draw filled portion of mana bar (change color when low)
         int fillWidth = (int)(MANA_BAR_WIDTH * manaPercent);
         if (fillWidth > 0) {
+            // Use red color for low mana instead of blue
+            int fillColor = manaPercent <= LOW_MANA_THRESHOLD ? LOW_MANA_FILL_COLOR : MANA_BAR_FILL_COLOR;
+
             DrawableHelper.fill(matrixStack,
                     x,
                     y,
                     x + fillWidth,
                     y + MANA_BAR_HEIGHT,
-                    MANA_BAR_FILL_COLOR);
+                    fillColor);
         }
 
         // Draw mana text

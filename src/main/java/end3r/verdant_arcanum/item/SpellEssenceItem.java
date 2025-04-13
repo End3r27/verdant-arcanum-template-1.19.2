@@ -1,10 +1,11 @@
 package end3r.verdant_arcanum.item;
 
 import end3r.verdant_arcanum.magic.ManaSystem;
+import end3r.verdant_arcanum.registry.SpellRegistry;
+import end3r.verdant_arcanum.spell.Spell;
 import end3r.verdant_arcanum.util.TooltipUtils;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.projectile.SmallFireballEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.particle.ParticleTypes;
@@ -15,7 +16,6 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
-import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
 import java.util.List;
@@ -23,9 +23,6 @@ import java.util.List;
 public class SpellEssenceItem extends Item {
     private final String essenceType;
     private static final int COOLDOWN_TICKS = 20; // 1 second cooldown
-
-    // Mana costs for different spell types
-    private static final int FLAME_SPELL_MANA_COST = 25;
 
     public SpellEssenceItem(String essenceType, Settings settings) {
         super(settings);
@@ -52,8 +49,14 @@ public class SpellEssenceItem extends Item {
             return TypedActionResult.pass(itemStack);
         }
 
-        // Get mana cost based on spell type
-        int manaCost = getManaCost();
+        // Get the spell for this essence type
+        Spell spell = SpellRegistry.getSpell(essenceType);
+        if (spell == null) {
+            return TypedActionResult.pass(itemStack);
+        }
+
+        // Get mana cost
+        int manaCost = spell.getManaCost();
 
         // Check if player has enough mana
         ManaSystem manaSystem = ManaSystem.getInstance();
@@ -61,11 +64,8 @@ public class SpellEssenceItem extends Item {
         // Only cast the spell on the server side if player has enough mana
         if (!world.isClient) {
             if (manaSystem.useMana(player, manaCost)) {
-                // Apply spell effect based on essence type
-                if ("Flame".equalsIgnoreCase(essenceType)) {
-                    castFlameSpell(world, player);
-                }
-                // Add more spell types here as you develop them
+                // Cast the spell
+                spell.cast(world, player);
 
                 // Apply cooldown
                 player.getItemCooldownManager().set(this, COOLDOWN_TICKS);
@@ -84,7 +84,7 @@ public class SpellEssenceItem extends Item {
             // On client side, check if player has enough mana to show appropriate effects
             if (manaSystem.getPlayerMana(player).getCurrentMana() >= manaCost) {
                 // Play visual/sound effects on client side
-                playSpellCastEffects(world, player);
+                spell.playClientEffects(world, player);
             } else {
                 // Not enough mana - play client-side failure effects
                 for (int i = 0; i < 5; i++) {
@@ -104,68 +104,10 @@ public class SpellEssenceItem extends Item {
         return TypedActionResult.success(itemStack);
     }
 
-    private int getManaCost() {
-        return switch (essenceType.toLowerCase()) {
-            case "flame" -> FLAME_SPELL_MANA_COST;
-            // Add other spell types here
-            default -> 10; // Default mana cost
-        };
-    }
-
-    private void castFlameSpell(World world, PlayerEntity player) {
-        // Calculate fireball direction from where the player is looking
-        Vec3d lookVec = player.getRotationVector();
-
-        // Create a small fireball entity
-        SmallFireballEntity fireball = new SmallFireballEntity(
-                world,
-                player.getX() + lookVec.x * 0.5,
-                player.getY() + player.getStandingEyeHeight() - 0.1,
-                player.getZ() + lookVec.z * 0.5,
-                lookVec.x * 0.5,
-                lookVec.y * 0.5,
-                lookVec.z * 0.5
-        );
-
-        // Set the fireball owner to the player
-        fireball.setOwner(player);
-
-        // Spawn the fireball in the world
-        world.spawnEntity(fireball);
-
-        // Play sound effect
-        world.playSound(null, player.getX(), player.getY(), player.getZ(),
-                SoundEvents.ENTITY_BLAZE_SHOOT, SoundCategory.PLAYERS,
-                0.5F, 0.4F / (world.getRandom().nextFloat() * 0.4F + 0.8F));
-    }
-
-    private void playSpellCastEffects(World world, PlayerEntity player) {
-        // Add client-side particle effects based on essence type
-        if ("Flame".equalsIgnoreCase(essenceType)) {
-            // Spawn flame particles around the player
-            Vec3d lookVec = player.getRotationVector();
-            double x = player.getX() + lookVec.x * 0.5;
-            double y = player.getY() + player.getStandingEyeHeight() - 0.1;
-            double z = player.getZ() + lookVec.z * 0.5;
-
-            for (int i = 0; i < 10; i++) {
-                world.addParticle(
-                        ParticleTypes.FLAME,
-                        x + world.random.nextGaussian() * 0.1,
-                        y + world.random.nextGaussian() * 0.1,
-                        z + world.random.nextGaussian() * 0.1,
-                        lookVec.x * 0.2 + world.random.nextGaussian() * 0.02,
-                        lookVec.y * 0.2 + world.random.nextGaussian() * 0.02,
-                        lookVec.z * 0.2 + world.random.nextGaussian() * 0.02
-                );
-            }
-        }
-        // Add more essence type effects here as needed
-    }
-
     @Override
     public void appendTooltip(ItemStack stack, World world, List<Text> tooltip, TooltipContext context) {
-        int manaCost = getManaCost();
+        Spell spell = SpellRegistry.getSpell(essenceType);
+        int manaCost = spell != null ? spell.getManaCost() : 10;
 
         TooltipUtils.addTooltipWithShift(
                 stack, world, tooltip, context,

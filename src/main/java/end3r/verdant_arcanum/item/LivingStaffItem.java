@@ -1,7 +1,8 @@
 package end3r.verdant_arcanum.item;
 
 import end3r.verdant_arcanum.magic.ManaSystem;
-import end3r.verdant_arcanum.registry.ModItems;
+import end3r.verdant_arcanum.registry.SpellRegistry;
+import end3r.verdant_arcanum.spell.Spell;
 import end3r.verdant_arcanum.util.TooltipUtils;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.entity.player.PlayerEntity;
@@ -105,12 +106,12 @@ public class LivingStaffItem extends Item {
         // Get the ID of the spell essence in this slot
         String spellEssenceId = nbt.getString(slotKey);
 
-        // Find the corresponding SpellEssenceItem
-        SpellEssenceItem spellEssence = findSpellEssenceById(spellEssenceId);
-        if (spellEssence == null) return TypedActionResult.pass(staffStack);
+        // Find the corresponding spell
+        Spell spell = SpellRegistry.getSpellFromEssenceId(spellEssenceId);
+        if (spell == null) return TypedActionResult.pass(staffStack);
 
-        // Get the mana cost from the spell essence
-        int manaCost = getManaCostForEssence(spellEssence.getEssenceType());
+        // Get the mana cost
+        int manaCost = spell.getManaCost();
 
         // Check if player is on cooldown
         if (player.getItemCooldownManager().isCoolingDown(this)) {
@@ -124,10 +125,7 @@ public class LivingStaffItem extends Item {
             // Client-side effects
             if (manaSystem.getPlayerMana(player).getCurrentMana() >= manaCost) {
                 // Play the appropriate spell cast effects
-                if ("Flame".equalsIgnoreCase(spellEssence.getEssenceType())) {
-                    playFlameSpellEffects(world, player);
-                }
-                // Add more spell effect types here
+                spell.playClientEffects(world, player);
             } else {
                 // Not enough mana - play client-side failure effects
                 for (int i = 0; i < 5; i++) {
@@ -145,13 +143,10 @@ public class LivingStaffItem extends Item {
         } else {
             // Server-side handling
             if (manaSystem.useMana(player, manaCost)) {
-                // Apply the spell effect based on the essence type
-                if ("Flame".equalsIgnoreCase(spellEssence.getEssenceType())) {
-                    castFlameSpell(world, player);
-                }
-                // Add more spell types as they are developed
+                // Cast the spell
+                spell.cast(world, player);
 
-                // Apply cooldown (using same cooldown as direct spell essence)
+                // Apply cooldown
                 player.getItemCooldownManager().set(this, 20); // 1 second cooldown
 
                 return TypedActionResult.success(staffStack);
@@ -166,65 +161,6 @@ public class LivingStaffItem extends Item {
         }
 
         return TypedActionResult.success(staffStack);
-    }
-
-    // These methods reuse the same spell casting logic from SpellEssenceItem
-    private void castFlameSpell(World world, PlayerEntity player) {
-        // Existing flame spell implementation from SpellEssenceItem
-        net.minecraft.entity.projectile.SmallFireballEntity fireball = new net.minecraft.entity.projectile.SmallFireballEntity(
-                world,
-                player.getX() + player.getRotationVector().x * 0.5,
-                player.getY() + player.getStandingEyeHeight() - 0.1,
-                player.getZ() + player.getRotationVector().z * 0.5,
-                player.getRotationVector().x * 0.5,
-                player.getRotationVector().y * 0.5,
-                player.getRotationVector().z * 0.5
-        );
-
-        fireball.setOwner(player);
-        world.spawnEntity(fireball);
-
-        world.playSound(null, player.getX(), player.getY(), player.getZ(),
-                SoundEvents.ENTITY_BLAZE_SHOOT, SoundCategory.PLAYERS,
-                0.5F, 0.4F / (world.getRandom().nextFloat() * 0.4F + 0.8F));
-    }
-
-    private void playFlameSpellEffects(World world, PlayerEntity player) {
-        // Reuse the same client-side effects from SpellEssenceItem
-        net.minecraft.util.math.Vec3d lookVec = player.getRotationVector();
-        double x = player.getX() + lookVec.x * 0.5;
-        double y = player.getY() + player.getStandingEyeHeight() - 0.1;
-        double z = player.getZ() + lookVec.z * 0.5;
-
-        for (int i = 0; i < 10; i++) {
-            world.addParticle(
-                    net.minecraft.particle.ParticleTypes.FLAME,
-                    x + world.random.nextGaussian() * 0.1,
-                    y + world.random.nextGaussian() * 0.1,
-                    z + world.random.nextGaussian() * 0.1,
-                    lookVec.x * 0.2 + world.random.nextGaussian() * 0.02,
-                    lookVec.y * 0.2 + world.random.nextGaussian() * 0.02,
-                    lookVec.z * 0.2 + world.random.nextGaussian() * 0.02
-            );
-        }
-    }
-
-    private int getManaCostForEssence(String essenceType) {
-        // Reuse the same mana costs defined in SpellEssenceItem
-        return switch (essenceType.toLowerCase()) {
-            case "flame" -> 25; // Same as FLAME_SPELL_MANA_COST in SpellEssenceItem
-            // Add other spell types here
-            default -> 10; // Default mana cost
-        };
-    }
-
-    private SpellEssenceItem findSpellEssenceById(String id) {
-        // Map the ID string to the actual spell essence items
-        return switch (id) {
-            case "verdant_arcanum:spell_essence_flame" -> (SpellEssenceItem) ModItems.SPELL_ESSENCE_FLAME;
-            // Add more spell essences here as they are developed
-            default -> null;
-        };
     }
 
     // Allow for grafting spell essences onto the staff
@@ -342,7 +278,8 @@ public class LivingStaffItem extends Item {
             String slotKey = SLOT_PREFIX + i;
             if (nbt.contains(slotKey)) {
                 String essenceId = nbt.getString(slotKey);
-                String essenceType = getEssenceTypeFromId(essenceId);
+                Spell spell = SpellRegistry.getSpellFromEssenceId(essenceId);
+                String essenceType = spell != null ? spell.getType() : "Unknown";
 
                 // Mark the active slot with an indicator
                 Formatting formatting = i == activeSlot ? Formatting.GREEN : Formatting.GRAY;
@@ -357,13 +294,5 @@ public class LivingStaffItem extends Item {
         }
 
         return spellInfo;
-    }
-
-    private String getEssenceTypeFromId(String essenceId) {
-        return switch (essenceId) {
-            case "verdant_arcanum:spell_essence_flame" -> "Flame";
-            // Add more essence types here as they are developed
-            default -> "Unknown";
-        };
     }
 }

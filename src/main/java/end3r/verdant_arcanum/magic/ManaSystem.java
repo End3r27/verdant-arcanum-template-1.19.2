@@ -59,6 +59,12 @@ public class ManaSystem {
 
         if (mana.getCurrentMana() >= amount) {
             mana.consumeMana(amount);
+
+            // Spawn mana consumption particles on the client side
+            if (player.getWorld().isClient()) {
+                ManaParticleSystem.getInstance().createManaConsumptionBurst(player, amount);
+            }
+
             return true;
         }
 
@@ -70,7 +76,13 @@ public class ManaSystem {
      */
     public void updateManaRegen(PlayerEntity player) {
         PlayerMana mana = getPlayerMana(player);
+        float prevMana = mana.getCurrentMana();
         mana.regenerateMana(MANA_REGEN_RATE);
+
+        // Update particles on client side
+        if (player.getWorld().isClient()) {
+            ManaParticleSystem.getInstance().updateManaParticles(player);
+        }
     }
 
     /**
