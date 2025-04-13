@@ -56,6 +56,28 @@
           "name": "verdant_arcanum:flame_flower_seeds"
         }
       ]
+    },
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "verdant_arcanum:spell_essence_flame"
+        }
+      ],
+      "conditions": [
+        {
+          "condition": "minecraft:block_state_property",
+          "block": "verdant_arcanum:flame_flower",
+          "properties": {
+            "age": "2"
+          }
+        },
+        {
+          "condition": "minecraft:random_chance",
+          "chance": 0.75
+        }
+      ]
     }
   ],
   "functions": [

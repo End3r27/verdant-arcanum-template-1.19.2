@@ -3,6 +3,7 @@
   "block.verdant_arcanum.flame_flower": "Flame Flower",
   "item.verdant_arcanum.flame_flower_seeds": "Flame Flower Seeds",
   "item.verdant_arcanum.flame_flower_bloom": "Flame Flower Bloom",
+  "item.verdant_arcanum.spell_essence_flame": "Spell Essence: Flame",
   "itemGroup.verdant_arcanum.main": "Verdant Arcanum",
 
   "tooltip.verdant_arcanum.hold_shift": "Hold §eShift§r for more information",
@@ -18,5 +19,10 @@
 
   "tooltip.verdant_arcanum.flame_flower_bloom": "A vibrant flower with ember-like petals",
   "tooltip.verdant_arcanum.flame_flower_bloom.detailed.1": "Can be brewed into potions of Fire Resistance",
-  "tooltip.verdant_arcanum.flame_flower_bloom.detailed.2": "Emits a faint warmth when held"
+  "tooltip.verdant_arcanum.flame_flower_bloom.detailed.2": "Emits a faint warmth when held",
+
+  "tooltip.verdant_arcanum.spell_essence": "Pure magical essence extracted from a magical plant",
+  "tooltip.verdant_arcanum.spell_essence.flame": "Contains the essence of fire",
+  "tooltip.verdant_arcanum.spell_essence.detailed.1": "Can be used to graft magical properties into a Living Staff",
+  "tooltip.verdant_arcanum.spell_essence.detailed.2": "Required for advanced magical crafting recipes"
 }

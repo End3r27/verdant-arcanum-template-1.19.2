@@ -1,4 +1,4 @@
-// ModRegistry.java
+// Updated src/main/java/end3r/verdant_arcanum/registry/ModRegistry.java
 package end3r.verdant_arcanum.registry;
 
 import net.fabricmc.fabric.api.client.itemgroup.FabricItemGroupBuilder;
@@ -20,6 +20,9 @@ public class ModRegistry {
                 // Add plants and related items
                 stacks.add(new ItemStack(end3r.verdant_arcanum.registry.ModItems.FLAME_FLOWER_SEEDS));
                 stacks.add(new ItemStack(end3r.verdant_arcanum.registry.ModItems.FLAME_FLOWER_BLOOM));
+
+                // Add magical essences
+                stacks.add(new ItemStack(end3r.verdant_arcanum.registry.ModItems.SPELL_ESSENCE_FLAME));
 
                 // When you add more items to your mod in the future,
                 // add them to the creative tab here
