@@ -23,10 +23,12 @@ public class ModRegistry {
 
                 // Add magical essences
                 stacks.add(new ItemStack(end3r.verdant_arcanum.registry.ModItems.SPELL_ESSENCE_FLAME));
+                stacks.add(new ItemStack(end3r.verdant_arcanum.registry.ModItems.SPELL_ESSENCE_BLINK));
+                stacks.add(new ItemStack(end3r.verdant_arcanum.registry.ModItems.SPELL_ESSENCE_ROOTGRASP));
+                stacks.add(new ItemStack(end3r.verdant_arcanum.registry.ModItems.SPELL_ESSENCE_GUST));
 
+                // Add magical tools
                 stacks.add(new ItemStack(ModItems.LIVING_STAFF));
-
-
             })
             .build();
 

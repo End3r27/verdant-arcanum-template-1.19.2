@@ -27,32 +27,37 @@ public class ModItems {
     private static final ItemGroup DEFAULT_GROUP = ItemGroup.MISC;
 
     // Block items
-    public static final Item GROVE_SOIL = new BlockItem(ModBlocks.GROVE_SOIL,
-            new FabricItemSettings().group(DEFAULT_GROUP));
+    public static final Item GROVE_SOIL = new BlockItem(ModBlocks.GROVE_SOIL, new FabricItemSettings().group(DEFAULT_GROUP));
 
     // Seeds for the flame flower
-    public static final Item FLAME_FLOWER_SEEDS = new FlameFlowerSeedsItem(
-            ModBlocks.FLAME_FLOWER,
-            new FabricItemSettings().group(DEFAULT_GROUP));
+    public static final Item FLAME_FLOWER_SEEDS = new FlameFlowerSeedsItem(ModBlocks.FLAME_FLOWER, new FabricItemSettings().group(DEFAULT_GROUP));
 
     // Harvested flame flower
-    public static final Item FLAME_FLOWER_BLOOM = new FlameFlowerBloomItem(
-            new FabricItemSettings().group(DEFAULT_GROUP));
+    public static final Item FLAME_FLOWER_BLOOM = new FlameFlowerBloomItem(new FabricItemSettings().group(DEFAULT_GROUP));
 
     // Spell essences
-    public static final Item SPELL_ESSENCE_FLAME = new SpellEssenceItem(
-            "Flame",
-            new FabricItemSettings().group(DEFAULT_GROUP).fireproof().maxCount(16));
+    public static final Item SPELL_ESSENCE_FLAME = new SpellEssenceItem("Flame", new FabricItemSettings().group(DEFAULT_GROUP).fireproof().maxCount(16));
+    public static final Item SPELL_ESSENCE_BLINK = new SpellEssenceItem("blink", new Item.Settings().group(ItemGroup.MISC).maxCount(16));
+    public static final Item SPELL_ESSENCE_ROOTGRASP = new SpellEssenceItem("rootgrasp", new Item.Settings().group(ItemGroup.MISC).maxCount(16));
+    public static final Item SPELL_ESSENCE_GUST = new SpellEssenceItem("gust", new Item.Settings().group(ItemGroup.MISC).maxCount(16));
 
-    public static final Item LIVING_STAFF = new LivingStaffItem(
-            new FabricItemSettings().group(DEFAULT_GROUP).maxCount(1).maxDamage(256));
+
+    public static final Item LIVING_STAFF = new LivingStaffItem(new FabricItemSettings().group(DEFAULT_GROUP).maxCount(1).maxDamage(256));
 
     // This method will be called from ModRegistry
     public static void register() {
         Registry.register(Registry.ITEM, new Identifier(VerdantArcanum.MOD_ID, "grove_soil"), GROVE_SOIL);
+
         Registry.register(Registry.ITEM, new Identifier(VerdantArcanum.MOD_ID, "flame_flower_seeds"), FLAME_FLOWER_SEEDS);
+
         Registry.register(Registry.ITEM, new Identifier(VerdantArcanum.MOD_ID, "flame_flower_bloom"), FLAME_FLOWER_BLOOM);
+
+        Registry.register(Registry.ITEM, new Identifier("verdant_arcanum", "spell_essence_blink"), SPELL_ESSENCE_BLINK);
+        Registry.register(Registry.ITEM, new Identifier("verdant_arcanum", "spell_essence_rootgrasp"), SPELL_ESSENCE_ROOTGRASP);
+        Registry.register(Registry.ITEM, new Identifier("verdant_arcanum", "spell_essence_gust"), SPELL_ESSENCE_GUST);
         Registry.register(Registry.ITEM, new Identifier(VerdantArcanum.MOD_ID, "spell_essence_flame"), SPELL_ESSENCE_FLAME);
+
+
         Registry.register(Registry.ITEM, new Identifier(VerdantArcanum.MOD_ID, "living_staff"), LIVING_STAFF);
 
     }

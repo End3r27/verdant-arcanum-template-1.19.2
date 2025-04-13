@@ -1,52 +1,50 @@
 package end3r.verdant_arcanum.registry;
 
-import end3r.verdant_arcanum.spell.FlameSpell;
-import end3r.verdant_arcanum.spell.Spell;
+import end3r.verdant_arcanum.spell.*;
+import net.minecraft.util.Identifier;
+import net.minecraft.util.registry.Registry;
 
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * Registry for all available spells in the mod.
- */
 public class SpellRegistry {
+    // Map to store spell types by their ID
     private static final Map<String, Spell> SPELLS = new HashMap<>();
 
     // Initialize spells
     static {
-        registerSpell(new FlameSpell());
-        // Register other spells here as they are developed
+        // Register the flame spell
+        register("flame", new FlameSpell());
+
+        // Register the new spells
+        register("blink", new BlinkSpell());
+        register("rootgrasp", new RootgraspSpell());
+        register("gust", new GustSpell());
     }
 
-    /**
-     * Register a spell in the registry.
-     * @param spell The spell to register
-     */
-    public static void registerSpell(Spell spell) {
-        SPELLS.put(spell.getType().toLowerCase(), spell);
+    private static void register(String type, Spell spell) {
+        SPELLS.put(type, spell);
     }
 
-    /**
-     * Get a spell by its type.
-     * @param type The spell type
-     * @return The spell, or null if not found
-     */
     public static Spell getSpell(String type) {
-        return SPELLS.get(type.toLowerCase());
+        return SPELLS.get(type);
     }
 
     /**
-     * Get a spell from an essence ID.
-     * @param essenceId The full registry ID of the spell essence
-     * @return The spell, or null if not found
+     * Get a spell based on the essence item ID.
+     * @param essenceId The item ID of the spell essence
+     * @return The corresponding spell, or null if not found
      */
     public static Spell getSpellFromEssenceId(String essenceId) {
-        // Map essence IDs to spell types
-        if (essenceId.equals("verdant_arcanum:spell_essence_flame")) {
-            return getSpell("flame");
+        // Extract the spell type from the essence ID
+        // Format expected: "verdant_arcanum:spell_essence_flame"
+        if (essenceId != null && essenceId.contains("spell_essence_")) {
+            String[] parts = essenceId.split("spell_essence_");
+            if (parts.length > 1) {
+                // Get the spell type from the end of the ID
+                return getSpell(parts[1]);
+            }
         }
-        // Add more mappings as spells are developed
-
         return null;
     }
 }
