@@ -21,10 +21,20 @@ public class ItemInteractionHandler {
 
         // Check if one hand has a spell essence and the other has a living staff
         if (mainHandStack.getItem() instanceof SpellEssenceItem && offHandStack.getItem() instanceof LivingStaffItem) {
-            return LivingStaffItem.graftSpellEssence(world, player, offHandStack, mainHandStack);
+            TypedActionResult<ItemStack> result = LivingStaffItem.graftSpellEssence(world, player, offHandStack, mainHandStack);
+            if (result.getResult().isAccepted()) {
+                // Only return success if the grafting succeeded
+                return TypedActionResult.success(mainHandStack);
+            }
+            return TypedActionResult.fail(mainHandStack);
         }
         else if (offHandStack.getItem() instanceof SpellEssenceItem && mainHandStack.getItem() instanceof LivingStaffItem) {
-            return LivingStaffItem.graftSpellEssence(world, player, mainHandStack, offHandStack);
+            TypedActionResult<ItemStack> result = LivingStaffItem.graftSpellEssence(world, player, mainHandStack, offHandStack);
+            if (result.getResult().isAccepted()) {
+                // Only return success if the grafting succeeded
+                return TypedActionResult.success(mainHandStack);
+            }
+            return TypedActionResult.fail(mainHandStack);
         }
 
         // No valid combination found

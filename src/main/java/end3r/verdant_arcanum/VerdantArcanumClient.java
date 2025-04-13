@@ -1,6 +1,7 @@
 // VerdantArcanumClient.java
 package end3r.verdant_arcanum;
 
+import end3r.verdant_arcanum.item.LivingStaffItem;
 import end3r.verdant_arcanum.magic.ManaSystem;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
@@ -78,7 +79,9 @@ public class VerdantArcanumClient implements ClientModInitializer {
      */
     private boolean isPlayerHoldingMagicalItem(PlayerEntity player) {
         return player.getMainHandStack().getItem() instanceof SpellEssenceItem ||
-                player.getOffHandStack().getItem() instanceof SpellEssenceItem;
+                player.getOffHandStack().getItem() instanceof SpellEssenceItem ||
+                player.getMainHandStack().getItem() instanceof LivingStaffItem ||
+                player.getOffHandStack().getItem() instanceof LivingStaffItem;
     }
 
     /**
@@ -87,13 +90,15 @@ public class VerdantArcanumClient implements ClientModInitializer {
     private boolean playerHasMagicalItems(PlayerEntity player) {
         // Check all slots in inventory
         for (ItemStack stack : player.getInventory().main) {
-            if (stack.getItem() instanceof SpellEssenceItem) {
+            if (stack.getItem() instanceof SpellEssenceItem ||
+                    stack.getItem() instanceof LivingStaffItem) {
                 return true;
             }
         }
 
         // Check offhand slot
-        if (player.getOffHandStack().getItem() instanceof SpellEssenceItem) {
+        if (player.getOffHandStack().getItem() instanceof SpellEssenceItem ||
+                player.getOffHandStack().getItem() instanceof LivingStaffItem) {
             return true;
         }
 

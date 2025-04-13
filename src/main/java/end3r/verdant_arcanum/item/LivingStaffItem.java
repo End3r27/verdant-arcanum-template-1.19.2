@@ -120,8 +120,30 @@ public class LivingStaffItem extends Item {
         // Check if player has enough mana
         ManaSystem manaSystem = ManaSystem.getInstance();
 
-        // Handle spell casting
-        if (!world.isClient) {
+        if (world.isClient) {
+            // Client-side effects
+            if (manaSystem.getPlayerMana(player).getCurrentMana() >= manaCost) {
+                // Play the appropriate spell cast effects
+                if ("Flame".equalsIgnoreCase(spellEssence.getEssenceType())) {
+                    playFlameSpellEffects(world, player);
+                }
+                // Add more spell effect types here
+            } else {
+                // Not enough mana - play client-side failure effects
+                for (int i = 0; i < 5; i++) {
+                    world.addParticle(
+                            net.minecraft.particle.ParticleTypes.SMOKE,
+                            player.getX(),
+                            player.getY() + player.getStandingEyeHeight() - 0.1,
+                            player.getZ(),
+                            world.random.nextGaussian() * 0.02,
+                            world.random.nextGaussian() * 0.02,
+                            world.random.nextGaussian() * 0.02
+                    );
+                }
+            }
+        } else {
+            // Server-side handling
             if (manaSystem.useMana(player, manaCost)) {
                 // Apply the spell effect based on the essence type
                 if ("Flame".equalsIgnoreCase(spellEssence.getEssenceType())) {
@@ -140,15 +162,6 @@ public class LivingStaffItem extends Item {
                         0.5F, 1.2F);
 
                 return TypedActionResult.fail(staffStack);
-            }
-        } else {
-            // Client-side effects
-            if (manaSystem.getPlayerMana(player).getCurrentMana() >= manaCost) {
-                // Play the appropriate spell cast effects
-                if ("Flame".equalsIgnoreCase(spellEssence.getEssenceType())) {
-                    playFlameSpellEffects(world, player);
-                }
-                // Add more spell effect types here
             }
         }
 
