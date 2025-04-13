@@ -36,7 +36,7 @@ public class ModItems {
     public static final Item FLAME_FLOWER_BLOOM = new FlameFlowerBloomItem(new FabricItemSettings().group(DEFAULT_GROUP));
 
     // Spell essences
-    public static final Item SPELL_ESSENCE_FLAME = new SpellEssenceItem("Flame", new FabricItemSettings().group(DEFAULT_GROUP).fireproof().maxCount(16));
+    public static final Item SPELL_ESSENCE_FLAME = new SpellEssenceItem("flame", new FabricItemSettings().group(DEFAULT_GROUP).fireproof().maxCount(16));
     public static final Item SPELL_ESSENCE_BLINK = new SpellEssenceItem("blink", new Item.Settings().group(ItemGroup.MISC).maxCount(16));
     public static final Item SPELL_ESSENCE_ROOTGRASP = new SpellEssenceItem("rootgrasp", new Item.Settings().group(ItemGroup.MISC).maxCount(16));
     public static final Item SPELL_ESSENCE_GUST = new SpellEssenceItem("gust", new Item.Settings().group(ItemGroup.MISC).maxCount(16));

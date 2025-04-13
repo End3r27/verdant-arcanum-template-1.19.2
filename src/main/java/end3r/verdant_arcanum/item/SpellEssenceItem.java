@@ -158,9 +158,6 @@ public class SpellEssenceItem extends Item {
     private Formatting getFormattingForType(String type) {
         return switch (type.toLowerCase()) {
             case "flame" -> Formatting.RED;
-            case "water" -> Formatting.BLUE;
-            case "earth" -> Formatting.DARK_GREEN;
-            case "air" -> Formatting.WHITE;
             case "blink" -> Formatting.LIGHT_PURPLE;
             case "gust" -> Formatting.AQUA;
             case "rootgrasp" -> Formatting.GREEN;

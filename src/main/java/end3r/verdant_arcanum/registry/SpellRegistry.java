@@ -15,8 +15,6 @@ public class SpellRegistry {
     static {
         // Register the flame spell
         register("flame", new FlameSpell());
-
-        // Register the new spells
         register("blink", new BlinkSpell());
         register("rootgrasp", new RootgraspSpell());
         register("gust", new GustSpell());
