@@ -90,7 +90,14 @@ public class SpellEssenceItem extends Item {
                 // Increment the player's "used item" statistic
                 player.incrementStat(Stats.USED.getOrCreateStat(this));
 
-                return TypedActionResult.success(itemStack);
+                // Consume the item by decreasing its count by 1
+                itemStack.decrement(1);
+                if (itemStack.isEmpty()) {
+                    // If the stack is now empty, replace it with an empty hand
+                    return TypedActionResult.consume(ItemStack.EMPTY);
+                }
+
+                return TypedActionResult.consume(itemStack);
             } else {
                 // Not enough mana - play failure sound
                 world.playSound(null, player.getX(), player.getY(), player.getZ(),
@@ -138,14 +145,17 @@ public class SpellEssenceItem extends Item {
                         TooltipUtils.createTooltip("tooltip.verdant_arcanum.spell_essence.usage",
                                 Formatting.YELLOW),
                         TooltipUtils.createTooltip("tooltip.verdant_arcanum.mana_cost",
-                                Formatting.BLUE, formatArg(manaCost))
+                                Formatting.BLUE, formatArg(manaCost)),
+                        TooltipUtils.createTooltip("tooltip.verdant_arcanum.consumable",
+                                Formatting.RED)
                 },
                 // Detailed info supplier (shown when shift is pressed)
                 () -> new Text[] {
                         TooltipUtils.createTooltip("tooltip.verdant_arcanum.spell_essence.detailed.1", Formatting.GOLD),
                         TooltipUtils.createTooltip("tooltip.verdant_arcanum.spell_essence.detailed.2", Formatting.GOLD),
                         TooltipUtils.createTooltip("tooltip.verdant_arcanum.spell_essence." + essenceType.toLowerCase() + ".spell",
-                                getFormattingForType(essenceType))
+                                getFormattingForType(essenceType)),
+                        TooltipUtils.createTooltip("tooltip.verdant_arcanum.spell_essence.consumed", Formatting.RED)
                 }
         );
         super.appendTooltip(stack, world, tooltip, context);

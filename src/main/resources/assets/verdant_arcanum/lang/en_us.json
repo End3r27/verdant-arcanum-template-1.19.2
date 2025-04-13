@@ -11,6 +11,8 @@
 
   "tooltip.verdant_arcanum.hold_shift": "Hold §eShift§r for more information",
   "tooltip.verdant_arcanum.mana_cost": "Mana Cost: %d",
+  "tooltip.verdant_arcanum.consumable": "Single-Use Item",
+  "tooltip.verdant_arcanum.spell_essence.consumed": "Consumed upon use",
 
   "tooltip.verdant_arcanum.grove_soil": "Rich soil infused with arcane energy",
   "tooltip.verdant_arcanum.grove_soil.detailed.1": "Required for growing special magical plants",
