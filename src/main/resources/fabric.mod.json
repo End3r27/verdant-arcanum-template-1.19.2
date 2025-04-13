@@ -3,7 +3,7 @@
 	"id": "verdant_arcanum",
 	"version": "1.0.0",
 	"name": "Verdant Arcanum",
-	"description": "A magic-focused botanical mod adding mystical plants.",
+	"description": "A magic-focused botanical mod adding mystical plants and spell casting.",
 	"authors": [
 		"end3r"
 	],
@@ -17,8 +17,17 @@
 	"entrypoints": {
 		"main": [
 			"end3r.verdant_arcanum.VerdantArcanum"
+		],
+		"client": [
+			"end3r.verdant_arcanum.VerdantArcanumClient"
+		],
+		"fabric-datagen": [
+			"end3r.verdant_arcanum.VerdantArcanumDataGenerator"
 		]
 	},
+	"mixins": [
+		"verdant_arcanum.mixins.json",
+	],
 	"depends": {
 		"fabricloader": ">=0.14.6",
 		"fabric-api": "*",

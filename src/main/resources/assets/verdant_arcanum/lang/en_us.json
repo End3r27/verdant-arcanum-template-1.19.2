@@ -7,6 +7,7 @@
   "itemGroup.verdant_arcanum.main": "Verdant Arcanum",
 
   "tooltip.verdant_arcanum.hold_shift": "Hold §eShift§r for more information",
+  "tooltip.verdant_arcanum.mana_cost": "Mana Cost: %d",
 
   "tooltip.verdant_arcanum.grove_soil": "Rich soil infused with arcane energy",
   "tooltip.verdant_arcanum.grove_soil.detailed.1": "Required for growing special magical plants",
@@ -23,6 +24,8 @@
 
   "tooltip.verdant_arcanum.spell_essence": "Pure magical essence extracted from a magical plant",
   "tooltip.verdant_arcanum.spell_essence.flame": "Contains the essence of fire",
+  "tooltip.verdant_arcanum.spell_essence.usage": "Right-click to cast a spell",
   "tooltip.verdant_arcanum.spell_essence.detailed.1": "Can be used to graft magical properties into a Living Staff",
-  "tooltip.verdant_arcanum.spell_essence.detailed.2": "Required for advanced magical crafting recipes"
+  "tooltip.verdant_arcanum.spell_essence.detailed.2": "Required for advanced magical crafting recipes",
+  "tooltip.verdant_arcanum.spell_essence.flame.spell": "Casts a small fireball when used"
 }

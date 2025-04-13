@@ -41,14 +41,14 @@ public class ModItems {
     // Spell essences
     public static final Item SPELL_ESSENCE_FLAME = new SpellEssenceItem(
             "Flame",
-            new FabricItemSettings().group(DEFAULT_GROUP).fireproof());
+            new FabricItemSettings().group(DEFAULT_GROUP).fireproof().maxCount(16));
 
     // This method will be called from ModRegistry
     public static void register() {
         Registry.register(Registry.ITEM, new Identifier(VerdantArcanum.MOD_ID, "grove_soil"), GROVE_SOIL);
         Registry.register(Registry.ITEM, new Identifier(VerdantArcanum.MOD_ID, "flame_flower_seeds"), FLAME_FLOWER_SEEDS);
         Registry.register(Registry.ITEM, new Identifier(VerdantArcanum.MOD_ID, "flame_flower_bloom"), FLAME_FLOWER_BLOOM);
-        Registry.register(Registry.ITEM, new Identifier(VerdantArcanum.MOD_ID, "spell_essence_flame.json"), SPELL_ESSENCE_FLAME);
+        Registry.register(Registry.ITEM, new Identifier(VerdantArcanum.MOD_ID, "spell_essence_flame"), SPELL_ESSENCE_FLAME);
     }
 
     // Custom item class for Flame Flower Seeds with tooltip
