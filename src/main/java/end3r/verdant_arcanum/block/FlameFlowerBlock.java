@@ -1,4 +1,4 @@
-// FlameFlowerBlock.java
+
 package end3r.verdant_arcanum.block;
 
 import end3r.verdant_arcanum.registry.ModItems;
@@ -16,7 +16,6 @@ import net.minecraft.tag.TagKey;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.registry.Registry;
-import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldView;
 
