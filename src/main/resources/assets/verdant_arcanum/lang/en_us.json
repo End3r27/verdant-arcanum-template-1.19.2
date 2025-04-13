@@ -27,5 +27,14 @@
   "tooltip.verdant_arcanum.spell_essence.usage": "Right-click to cast a spell",
   "tooltip.verdant_arcanum.spell_essence.detailed.1": "Can be used to graft magical properties into a Living Staff",
   "tooltip.verdant_arcanum.spell_essence.detailed.2": "Required for advanced magical crafting recipes",
-  "tooltip.verdant_arcanum.spell_essence.flame.spell": "Casts a small fireball when used"
+  "tooltip.verdant_arcanum.spell_essence.flame.spell": "Casts a small fireball when used",
+
+  "item.verdant_arcanum.living_staff": "Living Staff",
+  "tooltip.verdant_arcanum.living_staff": "A staff that bonds with magical essences",
+  "tooltip.verdant_arcanum.living_staff.slots": "Spell Slots: %d",
+  "tooltip.verdant_arcanum.living_staff.grafted_spells": "Grafted Spells:",
+  "tooltip.verdant_arcanum.living_staff.spell_slot": "%s Slot %d: %s",
+  "tooltip.verdant_arcanum.living_staff.detailed.1": "Right-click with spell essence in hand to graft it to the staff",
+  "tooltip.verdant_arcanum.living_staff.detailed.2": "Right-click to cast the active spell",
+  "tooltip.verdant_arcanum.living_staff.detailed.3": "Sneak + Right-click to cycle between grafted spells"
 }

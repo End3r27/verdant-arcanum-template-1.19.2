@@ -2,6 +2,7 @@
 package end3r.verdant_arcanum.registry;
 
 import end3r.verdant_arcanum.VerdantArcanum;
+import end3r.verdant_arcanum.item.LivingStaffItem;
 import end3r.verdant_arcanum.item.SpellEssenceItem;
 import end3r.verdant_arcanum.util.TooltipUtils;
 
@@ -43,12 +44,17 @@ public class ModItems {
             "Flame",
             new FabricItemSettings().group(DEFAULT_GROUP).fireproof().maxCount(16));
 
+    public static final Item LIVING_STAFF = new LivingStaffItem(
+            new FabricItemSettings().group(DEFAULT_GROUP).maxCount(1).maxDamage(256));
+
     // This method will be called from ModRegistry
     public static void register() {
         Registry.register(Registry.ITEM, new Identifier(VerdantArcanum.MOD_ID, "grove_soil"), GROVE_SOIL);
         Registry.register(Registry.ITEM, new Identifier(VerdantArcanum.MOD_ID, "flame_flower_seeds"), FLAME_FLOWER_SEEDS);
         Registry.register(Registry.ITEM, new Identifier(VerdantArcanum.MOD_ID, "flame_flower_bloom"), FLAME_FLOWER_BLOOM);
         Registry.register(Registry.ITEM, new Identifier(VerdantArcanum.MOD_ID, "spell_essence_flame"), SPELL_ESSENCE_FLAME);
+        Registry.register(Registry.ITEM, new Identifier(VerdantArcanum.MOD_ID, "living_staff"), LIVING_STAFF);
+
     }
 
     // Custom item class for Flame Flower Seeds with tooltip

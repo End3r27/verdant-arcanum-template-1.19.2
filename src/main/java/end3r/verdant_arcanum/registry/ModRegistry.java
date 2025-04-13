@@ -24,8 +24,9 @@ public class ModRegistry {
                 // Add magical essences
                 stacks.add(new ItemStack(end3r.verdant_arcanum.registry.ModItems.SPELL_ESSENCE_FLAME));
 
-                // When you add more items to your mod in the future,
-                // add them to the creative tab here
+                stacks.add(new ItemStack(ModItems.LIVING_STAFF));
+
+
             })
             .build();
 

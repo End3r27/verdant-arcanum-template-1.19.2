@@ -40,6 +40,13 @@ public class SpellEssenceItem extends Item {
     public TypedActionResult<ItemStack> use(World world, PlayerEntity player, Hand hand) {
         ItemStack itemStack = player.getStackInHand(hand);
 
+        // Check if the player is trying to graft this essence onto a staff
+        ItemStack otherHandStack = player.getStackInHand(hand == Hand.MAIN_HAND ? Hand.OFF_HAND : Hand.MAIN_HAND);
+        if (otherHandStack.getItem() instanceof LivingStaffItem) {
+            // Try to graft this essence onto the staff
+            return ItemInteractionHandler.tryGraftingOntoStaff(world, player, hand);
+        }
+
         // If the player is on cooldown, just return
         if (player.getItemCooldownManager().isCoolingDown(this)) {
             return TypedActionResult.pass(itemStack);
