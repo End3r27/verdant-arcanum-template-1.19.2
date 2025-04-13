@@ -105,7 +105,7 @@ public class VerdantArcanumClient implements ClientModInitializer {
      */
     private void renderManaBar(MatrixStack matrixStack, MinecraftClient client, PlayerEntity player) {
         // Get player's mana
-        ManaSystem.ManaSystem.PlayerMana playerMana = ManaSystem.getInstance().getPlayerMana(player);
+        ManaSystem.PlayerMana playerMana = ManaSystem.getInstance().getPlayerMana(player);
         float manaPercent = playerMana.getManaPercentage();
 
         // Calculate positions

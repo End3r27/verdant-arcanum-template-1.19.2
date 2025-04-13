@@ -56,6 +56,12 @@ public class TooltipUtils {
      * @param formatting The formatting to apply
      * @return The formatted Text
      */
+// Update in TooltipUtils.java
+    public static Text createTooltip(String translationKey, Formatting formatting, Object... args) {
+        return Text.translatable(translationKey, args).formatted(formatting);
+    }
+
+    // For backward compatibility, keep the original method
     public static Text createTooltip(String translationKey, Formatting... formatting) {
         return Text.translatable(translationKey).formatted(formatting);
     }
