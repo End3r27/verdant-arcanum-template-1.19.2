@@ -1,0 +1,22 @@
+{
+  "block.verdant_arcanum.grove_soil": "Grove Soil",
+  "block.verdant_arcanum.flame_flower": "Flame Flower",
+  "item.verdant_arcanum.flame_flower_seeds": "Flame Flower Seeds",
+  "item.verdant_arcanum.flame_flower_bloom": "Flame Flower Bloom",
+  "itemGroup.verdant_arcanum.main": "Verdant Arcanum",
+
+  "tooltip.verdant_arcanum.hold_shift": "Hold §eShift§r for more information",
+
+  "tooltip.verdant_arcanum.grove_soil": "Rich soil infused with arcane energy",
+  "tooltip.verdant_arcanum.grove_soil.detailed.1": "Required for growing special magical plants",
+  "tooltip.verdant_arcanum.grove_soil.detailed.2": "Supports faster growth for most arcane plants",
+
+  "tooltip.verdant_arcanum.flame_flower_seeds": "Mystical seeds that grow into fire-resistant plants",
+  "tooltip.verdant_arcanum.flame_flower_seeds.detailed.1": "Must be planted on Grove Soil to grow",
+  "tooltip.verdant_arcanum.flame_flower_seeds.detailed.2": "Goes through 3 growth stages: Seed → Bud → Bloom",
+  "tooltip.verdant_arcanum.flame_flower_seeds.detailed.3": "Grows faster when exposed to higher temperatures",
+
+  "tooltip.verdant_arcanum.flame_flower_bloom": "A vibrant flower with ember-like petals",
+  "tooltip.verdant_arcanum.flame_flower_bloom.detailed.1": "Can be brewed into potions of Fire Resistance",
+  "tooltip.verdant_arcanum.flame_flower_bloom.detailed.2": "Emits a faint warmth when held"
+}
