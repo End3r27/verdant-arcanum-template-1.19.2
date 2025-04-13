@@ -76,7 +76,7 @@ public class LivingStaffItem extends Item {
             String slotKey = SLOT_PREFIX + nextSlot;
 
             // If this slot has a spell, use it
-            if (nbt.contains(slotKey)) {
+            if (nbt.contains(slotKey) && !nbt.getString(slotKey).isEmpty()) {
                 return nextSlot;
             }
         }
@@ -93,7 +93,7 @@ public class LivingStaffItem extends Item {
         String slotKey = SLOT_PREFIX + activeSlot;
 
         // Check if the active slot has a spell
-        if (!nbt.contains(slotKey)) {
+        if (!nbt.contains(slotKey) || nbt.getString(slotKey).isEmpty()) {
             // No spell in this slot - make a "failed" sound on client
             if (world.isClient) {
                 world.playSound(player, player.getX(), player.getY(), player.getZ(),
@@ -211,7 +211,8 @@ public class LivingStaffItem extends Item {
 
         for (int i = 0; i < MAX_SLOTS; i++) {
             String slotKey = SLOT_PREFIX + i;
-            if (!nbt.contains(slotKey)) {
+            // Check if the slot key doesn't exist or has an empty value
+            if (!nbt.contains(slotKey) || nbt.getString(slotKey).isEmpty()) {
                 return i;
             }
         }
@@ -263,7 +264,8 @@ public class LivingStaffItem extends Item {
         // Count how many spells are grafted
         int spellCount = 0;
         for (int i = 0; i < MAX_SLOTS; i++) {
-            if (nbt.contains(SLOT_PREFIX + i)) {
+            String slotKey = SLOT_PREFIX + i;
+            if (nbt.contains(slotKey) && !nbt.getString(slotKey).isEmpty()) {
                 spellCount++;
             }
         }
@@ -276,7 +278,7 @@ public class LivingStaffItem extends Item {
         int index = 1;
         for (int i = 0; i < MAX_SLOTS; i++) {
             String slotKey = SLOT_PREFIX + i;
-            if (nbt.contains(slotKey)) {
+            if (nbt.contains(slotKey) && !nbt.getString(slotKey).isEmpty()) {
                 String essenceId = nbt.getString(slotKey);
                 Spell spell = SpellRegistry.getSpellFromEssenceId(essenceId);
                 String essenceType = spell != null ? spell.getType() : "Unknown";

@@ -142,6 +142,9 @@ public class SpellEssenceItem extends Item {
             case "water" -> Formatting.BLUE;
             case "earth" -> Formatting.DARK_GREEN;
             case "air" -> Formatting.WHITE;
+            case "blink" -> Formatting.LIGHT_PURPLE;
+            case "gust" -> Formatting.AQUA;
+            case "rootgrasp" -> Formatting.GREEN;
             default -> Formatting.GRAY;
         };
     }
