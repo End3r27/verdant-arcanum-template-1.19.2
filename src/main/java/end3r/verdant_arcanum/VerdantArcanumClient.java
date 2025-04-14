@@ -62,7 +62,6 @@ public class VerdantArcanumClient implements ClientModInitializer {
     private static final int MANA_BAR_BORDER_COLOR = 0xFF000080; // Dark blue
     private static final int MANA_BAR_BACKGROUND_COLOR = 0x80000040; // Semi-transparent dark blue
     private static final int MANA_BAR_FILL_COLOR = 0xFF0080FF; // Light blue
-    private static final int MANA_TEXT_COLOR = 0xFFFFFFFF; // White
 
     // Low mana warning effect
     private static final int LOW_MANA_FILL_COLOR = 0xFFFF3030; // Red
@@ -355,17 +354,6 @@ public class VerdantArcanumClient implements ClientModInitializer {
                     fillColor);
         }
 
-        // Draw mana text
-        TextRenderer textRenderer = client.textRenderer;
-        String manaText = String.format("Mana: %.0f/%.0f", playerMana.getCurrentMana(), (float)playerMana.getMaxMana());
-        int textWidth = textRenderer.getWidth(manaText);
-
-        // Center text in mana bar
-        int textX = x + (MANA_BAR_WIDTH - textWidth) / 2;
-        int textY = y + (MANA_BAR_HEIGHT - textRenderer.fontHeight) / 2;
-
-        // Draw with shadow for better visibility
-        textRenderer.drawWithShadow(matrixStack, manaText, textX, textY, MANA_TEXT_COLOR);
     }
 
     private void renderSpellCooldown(MatrixStack matrixStack, MinecraftClient client, PlayerEntity player, Item spellItem) {
