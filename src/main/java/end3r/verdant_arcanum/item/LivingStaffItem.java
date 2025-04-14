@@ -128,13 +128,18 @@ public class LivingStaffItem extends Item {
                 return TypedActionResult.fail(staffStack);
             }
         } else {  // CLIENT-SIDE ONLY
-            // The client should only show effects, not make decisions about casting
-            // The client shouldn't predict whether the cast will succeed or fail
-            // Let the server handle all logic and sync back the results
-
-            // We can optionally do some prediction for responsiveness,
-            // but don't play spell effects yet - that should be handled by the spell itself
-            // when the server confirms the cast succeeded
+            // Check if the player has enough mana (client-side prediction)
+            if (manaSystem.hasEnoughMana(player, manaCost)) {
+                // Play successful cast effects
+                spell.playClientEffects(world, player);
+            } else {
+                // Play failure effects
+                spell.playFailureEffects(world, player);
+                // Play the failure sound
+                world.playSound(player, player.getX(), player.getY(), player.getZ(),
+                        SoundEvents.BLOCK_FIRE_EXTINGUISH, SoundCategory.PLAYERS,
+                        0.5F, 1.2F);
+            }
 
             return TypedActionResult.success(staffStack);
         }

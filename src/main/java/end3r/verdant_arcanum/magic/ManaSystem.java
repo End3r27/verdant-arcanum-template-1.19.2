@@ -153,4 +153,9 @@ public class ManaSystem {
             return currentMana / maxMana;
         }
     }
+    // Add this method to ManaSystem.java
+    public boolean hasEnoughMana(PlayerEntity player, int manaCost) {
+        // Check if the player has enough mana without consuming it
+        return getPlayerMana(player).getCurrentMana() >= manaCost;
+    }
 }

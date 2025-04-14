@@ -94,10 +94,13 @@ public class LivingStaffScreenHandler extends ScreenHandler {
         // Load slots from staff NBT
         loadSlotsFromStaff();
 
-        // Add the spell essence slots
+// Updated slot positioning in LivingStaffScreenHandler.java
+// Find this section in the file:
+
+// Add the spell essence slots
         for (int i = 0; i < LivingStaffItem.MAX_SLOTS; i++) {
             final int slotIndex = i;
-            this.addSlot(new Slot(inventory, i, 62 + i * 26, 35) {
+            this.addSlot(new Slot(inventory, i, 62 + i * 18, 20) {
                 @Override
                 public boolean canInsert(ItemStack stack) {
                     return stack.getItem() instanceof SpellEssenceItem;

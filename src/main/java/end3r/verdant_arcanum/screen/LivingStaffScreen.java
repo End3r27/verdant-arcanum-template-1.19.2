@@ -68,18 +68,14 @@ public class LivingStaffScreen extends HandledScreen<LivingStaffScreenHandler> {
 
     // Helper method to calculate slot X position
     private int getSlotX(int slot) {
-        // Start from a fixed left position and arrange slots consecutively
-        // Using a left margin of 20px from the GUI edge
-        int leftMargin = 20;
-        int slotSpacing = 10; // Spacing between slots
-
-        return leftMargin + slot * slotSpacing;
+        // Based on the new positioning in the screen handler (62 + i * 19)
+        return 62 + (slot * 18); // Slot position with 1px spacing
     }
 
     // Helper method to get slot Y position
     private int getSlotY() {
-        // Keep slots higher up on the screen
-        return -35;
+        // Match the new Y position set in the screen handler
+        return 20;
     }
 
     @Override
