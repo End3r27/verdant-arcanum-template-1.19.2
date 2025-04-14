@@ -35,7 +35,7 @@ public class LivingStaffItem extends Item {
     public TypedActionResult<ItemStack> use(World world, PlayerEntity player, Hand hand) {
         ItemStack staffStack = player.getStackInHand(hand);
 
-        // Handle sneaking to open GUI instead of cycling
+        // Handle sneaking to open GUI instead of casting
         if (player.isSneaking()) {
             if (!world.isClient) {
                 // Open the GUI
