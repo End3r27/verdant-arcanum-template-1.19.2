@@ -10,6 +10,7 @@ import end3r.verdant_arcanum.spell.Spell;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
@@ -38,6 +39,10 @@ import end3r.verdant_arcanum.item.SpellEssenceItem;
 public class VerdantArcanumClient implements ClientModInitializer {
     private static final Logger LOGGER = LoggerFactory.getLogger(VerdantArcanum.MOD_ID);
 
+    // Mouse scroll tracking
+    private static boolean mouseScrolled = false;
+    private static int scrollDirection = 0;
+
     // Mana bar dimensions
     private static final int MANA_BAR_WIDTH = 100;
     private static final int MANA_BAR_HEIGHT = 8;
@@ -58,6 +63,7 @@ public class VerdantArcanumClient implements ClientModInitializer {
     private static final int SPELL_ICON_SIZE = 24;
     private static final int SPELL_ICON_PADDING = 5;
 
+
     @Override
     public void onInitializeClient() {
         LOGGER.info("Initializing Verdant Arcanum Client...");
@@ -71,29 +77,42 @@ public class VerdantArcanumClient implements ClientModInitializer {
         // Ensure ManaParticleSystem is initialized
         ManaParticleSystem.getInstance();
 
-        // Register scroll event for spell switching
-        ClientTickEvents.END_CLIENT_TICK.register(client -> {
-            if (client.player != null && client.player.isSneaking()) {
-                ItemStack mainHandItem = client.player.getMainHandStack();
-                ItemStack offHandItem = client.player.getOffHandStack();
+        // Register client started event for mouse scroll setup
+        ClientLifecycleEvents.CLIENT_STARTED.register(client -> {
+            // Set up the scroll callback now that the window is available
+            GLFW.glfwSetScrollCallback(client.getWindow().getHandle(), (window, xoffset, yoffset) -> {
+                // Capture scroll direction (positive for up, negative for down)
+                mouseScrolled = true;
+                scrollDirection = yoffset > 0 ? 1 : -1;
+            });
+        });
+
+        // Register spell scroll handling in client tick
+        ClientTickEvents.END_CLIENT_TICK.register(tickClient -> {
+            if (tickClient.player != null && tickClient.player.isSneaking() && mouseScrolled) {
+                ItemStack mainHandItem = tickClient.player.getMainHandStack();
+                ItemStack offHandItem = tickClient.player.getOffHandStack();
 
                 if (mainHandItem.getItem() instanceof LivingStaffItem) {
-                    handleStaffScrollInput(client, mainHandItem);
+                    LivingStaffItem.handleScrollWheel(tickClient.world, tickClient.player, mainHandItem, scrollDirection);
                 } else if (offHandItem.getItem() instanceof LivingStaffItem) {
-                    handleStaffScrollInput(client, offHandItem);
+                    LivingStaffItem.handleScrollWheel(tickClient.world, tickClient.player, offHandItem, scrollDirection);
                 }
+
+                // Reset after handling
+                mouseScrolled = false;
             }
         });
 
         // Register HUD rendering callback
         HudRenderCallback.EVENT.register((matrixStack, tickDelta) -> {
-            MinecraftClient client = MinecraftClient.getInstance();
-            PlayerEntity player = client.player;
+            MinecraftClient hudClient = MinecraftClient.getInstance();
+            PlayerEntity player = hudClient.player;
 
             if (player != null) {
                 // Render mana bar if player has magical items in inventory or hotbar
                 if (playerHasMagicalItems(player) || isPlayerHoldingMagicalItem(player)) {
-                    renderManaBar(matrixStack, client, player);
+                    renderManaBar(matrixStack, hudClient, player);
                 }
 
                 // Render active spell icon if player is holding a staff
@@ -101,9 +120,9 @@ public class VerdantArcanumClient implements ClientModInitializer {
                 ItemStack offHandStack = player.getOffHandStack();
 
                 if (mainHandStack.getItem() instanceof LivingStaffItem) {
-                    renderActiveSpellIcon(matrixStack, client, mainHandStack);
+                    renderActiveSpellIcon(matrixStack, hudClient, mainHandStack);
                 } else if (offHandStack.getItem() instanceof LivingStaffItem) {
-                    renderActiveSpellIcon(matrixStack, client, offHandStack);
+                    renderActiveSpellIcon(matrixStack, hudClient, offHandStack);
                 }
 
                 // Get the item the player is holding
@@ -120,32 +139,20 @@ public class VerdantArcanumClient implements ClientModInitializer {
 
                 // If the player is holding a spell essence, show the cooldown if applicable
                 if (spellItem != null && player.getItemCooldownManager().isCoolingDown(spellItem)) {
-                    renderSpellCooldown(matrixStack, client, player, spellItem);
+                    renderSpellCooldown(matrixStack, hudClient, player, spellItem);
                 }
             }
         });
 
         // Register client tick event for particle updates
-        ClientTickEvents.END_CLIENT_TICK.register(client -> {
-            if (client.player != null && client.world != null) {
+        ClientTickEvents.END_CLIENT_TICK.register(particleClient -> {
+            if (particleClient.player != null && particleClient.world != null) {
                 // Particles will be handled in ManaSystem's update method
-                ManaSystem.getInstance().updateManaRegen(client.player);
+                ManaSystem.getInstance().updateManaRegen(particleClient.player);
             }
         });
 
         LOGGER.info("Verdant Arcanum Client initialization complete!");
-    }
-
-    /**
-     * Handle mouse scroll input for staff spell switching
-     */
-    private void handleStaffScrollInput(MinecraftClient client, ItemStack staffStack) {
-        double scrollDelta = client.mouse.getScrollY();
-        if (scrollDelta != 0) {
-            // Direction is positive for scrolling up, negative for scrolling down
-            int direction = scrollDelta > 0 ? 1 : -1;
-            LivingStaffItem.handleScrollWheel(client.world, client.player, staffStack, direction);
-        }
     }
 
     /**
