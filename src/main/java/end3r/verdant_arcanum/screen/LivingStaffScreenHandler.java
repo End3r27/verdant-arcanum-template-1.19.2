@@ -277,26 +277,3 @@ public class LivingStaffScreenHandler extends ScreenHandler {
     }
 }
 
-// Factory for creating the screen handler
-class LivingStaffScreenHandlerFactory implements ExtendedScreenHandlerFactory {
-    private final ItemStack staffStack;
-
-    public LivingStaffScreenHandlerFactory(ItemStack staffStack) {
-        this.staffStack = staffStack;
-    }
-
-    @Override
-    public void writeScreenOpeningData(ServerPlayerEntity player, PacketByteBuf buf) {
-        buf.writeItemStack(staffStack);
-    }
-
-    @Override
-    public Text getDisplayName() {
-        return Text.translatable("container.verdant_arcanum.living_staff");
-    }
-
-    @Override
-    public ScreenHandler createMenu(int syncId, PlayerInventory inv, PlayerEntity player) {
-        return new LivingStaffScreenHandler(syncId, inv, staffStack);
-    }
-}
