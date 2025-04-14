@@ -1,7 +1,10 @@
 // Updated src/main/java/end3r/verdant_arcanum/registry/ModRegistry.java
 package end3r.verdant_arcanum.registry;
 
+import end3r.verdant_arcanum.client.screen.LivingStaffScreen;
+import end3r.verdant_arcanum.screen.LivingStaffScreenHandler;
 import net.fabricmc.fabric.api.client.itemgroup.FabricItemGroupBuilder;
+import net.fabricmc.fabric.api.client.screenhandler.v1.ScreenRegistry;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Identifier;
@@ -38,6 +41,12 @@ public class ModRegistry {
 
         // Then register items (which may depend on blocks)
         end3r.verdant_arcanum.registry.ModItems.register();
+
+
+        LivingStaffScreenHandler.register();
+
+        ScreenRegistry.register(LivingStaffScreenHandler.HANDLER_TYPE, LivingStaffScreen::new);
+
 
         // Register other components if needed
         // ModEntities.register();

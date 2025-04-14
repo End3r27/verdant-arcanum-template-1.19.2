@@ -168,10 +168,11 @@ public class LivingStaffItem extends Item {
                     nbt.putInt(ACTIVE_SLOT_KEY, nextSlot);
 
                     // Play a slot change sound
-                    world.playSound(null, player.getX(), player.getY(), player.getZ(),
-                            SoundEvents.BLOCK_WOODEN_BUTTON_CLICK_ON, SoundCategory.PLAYERS,
-                            0.6F, 1.0F + (world.random.nextFloat() * 0.2F));
-
+                    if (world != null) {  // Added null check for safety
+                        world.playSound(null, player.getX(), player.getY(), player.getZ(),
+                                SoundEvents.BLOCK_WOODEN_BUTTON_CLICK_ON, SoundCategory.PLAYERS,
+                                0.6F, 1.0F + (world.random.nextFloat() * 0.2F));
+                    }
                     break;
                 }
             }

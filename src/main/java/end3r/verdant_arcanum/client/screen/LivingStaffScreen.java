@@ -49,19 +49,4 @@ public class LivingStaffScreen extends HandledScreen<LivingStaffScreenHandler> {
         // Draw the background
         int x = (width - backgroundWidth) / 2;
         int y = (height - backgroundHeight) / 2;
-        drawTexture(matrices, x, y, 0, 0, backgroundWidth, backgroundHeight);
-
-        // Draw active slot highlight
-        drawTexture(matrices, x + activeSlotHighlightX - 1, y + 34, 176, 0, 18, 18);
-    }
-
-    @Override
-    public boolean mouseScrolled(double mouseX, double mouseY, double amount) {
-        // Delegate scroll handling to the screen handler
-        if (this.client.player.isSneaking()) {
-            handler.handleScroll(amount);
-            return true;
-        }
-        return super.mouseScrolled(mouseX, mouseY, amount);
-    }
-}
+        drawTexture(matrices, x
