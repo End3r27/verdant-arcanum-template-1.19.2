@@ -90,14 +90,14 @@ public class SpellEssenceItem extends Item {
                 // Increment the player's "used item" statistic
                 player.incrementStat(Stats.USED.getOrCreateStat(this));
 
-                // Consume the item by decreasing its count by 1
-                itemStack.decrement(1);
-                if (itemStack.isEmpty()) {
-                    // If the stack is now empty, replace it with an empty hand
-                    return TypedActionResult.consume(ItemStack.EMPTY);
-                }
+                // Create a copy of the stack to modify
+                ItemStack resultStack = itemStack.copy();
 
-                return TypedActionResult.consume(itemStack);
+                // Consume the item by decreasing its count by 1
+                resultStack.decrement(1);
+
+                // Always return consume result - this tells Minecraft to update the player's inventory
+                return TypedActionResult.consume(resultStack);
             } else {
                 // Not enough mana - play failure sound
                 world.playSound(null, player.getX(), player.getY(), player.getZ(),
