@@ -2,6 +2,7 @@ package end3r.verdant_arcanum.item;
 
 import end3r.verdant_arcanum.magic.ManaSystem;
 import end3r.verdant_arcanum.registry.SpellRegistry;
+import end3r.verdant_arcanum.screen.LivingStaffScreenHandlerFactory;
 import end3r.verdant_arcanum.spell.Spell;
 import end3r.verdant_arcanum.util.TooltipUtils;
 import net.minecraft.client.item.TooltipContext;
@@ -23,8 +24,8 @@ import java.util.List;
 public class LivingStaffItem extends Item {
     // Constants
     public static final int MAX_SLOTS = 3;
-    private static final String ACTIVE_SLOT_KEY = "ActiveSlot";
-    private static final String SLOT_PREFIX = "Slot_";
+    public static final String ACTIVE_SLOT_KEY = "ActiveSlot";
+    public static final String SLOT_PREFIX = "Slot_";
 
     public LivingStaffItem(Settings settings) {
         super(settings);
@@ -34,9 +35,13 @@ public class LivingStaffItem extends Item {
     public TypedActionResult<ItemStack> use(World world, PlayerEntity player, Hand hand) {
         ItemStack staffStack = player.getStackInHand(hand);
 
-        // Handle sneaking to cycle through slots
+        // Handle sneaking to open GUI instead of cycling
         if (player.isSneaking()) {
-            return cycleActiveSlot(world, player, staffStack);
+            if (!world.isClient) {
+                // Open the GUI
+                player.openHandledScreen(new LivingStaffScreenHandlerFactory(staffStack));
+            }
+            return TypedActionResult.success(staffStack);
         } else {
             // Cast the spell in the active slot
             return castSpell(world, player, staffStack);
@@ -49,25 +54,8 @@ public class LivingStaffItem extends Item {
         return ActionResult.PASS;
     }
 
-    private TypedActionResult<ItemStack> cycleActiveSlot(World world, PlayerEntity player, ItemStack staffStack) {
-        if (world.isClient) return TypedActionResult.success(staffStack);
-
-        NbtCompound nbt = staffStack.getOrCreateNbt();
-        int currentSlot = nbt.getInt(ACTIVE_SLOT_KEY);
-        int nextSlot = findNextActiveSlot(staffStack, currentSlot);
-
-        // Set the new active slot
-        nbt.putInt(ACTIVE_SLOT_KEY, nextSlot);
-
-        // Play a slot change sound
-        world.playSound(null, player.getX(), player.getY(), player.getZ(),
-                SoundEvents.BLOCK_WOODEN_BUTTON_CLICK_ON, SoundCategory.PLAYERS,
-                0.6F, 1.0F + (world.random.nextFloat() * 0.2F));
-
-        return TypedActionResult.success(staffStack);
-    }
-
-    private int findNextActiveSlot(ItemStack staffStack, int currentSlot) {
+    // Method made public static to be used by the GUI
+    public static int findNextActiveSlot(ItemStack staffStack, int currentSlot) {
         NbtCompound nbt = staffStack.getOrCreateNbt();
 
         // Start from the next slot and wrap around if needed
@@ -163,6 +151,33 @@ public class LivingStaffItem extends Item {
         return TypedActionResult.success(staffStack);
     }
 
+    // Method to handle scroll wheel spell switching
+    public static void handleScrollWheel(World world, PlayerEntity player, ItemStack staffStack, int direction) {
+        if (player.isSneaking()) {
+            NbtCompound nbt = staffStack.getOrCreateNbt();
+            int currentSlot = nbt.getInt(ACTIVE_SLOT_KEY);
+
+            // Find the next valid slot in the scroll direction
+            for (int i = 1; i <= MAX_SLOTS; i++) {
+                int nextSlot = Math.floorMod(currentSlot + (i * direction), MAX_SLOTS);
+                String slotKey = SLOT_PREFIX + nextSlot;
+
+                // Check if this slot has a spell
+                if (nbt.contains(slotKey) && !nbt.getString(slotKey).isEmpty()) {
+                    // Set the new active slot
+                    nbt.putInt(ACTIVE_SLOT_KEY, nextSlot);
+
+                    // Play a slot change sound
+                    world.playSound(null, player.getX(), player.getY(), player.getZ(),
+                            SoundEvents.BLOCK_WOODEN_BUTTON_CLICK_ON, SoundCategory.PLAYERS,
+                            0.6F, 1.0F + (world.random.nextFloat() * 0.2F));
+
+                    break;
+                }
+            }
+        }
+    }
+
     // Allow for grafting spell essences onto the staff
     public static TypedActionResult<ItemStack> graftSpellEssence(World world, PlayerEntity player,
                                                                  ItemStack staffStack, ItemStack essenceStack) {
@@ -230,7 +245,7 @@ public class LivingStaffItem extends Item {
                 stack, world, tooltip, context,
                 // Basic info supplier
                 () -> {
-                    Text[] basicInfo = new Text[] {
+                    Text[] basicInfo = new Text[]{
                             TooltipUtils.createTooltip("tooltip.verdant_arcanum.living_staff", Formatting.GREEN),
                             TooltipUtils.createTooltip("tooltip.verdant_arcanum.living_staff.slots", Formatting.GOLD, MAX_SLOTS)
                     };
@@ -250,10 +265,11 @@ public class LivingStaffItem extends Item {
                     return basicInfo;
                 },
                 // Detailed info supplier (shown when shift is pressed)
-                () -> new Text[] {
+                () -> new Text[]{
                         TooltipUtils.createTooltip("tooltip.verdant_arcanum.living_staff.detailed.1", Formatting.AQUA),
                         TooltipUtils.createTooltip("tooltip.verdant_arcanum.living_staff.detailed.2", Formatting.YELLOW),
-                        TooltipUtils.createTooltip("tooltip.verdant_arcanum.living_staff.detailed.3", Formatting.YELLOW)
+                        TooltipUtils.createTooltip("tooltip.verdant_arcanum.living_staff.detailed.3", Formatting.YELLOW),
+                        TooltipUtils.createTooltip("tooltip.verdant_arcanum.living_staff.scroll_hint", Formatting.GREEN)
                 }
         );
 

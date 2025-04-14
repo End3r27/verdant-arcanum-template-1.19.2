@@ -1,0 +1,42 @@
+package end3r.verdant_arcanum.network;
+
+import end3r.verdant_arcanum.VerdantArcanum;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
+import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
+import net.minecraft.network.PacketByteBuf;
+import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.util.Identifier;
+
+public class StaffPacketHandler {
+    public static final Identifier STAFF_SCROLL_PACKET_ID = new Identifier(VerdantArcanum.MOD_ID, "staff_scroll");
+
+    // Register the packet handler on the server
+    public static void registerServerReceivers() {
+        ServerPlayNetworking.registerGlobalReceiver(STAFF_SCROLL_PACKET_ID, (server, player, handler, buf, responseSender) -> {
+            // Get the scroll direction from the packet
+            int direction = buf.readInt();
+
+            // Execute on the server thread
+            server.execute(() -> {
+                // If player is holding a staff, apply the scroll
+                if (player.isUsingItem() && player.getActiveItem().getItem() instanceof end3r.verdant_arcanum.item.LivingStaffItem) {
+                    handleStaffScroll(player, direction);
+                }
+            });
+        });
+    }
+
+    // Helper method to handle scrolling
+    private static void handleStaffScroll(ServerPlayerEntity player, int direction) {
+        // This logic will be implemented in the LivingStaffItem class
+        // We'll call the appropriate method there
+    }
+
+    // Client side method to send a scroll packet
+    public static void sendScrollPacket(int direction) {
+        PacketByteBuf buf = PacketByteBufs.create();
+        buf.writeInt(direction);
+        ClientPlayNetworking.send(STAFF_SCROLL_PACKET_ID, buf);
+    }
+}
