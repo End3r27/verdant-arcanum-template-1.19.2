@@ -1,6 +1,6 @@
 package end3r.verdant_arcanum;
 
-import end3r.verdant_arcanum.client.screen.LivingStaffScreen;
+import end3r.verdant_arcanum.screen.LivingStaffScreen;
 import end3r.verdant_arcanum.item.LivingStaffItem;
 import end3r.verdant_arcanum.magic.ManaSystem;
 import end3r.verdant_arcanum.magic.ManaParticleSystem;
@@ -62,8 +62,10 @@ public class VerdantArcanumClient implements ClientModInitializer {
     public void onInitializeClient() {
         LOGGER.info("Initializing Verdant Arcanum Client...");
 
-        // Register the screen handler type and screen factory
+        // Register the screen handler type
         LivingStaffScreenHandler.register();
+
+        // Register the screen handler with the correct screen factory
         ScreenRegistry.register(LivingStaffScreenHandler.HANDLER_TYPE, LivingStaffScreen::new);
 
         // Ensure ManaParticleSystem is initialized
@@ -182,8 +184,32 @@ public class VerdantArcanumClient implements ClientModInitializer {
         // Render spell essence icon
         client.getItemRenderer().renderInGuiWithOverrides(new ItemStack(essenceItem), x, y);
 
-        // Render spell name
+        // Add a visual indicator for the active spell slot (1, 2, or 3)
         TextRenderer textRenderer = client.textRenderer;
+        String slotNumberText = String.valueOf(activeSlot + 1);
+        int slotIndicatorX = x + SPELL_ICON_SIZE - textRenderer.getWidth(slotNumberText) - 2;
+        int slotIndicatorY = y + SPELL_ICON_SIZE - textRenderer.fontHeight - 1;
+
+        // Draw a small background for better visibility
+        DrawableHelper.fill(
+                matrixStack,
+                slotIndicatorX - 1,
+                slotIndicatorY - 1,
+                slotIndicatorX + textRenderer.getWidth(slotNumberText) + 1,
+                slotIndicatorY + textRenderer.fontHeight,
+                0x80000000 // Semi-transparent black
+        );
+
+        // Draw the slot number
+        textRenderer.drawWithShadow(
+                matrixStack,
+                slotNumberText,
+                slotIndicatorX,
+                slotIndicatorY,
+                0xFFFFFF // White
+        );
+
+        // Render spell name
         String spellName = spell.getType().substring(0, 1).toUpperCase() + spell.getType().substring(1);
         int textWidth = textRenderer.getWidth(spellName);
         textRenderer.drawWithShadow(matrixStack, spellName, x + (SPELL_ICON_SIZE - textWidth) / 2,
