@@ -1,7 +1,7 @@
-// Updated src/main/java/end3r/verdant_arcanum/registry/ModItems.java
 package end3r.verdant_arcanum.registry;
 
 import end3r.verdant_arcanum.VerdantArcanum;
+
 import end3r.verdant_arcanum.item.LivingStaffItem;
 import end3r.verdant_arcanum.item.SpellEssenceItem;
 import end3r.verdant_arcanum.util.TooltipUtils;
@@ -14,6 +14,7 @@ import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.SpawnEggItem;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
@@ -41,6 +42,13 @@ public class ModItems {
     public static final Item SPELL_ESSENCE_ROOTGRASP = new SpellEssenceItem("rootgrasp", new Item.Settings().group(ItemGroup.MISC).maxCount(16));
     public static final Item SPELL_ESSENCE_GUST = new SpellEssenceItem("gust", new Item.Settings().group(ItemGroup.MISC).maxCount(16));
 
+    // Magic Infused Bee Spawn Egg (Purple and Yellow)
+    public static final Item MAGIC_INFUSED_BEE_SPAWN_EGG = new SpawnEggItem(
+            end3r.verdant_arcanum.registry.ModEntities.MAGIC_INFUSED_BEE,
+            0x9B30FF, // Purple primary color
+            0xFFD700, // Yellow secondary color
+            new FabricItemSettings().group(DEFAULT_GROUP)
+    );
 
     public static final Item LIVING_STAFF = new LivingStaffItem(new FabricItemSettings().group(DEFAULT_GROUP).maxCount(1).maxDamage(256));
 
@@ -57,9 +65,10 @@ public class ModItems {
         Registry.register(Registry.ITEM, new Identifier("verdant_arcanum", "spell_essence_gust"), SPELL_ESSENCE_GUST);
         Registry.register(Registry.ITEM, new Identifier(VerdantArcanum.MOD_ID, "spell_essence_flame"), SPELL_ESSENCE_FLAME);
 
+        // Register the Magic Infused Bee Spawn Egg
+        Registry.register(Registry.ITEM, new Identifier(VerdantArcanum.MOD_ID, "magic_infused_bee_spawn_egg"), MAGIC_INFUSED_BEE_SPAWN_EGG);
 
         Registry.register(Registry.ITEM, new Identifier(VerdantArcanum.MOD_ID, "living_staff"), LIVING_STAFF);
-
     }
 
     // Custom item class for Flame Flower Seeds with tooltip

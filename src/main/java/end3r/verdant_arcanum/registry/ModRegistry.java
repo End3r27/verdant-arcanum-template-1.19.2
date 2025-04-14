@@ -26,6 +26,8 @@ public class ModRegistry {
 
                 // Add magical tools
                 stacks.add(new ItemStack(ModItems.LIVING_STAFF));
+
+                stacks.add(new ItemStack(ModItems.MAGIC_INFUSED_BEE_SPAWN_EGG));
             })
             .build();
 
@@ -35,6 +37,8 @@ public class ModRegistry {
 
         // Then register items (which may depend on blocks)
         end3r.verdant_arcanum.registry.ModItems.register();
+
+        ModEntities.registerModEntities();
 
 
     }

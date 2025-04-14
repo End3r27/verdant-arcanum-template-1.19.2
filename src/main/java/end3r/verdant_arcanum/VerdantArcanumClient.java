@@ -1,5 +1,7 @@
 package end3r.verdant_arcanum;
 
+import end3r.verdant_arcanum.entity.client.MagicInfusedBeeRenderer;
+import end3r.verdant_arcanum.registry.ModEntities;
 import end3r.verdant_arcanum.screen.LivingStaffScreen;
 import end3r.verdant_arcanum.item.LivingStaffItem;
 import end3r.verdant_arcanum.magic.ManaSystem;
@@ -13,6 +15,7 @@ import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
+import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.fabricmc.fabric.api.client.screenhandler.v1.ScreenRegistry;
 import net.minecraft.client.MinecraftClient;
@@ -73,6 +76,9 @@ public class VerdantArcanumClient implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
         LOGGER.info("Initializing Verdant Arcanum Client...");
+
+        EntityRendererRegistry.register(ModEntities.MAGIC_INFUSED_BEE, MagicInfusedBeeRenderer::new);
+
 
         ClientTickEvents.END_CLIENT_TICK.register(tickClient -> {
             if (tickClient.player != null && tickClient.player.isSneaking() && mouseScrolled) {
