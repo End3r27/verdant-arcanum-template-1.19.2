@@ -139,6 +139,19 @@ public class LivingStaffItem extends Item {
                 world.playSound(player, player.getX(), player.getY(), player.getZ(),
                         SoundEvents.BLOCK_FIRE_EXTINGUISH, SoundCategory.PLAYERS,
                         0.5F, 1.2F);
+
+                // Add smoke particles to indicate failure (add this code)
+                for (int i = 0; i < 5; i++) {
+                    world.addParticle(
+                            net.minecraft.particle.ParticleTypes.SMOKE,
+                            player.getX(),
+                            player.getY() + player.getStandingEyeHeight() - 0.1,
+                            player.getZ(),
+                            world.random.nextGaussian() * 0.02,
+                            world.random.nextGaussian() * 0.02,
+                            world.random.nextGaussian() * 0.02
+                    );
+                }
             }
 
             return TypedActionResult.success(staffStack);
