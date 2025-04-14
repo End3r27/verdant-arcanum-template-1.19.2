@@ -30,6 +30,7 @@ import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 import org.lwjgl.glfw.GLFW;
+import org.lwjgl.glfw.GLFWScrollCallbackI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,6 +43,9 @@ public class VerdantArcanumClient implements ClientModInitializer {
     // Mouse scroll tracking
     private static boolean mouseScrolled = false;
     private static int scrollDirection = 0;
+
+    // Store the original scroll callback
+    private static GLFWScrollCallbackI originalScrollCallback;
 
     // Mana bar dimensions
     private static final int MANA_BAR_WIDTH = 100;
@@ -77,13 +81,38 @@ public class VerdantArcanumClient implements ClientModInitializer {
         // Ensure ManaParticleSystem is initialized
         ManaParticleSystem.getInstance();
 
+        // Get a reference to the MinecraftClient instance
+        MinecraftClient client = MinecraftClient.getInstance();
+
         // Register client started event for mouse scroll setup
-        ClientLifecycleEvents.CLIENT_STARTED.register(client -> {
-            // Set up the scroll callback now that the window is available
-            GLFW.glfwSetScrollCallback(client.getWindow().getHandle(), (window, xoffset, yoffset) -> {
-                // Capture scroll direction (positive for up, negative for down)
-                mouseScrolled = true;
-                scrollDirection = yoffset > 0 ? 1 : -1;
+        ClientLifecycleEvents.CLIENT_STARTED.register(startedClient -> {
+            // Store the original callback
+            long window = client.getWindow().getHandle();
+            originalScrollCallback = GLFW.glfwSetScrollCallback(window, null);
+
+            // Set our custom callback
+            GLFW.glfwSetScrollCallback(window, (windowHandle, xoffset, yoffset) -> {
+                // Check if player is sneaking and has a staff
+                boolean shouldHandleStaffScroll = false;
+
+                if (client.player != null && client.player.isSneaking()) {
+                    ItemStack mainHandItem = client.player.getMainHandStack();
+                    ItemStack offHandItem = client.player.getOffHandStack();
+
+                    if (mainHandItem.getItem() instanceof LivingStaffItem ||
+                            offHandItem.getItem() instanceof LivingStaffItem) {
+                        shouldHandleStaffScroll = true;
+                    }
+                }
+
+                // Only capture for staff if relevant
+                if (shouldHandleStaffScroll) {
+                    mouseScrolled = true;
+                    scrollDirection = yoffset > 0 ? 1 : -1;
+                } else if (originalScrollCallback != null) {
+                    // Call the original callback for default behavior
+                    originalScrollCallback.invoke(windowHandle, xoffset, yoffset);
+                }
             });
         });
 
