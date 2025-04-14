@@ -1,6 +1,7 @@
 // VerdantArcanum.java
 package end3r.verdant_arcanum;
 
+import end3r.verdant_arcanum.network.StaffPacketHandler;
 import end3r.verdant_arcanum.registry.ModRegistry;
 import net.fabricmc.api.ModInitializer;
 import org.slf4j.Logger;
@@ -19,6 +20,9 @@ public class VerdantArcanum implements ModInitializer {
 
 		// Register all mod components
 		ModRegistry.registerAll();
+		StaffPacketHandler.registerServerReceivers();
+
+
 
 		LOGGER.info("Verdant Arcanum initialization complete!");
 	}

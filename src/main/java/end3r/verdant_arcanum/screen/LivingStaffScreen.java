@@ -58,12 +58,28 @@ public class LivingStaffScreen extends HandledScreen<LivingStaffScreenHandler> {
         // Highlight the active slot
         int activeSlot = handler.getActiveSlot();
         if (activeSlot >= 0 && activeSlot < 3) {
-            int slotX = x + 62 + activeSlot * 26;
-            int slotY = y + 35;
+            int slotX = x + getSlotX(activeSlot);
+            int slotY = y + getSlotY();
 
             // Draw the highlight rectangle
             drawTexture(matrices, slotX - 1, slotY - 1, 176, 0, 18, 18);
         }
+    }
+
+    // Helper method to calculate slot X position
+    private int getSlotX(int slot) {
+        // Start from a fixed left position and arrange slots consecutively
+        // Using a left margin of 20px from the GUI edge
+        int leftMargin = 20;
+        int slotSpacing = 10; // Spacing between slots
+
+        return leftMargin + slot * slotSpacing;
+    }
+
+    // Helper method to get slot Y position
+    private int getSlotY() {
+        // Keep slots higher up on the screen
+        return -35;
     }
 
     @Override
@@ -88,8 +104,8 @@ public class LivingStaffScreen extends HandledScreen<LivingStaffScreenHandler> {
 
         // Check if clicked on a spell slot (for direct selection)
         for (int i = 0; i < 3; i++) {
-            int slotX = x + 62 + i * 26;
-            int slotY = y + 35;
+            int slotX = x + getSlotX(i);
+            int slotY = y + getSlotY();
 
             if (mouseX >= slotX && mouseX < slotX + 16 &&
                     mouseY >= slotY && mouseY < slotY + 16) {

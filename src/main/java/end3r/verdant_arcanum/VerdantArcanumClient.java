@@ -25,6 +25,8 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.sound.SoundCategory;
+import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
@@ -71,6 +73,26 @@ public class VerdantArcanumClient implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
         LOGGER.info("Initializing Verdant Arcanum Client...");
+
+        ClientTickEvents.END_CLIENT_TICK.register(tickClient -> {
+            if (tickClient.player != null && tickClient.player.isSneaking() && mouseScrolled) {
+                ItemStack mainHandItem = tickClient.player.getMainHandStack();
+                ItemStack offHandItem = tickClient.player.getOffHandStack();
+
+                // Only handle if player has a staff
+                if (mainHandItem.getItem() instanceof LivingStaffItem ||
+                        offHandItem.getItem() instanceof LivingStaffItem) {
+
+                    // Send packet to server instead of handling locally
+                    end3r.verdant_arcanum.network.StaffPacketHandler.sendScrollPacket(scrollDirection);
+                }
+
+                // Reset after handling (important to prevent repeated scrolling)
+                mouseScrolled = false;
+            }
+        });
+
+
 
         // Register the screen handler type
         LivingStaffScreenHandler.register();

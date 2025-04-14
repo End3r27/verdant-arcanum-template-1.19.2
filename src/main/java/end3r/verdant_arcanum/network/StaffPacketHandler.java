@@ -1,9 +1,11 @@
 package end3r.verdant_arcanum.network;
 
 import end3r.verdant_arcanum.VerdantArcanum;
+import end3r.verdant_arcanum.item.LivingStaffItem;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
+import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
@@ -19,18 +21,20 @@ public class StaffPacketHandler {
 
             // Execute on the server thread
             server.execute(() -> {
-                // If player is holding a staff, apply the scroll
-                if (player.isUsingItem() && player.getActiveItem().getItem() instanceof end3r.verdant_arcanum.item.LivingStaffItem) {
-                    handleStaffScroll(player, direction);
+                // Check if player is sneaking (important for security)
+                if (player.isSneaking()) {
+                    // Find the staff in either hand
+                    ItemStack mainHandStack = player.getMainHandStack();
+                    ItemStack offHandStack = player.getOffHandStack();
+
+                    if (mainHandStack.getItem() instanceof LivingStaffItem) {
+                        LivingStaffItem.handleScrollWheel(player.world, player, mainHandStack, direction);
+                    } else if (offHandStack.getItem() instanceof LivingStaffItem) {
+                        LivingStaffItem.handleScrollWheel(player.world, player, offHandStack, direction);
+                    }
                 }
             });
         });
-    }
-
-    // Helper method to handle scrolling
-    private static void handleStaffScroll(ServerPlayerEntity player, int direction) {
-        // This logic will be implemented in the LivingStaffItem class
-        // We'll call the appropriate method there
     }
 
     // Client side method to send a scroll packet

@@ -82,7 +82,7 @@ public class LivingStaffItem extends Item {
 
         // Check if the active slot has a spell
         if (!nbt.contains(slotKey) || nbt.getString(slotKey).isEmpty()) {
-            // No spell in this slot - make a "failed" sound on client
+            // No spell in this slot - make a "failed" sound
             if (world.isClient) {
                 world.playSound(player, player.getX(), player.getY(), player.getZ(),
                         SoundEvents.BLOCK_FIRE_EXTINGUISH, SoundCategory.PLAYERS,
@@ -109,27 +109,8 @@ public class LivingStaffItem extends Item {
         // Check if player has enough mana
         ManaSystem manaSystem = ManaSystem.getInstance();
 
-        if (world.isClient) {
-            // Client-side effects
-            if (manaSystem.getPlayerMana(player).getCurrentMana() >= manaCost) {
-                // Play the appropriate spell cast effects
-                spell.playClientEffects(world, player);
-            } else {
-                // Not enough mana - play client-side failure effects
-                for (int i = 0; i < 5; i++) {
-                    world.addParticle(
-                            net.minecraft.particle.ParticleTypes.SMOKE,
-                            player.getX(),
-                            player.getY() + player.getStandingEyeHeight() - 0.1,
-                            player.getZ(),
-                            world.random.nextGaussian() * 0.02,
-                            world.random.nextGaussian() * 0.02,
-                            world.random.nextGaussian() * 0.02
-                    );
-                }
-            }
-        } else {
-            // Server-side handling
+        if (!world.isClient) {  // SERVER-SIDE ONLY
+            // Only attempt to cast the spell on the server side
             if (manaSystem.useMana(player, manaCost)) {
                 // Cast the spell
                 spell.cast(world, player);
@@ -146,10 +127,19 @@ public class LivingStaffItem extends Item {
 
                 return TypedActionResult.fail(staffStack);
             }
-        }
+        } else {  // CLIENT-SIDE ONLY
+            // The client should only show effects, not make decisions about casting
+            // The client shouldn't predict whether the cast will succeed or fail
+            // Let the server handle all logic and sync back the results
 
-        return TypedActionResult.success(staffStack);
+            // We can optionally do some prediction for responsiveness,
+            // but don't play spell effects yet - that should be handled by the spell itself
+            // when the server confirms the cast succeeded
+
+            return TypedActionResult.success(staffStack);
+        }
     }
+
 
     // Method to handle scroll wheel spell switching
     public static void handleScrollWheel(World world, PlayerEntity player, ItemStack staffStack, int direction) {
