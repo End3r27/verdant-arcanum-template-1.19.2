@@ -8,10 +8,17 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemConvertible;
+import net.minecraft.item.ItemStack;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.sound.SoundCategory;
+import net.minecraft.sound.SoundEvents;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.IntProperty;
+import net.minecraft.util.ActionResult;
+import net.minecraft.util.Hand;
+import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.random.Random;
 import net.minecraft.util.shape.VoxelShape;
@@ -120,4 +127,28 @@ public class RootgraspFlowerBlock extends CropBlock {
         // Can only be planted on Grove Soil
         return block instanceof GroveSoilBlock;
     }
+    @Override
+    public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
+        int age = getAge(state);
+
+        // Only harvest if the flower is fully grown
+        if (age >= MAX_AGE) {
+            // Drop bloom on right-click
+            if (!world.isClient) {
+                // Drop only the bloom item
+                ItemStack bloomStack = new ItemStack(ModItems.ROOTGRASP_FLOWER_BLOOM);
+                Block.dropStack(world, pos, bloomStack);
+
+                // Reset to initial growth stage
+                world.setBlockState(pos, state.with(AGE, 0), 2);
+
+                // Play harvest sound
+                world.playSound(null, pos, SoundEvents.BLOCK_CROP_BREAK, SoundCategory.BLOCKS, 1.0F, 1.0F);
+            }
+            return ActionResult.success(world.isClient);
+        }
+
+        return ActionResult.PASS;
+    }
+
 }

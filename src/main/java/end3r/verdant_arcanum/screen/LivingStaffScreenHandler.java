@@ -111,6 +111,7 @@ public class LivingStaffScreenHandler extends ScreenHandler {
                     super.setStack(stack);
                     updateStaffNbt(slotIndex, stack);
                 }
+                //ciao <3 :3 ciauuu :3
 
                 @Override
                 public ItemStack takeStack(int amount) {

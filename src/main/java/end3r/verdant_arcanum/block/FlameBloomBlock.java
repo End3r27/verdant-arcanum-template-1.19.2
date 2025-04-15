@@ -1,15 +1,19 @@
 package end3r.verdant_arcanum.block;
 
+import end3r.verdant_arcanum.registry.ModBlocks;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
 import net.minecraft.block.Material;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.sound.BlockSoundGroup;
+import net.minecraft.tag.BlockTags;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldView;
 
 public class FlameBloomBlock extends PlacedBloomBlock {
     public FlameBloomBlock(Settings settings) {
@@ -25,5 +29,13 @@ public class FlameBloomBlock extends PlacedBloomBlock {
             );
         }
         super.onEntityCollision(state, world, pos, entity);
+    }
+    @Override
+    public boolean canPlaceAt(BlockState state, WorldView world, BlockPos pos) {
+        BlockState blockState = world.getBlockState(pos.down());
+        // Allow placement on grass blocks or grove soil
+        return blockState.isOf(Blocks.GRASS_BLOCK) ||
+                blockState.isOf(ModBlocks.GROVE_SOIL) ||
+                blockState.isIn(BlockTags.DIRT);
     }
 }

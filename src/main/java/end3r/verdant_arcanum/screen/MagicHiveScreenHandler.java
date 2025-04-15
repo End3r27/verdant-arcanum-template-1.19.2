@@ -25,10 +25,11 @@ public class MagicHiveScreenHandler extends ScreenHandler {
         this.inventory = inventory;
         inventory.onOpen(playerInventory.player);
 
-        // Add the hive inventory slots - a 4x5 grid
-        for (int row = 0; row < 4; ++row) {
-            for (int col = 0; col < 5; ++col) {
-                this.addSlot(new Slot(inventory, col + row * 5, 44 + col * 18, 18 + row * 18) {
+        //tieni baby ora funziona <3
+        // Add the hive inventory slots (3x3)
+        for (int row = 0; row < 3; ++row) {
+            for (int col = 0; col < 3; ++col) {
+                this.addSlot(new Slot(inventory, col + row * 3, 52 + col * 30, 7 + row * 18) {
                     // Only allow spell essence items to be added manually
                     @Override
                     public boolean canInsert(ItemStack stack) {

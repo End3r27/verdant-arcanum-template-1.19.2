@@ -114,12 +114,13 @@ public class FlameFlowerBlock extends CropBlock {
     public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
         int age = getAge(state);
 
-        // Only harvest if the flower is fully grown (bloom stage)
+        // Only harvest if the flower is fully grown
         if (age >= MAX_AGE) {
-            // Drop spell essence on right-click
+            // Drop bloom on right-click
             if (!world.isClient) {
-                // Drop items
-                dropHarvestItems(world, pos, player);
+                // Drop only the bloom item
+                ItemStack bloomStack = new ItemStack(ModItems.FLAME_FLOWER_BLOOM); // Change for each flower type
+                Block.dropStack(world, pos, bloomStack);
 
                 // Reset to initial growth stage
                 world.setBlockState(pos, state.with(AGE, 0), 2);

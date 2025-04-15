@@ -195,9 +195,9 @@ public class ModItems {
     }
 
     // Custom item class for Flame Flower Bloom with tooltip
-    public static class FlameFlowerBloomItem extends Item {
+    public static class FlameFlowerBloomItem extends BlockItem {
         public FlameFlowerBloomItem(Block flameBloom, Settings settings) {
-            super(settings);
+            super(flameBloom, settings);
         }
 
         @Override
@@ -219,9 +219,9 @@ public class ModItems {
     }
 
     // Custom item class for Blink Flower Bloom with tooltip
-    public static class BlinkFlowerBloomItem extends Item {
+    public static class BlinkFlowerBloomItem extends BlockItem {
         public BlinkFlowerBloomItem(Block blinkBloom, Settings settings) {
-            super(settings);
+            super(blinkBloom, settings);
         }
 
         @Override
@@ -243,9 +243,9 @@ public class ModItems {
     }
 
     // Custom item class for Rootgrasp Flower Bloom with tooltip
-    public static class RootgraspFlowerBloomItem extends Item {
+    public static class RootgraspFlowerBloomItem extends BlockItem {
         public RootgraspFlowerBloomItem(Block rootgraspBloom, Settings settings) {
-            super(settings);
+            super(rootgraspBloom, settings);
         }
 
         @Override
@@ -267,9 +267,9 @@ public class ModItems {
     }
 
     // Custom item class for Gust Flower Bloom with tooltip
-    public static class GustFlowerBloomItem extends Item {
+    public static class GustFlowerBloomItem extends BlockItem {
         public GustFlowerBloomItem(Block gustBloom, Settings settings) {
-            super(settings);
+            super(gustBloom, settings);
         }
 
         @Override
