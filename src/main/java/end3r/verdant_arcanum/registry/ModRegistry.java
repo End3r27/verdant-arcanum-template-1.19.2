@@ -32,12 +32,13 @@ public class ModRegistry {
                 stacks.add(new ItemStack(end3r.verdant_arcanum.registry.ModItems.SPELL_ESSENCE_BLINK));
                 stacks.add(new ItemStack(end3r.verdant_arcanum.registry.ModItems.SPELL_ESSENCE_ROOTGRASP));
                 stacks.add(new ItemStack(end3r.verdant_arcanum.registry.ModItems.SPELL_ESSENCE_GUST));
-                stacks.add(new ItemStack(ModItems.SPELL_ESSENCE_TIMESTOP));
 
                 // Add magical tools
                 stacks.add(new ItemStack(ModItems.LIVING_STAFF));
 
                 stacks.add(new ItemStack(ModItems.MAGIC_INFUSED_BEE_SPAWN_EGG));
+                stacks.add(new ItemStack(ModItems.MAGIC_HIVE));
+
             })
             .build();
 
@@ -49,6 +50,10 @@ public class ModRegistry {
         end3r.verdant_arcanum.registry.ModItems.register();
 
         ModEntities.registerModEntities();
+
+        ModBlockEntities.register();
+        ModScreenHandlers.register();
+
 
 
     }

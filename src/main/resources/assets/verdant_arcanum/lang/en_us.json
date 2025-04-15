@@ -105,5 +105,8 @@
   "tooltip.verdant_arcanum.timestop_flower_bloom.detailed.1": "Can be brewed into potions of Haste",
   "tooltip.verdant_arcanum.timestop_flower_bloom.detailed.2": "Seems to exist between moments of time",
 
-  "entity.verdant_arcanum.magic_infused_bee": "Magic Infused Bee"
+  "entity.verdant_arcanum.magic_infused_bee": "Magic Infused Bee",
+
+  "container.verdant_arcanum.living_staff": "Living Staff"
+
 }

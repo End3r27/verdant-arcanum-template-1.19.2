@@ -1,0 +1,9 @@
+{
+  "replace": false,
+  "values": [
+    "verdant_arcanum:flame_flowers_in_bloom",
+    "verdant_arcanum:blink_flowers_in_bloom",
+    "verdant_arcanum:rootgrasp_flowers_in_bloom",
+    "verdant_arcanum:gust_flowers_in_bloom"
+  ]
+}

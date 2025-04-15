@@ -131,7 +131,7 @@ public class LivingStaffScreenHandler extends ScreenHandler {
         // Add player inventory slots
         for (int y = 0; y < 3; ++y) {
             for (int x = 0; x < 9; ++x) {
-                this.addSlot(new Slot(playerInventory, x + y * 9 + 9, 8 + x * 18, 84 + y * 18));
+                this.addSlot(new Slot(playerInventory, x + y * 9 + 9, 9 + x * 18, 71 + y * 18));
             }
         }
 

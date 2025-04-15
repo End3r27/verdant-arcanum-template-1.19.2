@@ -121,4 +121,12 @@ public class LivingStaffScreen extends HandledScreen<LivingStaffScreenHandler> {
 
         return super.mouseClicked(mouseX, mouseY, button);
     }
+    @Override
+    protected void drawForeground(MatrixStack matrices, int mouseX, int mouseY) {
+        // Only draw the title, skip drawing the player inventory text
+        this.textRenderer.draw(matrices, this.title, this.titleX, this.titleY, 4210752);
+
+        // The line that would normally draw the player inventory text is omitted
+        // this.textRenderer.draw(matrices, this.playerInventory.getDisplayName(), this.playerInventoryTitleX, this.playerInventoryTitleY, 4210752);
+    }
 }

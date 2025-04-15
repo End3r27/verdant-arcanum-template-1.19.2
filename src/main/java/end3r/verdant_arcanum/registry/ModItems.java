@@ -7,7 +7,7 @@ import end3r.verdant_arcanum.item.SpellEssenceItem;
 import end3r.verdant_arcanum.util.TooltipUtils;
 
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
-import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.block.Block;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.item.AliasedBlockItem;
 import net.minecraft.item.BlockItem;
@@ -37,16 +37,19 @@ public class ModItems {
     public static final Item GUST_FLOWER_SEEDS = new GustFlowerSeedsItem(ModBlocks.GUST_FLOWER, new FabricItemSettings().group(DEFAULT_GROUP));
 
     // Harvested magical flower blooms
-    public static final Item FLAME_FLOWER_BLOOM = new FlameFlowerBloomItem(new FabricItemSettings().group(DEFAULT_GROUP));
-    public static final Item BLINK_FLOWER_BLOOM = new BlinkFlowerBloomItem(new FabricItemSettings().group(DEFAULT_GROUP));
-    public static final Item ROOTGRASP_FLOWER_BLOOM = new RootgraspFlowerBloomItem(new FabricItemSettings().group(DEFAULT_GROUP));
-    public static final Item GUST_FLOWER_BLOOM = new GustFlowerBloomItem(new FabricItemSettings().group(DEFAULT_GROUP));
+    public static final Item FLAME_FLOWER_BLOOM = new FlameFlowerBloomItem(ModBlocks.FLAME_BLOOM, new FabricItemSettings().group(DEFAULT_GROUP));
+    public static final Item BLINK_FLOWER_BLOOM = new BlinkFlowerBloomItem(ModBlocks.BLINK_BLOOM, new FabricItemSettings().group(DEFAULT_GROUP));
+    public static final Item ROOTGRASP_FLOWER_BLOOM = new RootgraspFlowerBloomItem(ModBlocks.ROOTGRASP_BLOOM, new FabricItemSettings().group(DEFAULT_GROUP));
+    public static final Item GUST_FLOWER_BLOOM = new GustFlowerBloomItem(ModBlocks.GUST_BLOOM, new FabricItemSettings().group(DEFAULT_GROUP));
 
     // Spell essences
     public static final Item SPELL_ESSENCE_FLAME = new SpellEssenceItem("flame", new FabricItemSettings().group(DEFAULT_GROUP).fireproof().maxCount(16));
     public static final Item SPELL_ESSENCE_BLINK = new SpellEssenceItem("blink", new Item.Settings().group(ItemGroup.MISC).maxCount(16));
     public static final Item SPELL_ESSENCE_ROOTGRASP = new SpellEssenceItem("rootgrasp", new Item.Settings().group(ItemGroup.MISC).maxCount(16));
     public static final Item SPELL_ESSENCE_GUST = new SpellEssenceItem("gust", new Item.Settings().group(ItemGroup.MISC).maxCount(16));
+
+
+    public static final Item MAGIC_HIVE = new BlockItem(ModBlocks.MAGIC_HIVE, new FabricItemSettings().group(DEFAULT_GROUP));
 
 
     // Magic Infused Bee Spawn Egg (Purple and Yellow)
@@ -76,10 +79,13 @@ public class ModItems {
         Registry.register(Registry.ITEM, new Identifier(VerdantArcanum.MOD_ID, "gust_flower_bloom"), GUST_FLOWER_BLOOM);
 
         // Register spell essences
-        Registry.register(Registry.ITEM, new Identifier("verdant_arcanum", "spell_essence_blink"), SPELL_ESSENCE_BLINK);
-        Registry.register(Registry.ITEM, new Identifier("verdant_arcanum", "spell_essence_rootgrasp"), SPELL_ESSENCE_ROOTGRASP);
-        Registry.register(Registry.ITEM, new Identifier("verdant_arcanum", "spell_essence_gust"), SPELL_ESSENCE_GUST);
+        Registry.register(Registry.ITEM, new Identifier(VerdantArcanum.MOD_ID, "spell_essence_blink"), SPELL_ESSENCE_BLINK);
+        Registry.register(Registry.ITEM, new Identifier(VerdantArcanum.MOD_ID, "spell_essence_rootgrasp"), SPELL_ESSENCE_ROOTGRASP);
+        Registry.register(Registry.ITEM, new Identifier(VerdantArcanum.MOD_ID, "spell_essence_gust"), SPELL_ESSENCE_GUST);
         Registry.register(Registry.ITEM, new Identifier(VerdantArcanum.MOD_ID, "spell_essence_flame"), SPELL_ESSENCE_FLAME);
+
+        Registry.register(Registry.ITEM, new Identifier(VerdantArcanum.MOD_ID, "magic_hive"), MAGIC_HIVE);
+
 
 
         // Register the Magic Infused Bee Spawn Egg
@@ -190,7 +196,7 @@ public class ModItems {
 
     // Custom item class for Flame Flower Bloom with tooltip
     public static class FlameFlowerBloomItem extends Item {
-        public FlameFlowerBloomItem(Settings settings) {
+        public FlameFlowerBloomItem(Block flameBloom, Settings settings) {
             super(settings);
         }
 
@@ -214,7 +220,7 @@ public class ModItems {
 
     // Custom item class for Blink Flower Bloom with tooltip
     public static class BlinkFlowerBloomItem extends Item {
-        public BlinkFlowerBloomItem(Settings settings) {
+        public BlinkFlowerBloomItem(Block blinkBloom, Settings settings) {
             super(settings);
         }
 
@@ -238,7 +244,7 @@ public class ModItems {
 
     // Custom item class for Rootgrasp Flower Bloom with tooltip
     public static class RootgraspFlowerBloomItem extends Item {
-        public RootgraspFlowerBloomItem(Settings settings) {
+        public RootgraspFlowerBloomItem(Block rootgraspBloom, Settings settings) {
             super(settings);
         }
 
@@ -262,7 +268,7 @@ public class ModItems {
 
     // Custom item class for Gust Flower Bloom with tooltip
     public static class GustFlowerBloomItem extends Item {
-        public GustFlowerBloomItem(Settings settings) {
+        public GustFlowerBloomItem(Block gustBloom, Settings settings) {
             super(settings);
         }
 

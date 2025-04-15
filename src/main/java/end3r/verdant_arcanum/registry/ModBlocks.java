@@ -1,12 +1,9 @@
 package end3r.verdant_arcanum.registry;
 
 import end3r.verdant_arcanum.VerdantArcanum;
-import end3r.verdant_arcanum.block.FlameFlowerBlock;
-import end3r.verdant_arcanum.block.BlinkFlowerBlock;
-import end3r.verdant_arcanum.block.RootgraspFlowerBlock;
-import end3r.verdant_arcanum.block.GustFlowerBlock;
-import end3r.verdant_arcanum.block.GroveSoilBlock;
+import end3r.verdant_arcanum.block.*;
 
+import end3r.verdant_arcanum.block.RootgraspBloomBlock;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.minecraft.block.Block;
 import net.minecraft.block.Material;
@@ -60,6 +57,47 @@ public class ModBlocks {
                     .luminance(state -> state.get(GustFlowerBlock.AGE) == 2 ? 1 : 0)
     );
 
+    // NEW: Placeable bloom blocks
+    public static final Block FLAME_BLOOM = new FlameBloomBlock(
+            FabricBlockSettings.of(Material.DECORATION)
+                    .strength(0.2f)
+                    .sounds(BlockSoundGroup.GRASS)
+                    .luminance(6)
+                    .ticksRandomly()
+    );
+
+    public static final Block BLINK_BLOOM = new BlinkBloomBlock(
+            FabricBlockSettings.of(Material.DECORATION)
+                    .strength(0.2f)
+                    .sounds(BlockSoundGroup.GRASS)
+                    .luminance(5)
+                    .ticksRandomly()
+    );
+
+    public static final Block ROOTGRASP_BLOOM = new RootgraspBloomBlock(
+            FabricBlockSettings.of(Material.DECORATION)
+                    .strength(0.2f)
+                    .sounds(BlockSoundGroup.GRASS)
+                    .luminance(2)
+                    .ticksRandomly()
+    );
+
+    public static final Block GUST_BLOOM = new GustBloomBlock(
+            FabricBlockSettings.of(Material.DECORATION)
+                    .strength(0.2f)
+                    .sounds(BlockSoundGroup.GRASS)
+                    .luminance(1)
+                    .ticksRandomly()
+    );
+
+    public static final Block MAGIC_HIVE = new MagicHiveBlock(
+            FabricBlockSettings.of(Material.WOOD)
+                    .strength(3.0f, 6.0f)
+                    .sounds(BlockSoundGroup.WOOD)
+                    .nonOpaque()
+    );
+
+
     // This method will be called from ModRegistry
     public static void register() {
         Registry.register(Registry.BLOCK, new Identifier(VerdantArcanum.MOD_ID, "grove_soil"), GROVE_SOIL);
@@ -67,5 +105,12 @@ public class ModBlocks {
         Registry.register(Registry.BLOCK, new Identifier(VerdantArcanum.MOD_ID, "blink_flower"), BLINK_FLOWER);
         Registry.register(Registry.BLOCK, new Identifier(VerdantArcanum.MOD_ID, "rootgrasp_flower"), ROOTGRASP_FLOWER);
         Registry.register(Registry.BLOCK, new Identifier(VerdantArcanum.MOD_ID, "gust_flower"), GUST_FLOWER);
+        Registry.register(Registry.BLOCK, new Identifier(VerdantArcanum.MOD_ID, "magic_hive"), MAGIC_HIVE);
+
+        // Register new bloom blocks
+        Registry.register(Registry.BLOCK, new Identifier(VerdantArcanum.MOD_ID, "flame_bloom"), FLAME_BLOOM);
+        Registry.register(Registry.BLOCK, new Identifier(VerdantArcanum.MOD_ID, "blink_bloom"), BLINK_BLOOM);
+        Registry.register(Registry.BLOCK, new Identifier(VerdantArcanum.MOD_ID, "rootgrasp_bloom"), ROOTGRASP_BLOOM);
+        Registry.register(Registry.BLOCK, new Identifier(VerdantArcanum.MOD_ID, "gust_bloom"), GUST_BLOOM);
     }
 }

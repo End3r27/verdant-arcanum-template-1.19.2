@@ -4,7 +4,9 @@
 	"compatibilityLevel": "JAVA_17",
 	"mixins": [
 		"ExampleMixin",
-		"PlayerEntityMixin"
+		"PlayerEntityMixin",
+		"BeeEntityMixin",
+		"BeeFlowerEventMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1
