@@ -39,6 +39,7 @@ public class MagicHiveScreenHandler extends ScreenHandler {
             }
         }
 
+
         // Add the player inventory slots (3 rows of 9)
         for (int row = 0; row < 3; ++row) {
             for (int col = 0; col < 9; ++col) {
