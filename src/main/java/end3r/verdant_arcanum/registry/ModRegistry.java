@@ -18,11 +18,21 @@ public class ModRegistry {
                 stacks.add(new ItemStack(end3r.verdant_arcanum.registry.ModItems.FLAME_FLOWER_SEEDS));
                 stacks.add(new ItemStack(end3r.verdant_arcanum.registry.ModItems.FLAME_FLOWER_BLOOM));
 
+                stacks.add(new ItemStack(end3r.verdant_arcanum.registry.ModItems.ROOTGRASP_FLOWER_SEEDS));
+                stacks.add(new ItemStack(end3r.verdant_arcanum.registry.ModItems.ROOTGRASP_FLOWER_BLOOM));
+
+                stacks.add(new ItemStack(end3r.verdant_arcanum.registry.ModItems.BLINK_FLOWER_SEEDS));
+                stacks.add(new ItemStack(end3r.verdant_arcanum.registry.ModItems.BLINK_FLOWER_BLOOM));
+
+                stacks.add(new ItemStack(end3r.verdant_arcanum.registry.ModItems.GUST_FLOWER_SEEDS));
+                stacks.add(new ItemStack(end3r.verdant_arcanum.registry.ModItems.GUST_FLOWER_BLOOM));
+
                 // Add magical essences
                 stacks.add(new ItemStack(end3r.verdant_arcanum.registry.ModItems.SPELL_ESSENCE_FLAME));
                 stacks.add(new ItemStack(end3r.verdant_arcanum.registry.ModItems.SPELL_ESSENCE_BLINK));
                 stacks.add(new ItemStack(end3r.verdant_arcanum.registry.ModItems.SPELL_ESSENCE_ROOTGRASP));
                 stacks.add(new ItemStack(end3r.verdant_arcanum.registry.ModItems.SPELL_ESSENCE_GUST));
+                stacks.add(new ItemStack(ModItems.SPELL_ESSENCE_TIMESTOP));
 
                 // Add magical tools
                 stacks.add(new ItemStack(ModItems.LIVING_STAFF));

@@ -13,11 +13,12 @@ public class SpellRegistry {
 
     // Initialize spells
     static {
-        // Register the flame spell
+        // Register the spells
         register("flame", new FlameSpell());
         register("blink", new BlinkSpell());
         register("rootgrasp", new RootgraspSpell());
         register("gust", new GustSpell());
+
     }
 
     private static void register(String type, Spell spell) {

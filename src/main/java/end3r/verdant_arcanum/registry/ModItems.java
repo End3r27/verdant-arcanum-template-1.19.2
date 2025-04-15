@@ -30,17 +30,24 @@ public class ModItems {
     // Block items
     public static final Item GROVE_SOIL = new BlockItem(ModBlocks.GROVE_SOIL, new FabricItemSettings().group(DEFAULT_GROUP));
 
-    // Seeds for the flame flower
+    // Seeds for magical flowers
     public static final Item FLAME_FLOWER_SEEDS = new FlameFlowerSeedsItem(ModBlocks.FLAME_FLOWER, new FabricItemSettings().group(DEFAULT_GROUP));
+    public static final Item BLINK_FLOWER_SEEDS = new BlinkFlowerSeedsItem(ModBlocks.BLINK_FLOWER, new FabricItemSettings().group(DEFAULT_GROUP));
+    public static final Item ROOTGRASP_FLOWER_SEEDS = new RootgraspFlowerSeedsItem(ModBlocks.ROOTGRASP_FLOWER, new FabricItemSettings().group(DEFAULT_GROUP));
+    public static final Item GUST_FLOWER_SEEDS = new GustFlowerSeedsItem(ModBlocks.GUST_FLOWER, new FabricItemSettings().group(DEFAULT_GROUP));
 
-    // Harvested flame flower
+    // Harvested magical flower blooms
     public static final Item FLAME_FLOWER_BLOOM = new FlameFlowerBloomItem(new FabricItemSettings().group(DEFAULT_GROUP));
+    public static final Item BLINK_FLOWER_BLOOM = new BlinkFlowerBloomItem(new FabricItemSettings().group(DEFAULT_GROUP));
+    public static final Item ROOTGRASP_FLOWER_BLOOM = new RootgraspFlowerBloomItem(new FabricItemSettings().group(DEFAULT_GROUP));
+    public static final Item GUST_FLOWER_BLOOM = new GustFlowerBloomItem(new FabricItemSettings().group(DEFAULT_GROUP));
 
     // Spell essences
     public static final Item SPELL_ESSENCE_FLAME = new SpellEssenceItem("flame", new FabricItemSettings().group(DEFAULT_GROUP).fireproof().maxCount(16));
     public static final Item SPELL_ESSENCE_BLINK = new SpellEssenceItem("blink", new Item.Settings().group(ItemGroup.MISC).maxCount(16));
     public static final Item SPELL_ESSENCE_ROOTGRASP = new SpellEssenceItem("rootgrasp", new Item.Settings().group(ItemGroup.MISC).maxCount(16));
     public static final Item SPELL_ESSENCE_GUST = new SpellEssenceItem("gust", new Item.Settings().group(ItemGroup.MISC).maxCount(16));
+
 
     // Magic Infused Bee Spawn Egg (Purple and Yellow)
     public static final Item MAGIC_INFUSED_BEE_SPAWN_EGG = new SpawnEggItem(
@@ -56,14 +63,24 @@ public class ModItems {
     public static void register() {
         Registry.register(Registry.ITEM, new Identifier(VerdantArcanum.MOD_ID, "grove_soil"), GROVE_SOIL);
 
+        // Register seeds
         Registry.register(Registry.ITEM, new Identifier(VerdantArcanum.MOD_ID, "flame_flower_seeds"), FLAME_FLOWER_SEEDS);
+        Registry.register(Registry.ITEM, new Identifier(VerdantArcanum.MOD_ID, "blink_flower_seeds"), BLINK_FLOWER_SEEDS);
+        Registry.register(Registry.ITEM, new Identifier(VerdantArcanum.MOD_ID, "rootgrasp_flower_seeds"), ROOTGRASP_FLOWER_SEEDS);
+        Registry.register(Registry.ITEM, new Identifier(VerdantArcanum.MOD_ID, "gust_flower_seeds"), GUST_FLOWER_SEEDS);
 
+        // Register blooms
         Registry.register(Registry.ITEM, new Identifier(VerdantArcanum.MOD_ID, "flame_flower_bloom"), FLAME_FLOWER_BLOOM);
+        Registry.register(Registry.ITEM, new Identifier(VerdantArcanum.MOD_ID, "blink_flower_bloom"), BLINK_FLOWER_BLOOM);
+        Registry.register(Registry.ITEM, new Identifier(VerdantArcanum.MOD_ID, "rootgrasp_flower_bloom"), ROOTGRASP_FLOWER_BLOOM);
+        Registry.register(Registry.ITEM, new Identifier(VerdantArcanum.MOD_ID, "gust_flower_bloom"), GUST_FLOWER_BLOOM);
 
+        // Register spell essences
         Registry.register(Registry.ITEM, new Identifier("verdant_arcanum", "spell_essence_blink"), SPELL_ESSENCE_BLINK);
         Registry.register(Registry.ITEM, new Identifier("verdant_arcanum", "spell_essence_rootgrasp"), SPELL_ESSENCE_ROOTGRASP);
         Registry.register(Registry.ITEM, new Identifier("verdant_arcanum", "spell_essence_gust"), SPELL_ESSENCE_GUST);
         Registry.register(Registry.ITEM, new Identifier(VerdantArcanum.MOD_ID, "spell_essence_flame"), SPELL_ESSENCE_FLAME);
+
 
         // Register the Magic Infused Bee Spawn Egg
         Registry.register(Registry.ITEM, new Identifier(VerdantArcanum.MOD_ID, "magic_infused_bee_spawn_egg"), MAGIC_INFUSED_BEE_SPAWN_EGG);
@@ -96,6 +113,81 @@ public class ModItems {
         }
     }
 
+    // Custom item class for Blink Flower Seeds with tooltip
+    public static class BlinkFlowerSeedsItem extends AliasedBlockItem {
+        public BlinkFlowerSeedsItem(net.minecraft.block.Block block, Settings settings) {
+            super(block, settings);
+        }
+
+        @Override
+        public void appendTooltip(ItemStack stack, World world, List<Text> tooltip, TooltipContext context) {
+            TooltipUtils.addTooltipWithShift(
+                    stack, world, tooltip, context,
+                    // Basic info supplier
+                    () -> new Text[] {
+                            TooltipUtils.createTooltip("tooltip.verdant_arcanum.blink_flower_seeds", Formatting.AQUA)
+                    },
+                    // Detailed info supplier (shown when shift is pressed)
+                    () -> new Text[] {
+                            TooltipUtils.createTooltip("tooltip.verdant_arcanum.blink_flower_seeds.detailed.1", Formatting.BLUE),
+                            TooltipUtils.createTooltip("tooltip.verdant_arcanum.blink_flower_seeds.detailed.2", Formatting.BLUE),
+                            TooltipUtils.createTooltip("tooltip.verdant_arcanum.blink_flower_seeds.detailed.3", Formatting.DARK_PURPLE)
+                    }
+            );
+            super.appendTooltip(stack, world, tooltip, context);
+        }
+    }
+
+    // Custom item class for Rootgrasp Flower Seeds with tooltip
+    public static class RootgraspFlowerSeedsItem extends AliasedBlockItem {
+        public RootgraspFlowerSeedsItem(net.minecraft.block.Block block, Settings settings) {
+            super(block, settings);
+        }
+
+        @Override
+        public void appendTooltip(ItemStack stack, World world, List<Text> tooltip, TooltipContext context) {
+            TooltipUtils.addTooltipWithShift(
+                    stack, world, tooltip, context,
+                    // Basic info supplier
+                    () -> new Text[] {
+                            TooltipUtils.createTooltip("tooltip.verdant_arcanum.rootgrasp_flower_seeds", Formatting.DARK_GREEN)
+                    },
+                    // Detailed info supplier (shown when shift is pressed)
+                    () -> new Text[] {
+                            TooltipUtils.createTooltip("tooltip.verdant_arcanum.rootgrasp_flower_seeds.detailed.1", Formatting.GREEN),
+                            TooltipUtils.createTooltip("tooltip.verdant_arcanum.rootgrasp_flower_seeds.detailed.2", Formatting.GREEN),
+                            TooltipUtils.createTooltip("tooltip.verdant_arcanum.rootgrasp_flower_seeds.detailed.3", Formatting.DARK_GREEN)
+                    }
+            );
+            super.appendTooltip(stack, world, tooltip, context);
+        }
+    }
+
+    // Custom item class for Gust Flower Seeds with tooltip
+    public static class GustFlowerSeedsItem extends AliasedBlockItem {
+        public GustFlowerSeedsItem(net.minecraft.block.Block block, Settings settings) {
+            super(block, settings);
+        }
+
+        @Override
+        public void appendTooltip(ItemStack stack, World world, List<Text> tooltip, TooltipContext context) {
+            TooltipUtils.addTooltipWithShift(
+                    stack, world, tooltip, context,
+                    // Basic info supplier
+                    () -> new Text[] {
+                            TooltipUtils.createTooltip("tooltip.verdant_arcanum.gust_flower_seeds", Formatting.WHITE)
+                    },
+                    // Detailed info supplier (shown when shift is pressed)
+                    () -> new Text[] {
+                            TooltipUtils.createTooltip("tooltip.verdant_arcanum.gust_flower_seeds.detailed.1", Formatting.GRAY),
+                            TooltipUtils.createTooltip("tooltip.verdant_arcanum.gust_flower_seeds.detailed.2", Formatting.GRAY),
+                            TooltipUtils.createTooltip("tooltip.verdant_arcanum.gust_flower_seeds.detailed.3", Formatting.WHITE)
+                    }
+            );
+            super.appendTooltip(stack, world, tooltip, context);
+        }
+    }
+
     // Custom item class for Flame Flower Bloom with tooltip
     public static class FlameFlowerBloomItem extends Item {
         public FlameFlowerBloomItem(Settings settings) {
@@ -114,6 +206,78 @@ public class ModItems {
                     () -> new Text[] {
                             TooltipUtils.createTooltip("tooltip.verdant_arcanum.flame_flower_bloom.detailed.1", Formatting.YELLOW),
                             TooltipUtils.createTooltip("tooltip.verdant_arcanum.flame_flower_bloom.detailed.2", Formatting.RED, Formatting.ITALIC)
+                    }
+            );
+            super.appendTooltip(stack, world, tooltip, context);
+        }
+    }
+
+    // Custom item class for Blink Flower Bloom with tooltip
+    public static class BlinkFlowerBloomItem extends Item {
+        public BlinkFlowerBloomItem(Settings settings) {
+            super(settings);
+        }
+
+        @Override
+        public void appendTooltip(ItemStack stack, World world, List<Text> tooltip, TooltipContext context) {
+            TooltipUtils.addTooltipWithShift(
+                    stack, world, tooltip, context,
+                    // Basic info supplier
+                    () -> new Text[] {
+                            TooltipUtils.createTooltip("tooltip.verdant_arcanum.blink_flower_bloom", Formatting.AQUA)
+                    },
+                    // Detailed info supplier (shown when shift is pressed)
+                    () -> new Text[] {
+                            TooltipUtils.createTooltip("tooltip.verdant_arcanum.blink_flower_bloom.detailed.1", Formatting.BLUE),
+                            TooltipUtils.createTooltip("tooltip.verdant_arcanum.blink_flower_bloom.detailed.2", Formatting.DARK_PURPLE, Formatting.ITALIC)
+                    }
+            );
+            super.appendTooltip(stack, world, tooltip, context);
+        }
+    }
+
+    // Custom item class for Rootgrasp Flower Bloom with tooltip
+    public static class RootgraspFlowerBloomItem extends Item {
+        public RootgraspFlowerBloomItem(Settings settings) {
+            super(settings);
+        }
+
+        @Override
+        public void appendTooltip(ItemStack stack, World world, List<Text> tooltip, TooltipContext context) {
+            TooltipUtils.addTooltipWithShift(
+                    stack, world, tooltip, context,
+                    // Basic info supplier
+                    () -> new Text[] {
+                            TooltipUtils.createTooltip("tooltip.verdant_arcanum.rootgrasp_flower_bloom", Formatting.DARK_GREEN)
+                    },
+                    // Detailed info supplier (shown when shift is pressed)
+                    () -> new Text[] {
+                            TooltipUtils.createTooltip("tooltip.verdant_arcanum.rootgrasp_flower_bloom.detailed.1", Formatting.GREEN),
+                            TooltipUtils.createTooltip("tooltip.verdant_arcanum.rootgrasp_flower_bloom.detailed.2", Formatting.DARK_GREEN, Formatting.ITALIC)
+                    }
+            );
+            super.appendTooltip(stack, world, tooltip, context);
+        }
+    }
+
+    // Custom item class for Gust Flower Bloom with tooltip
+    public static class GustFlowerBloomItem extends Item {
+        public GustFlowerBloomItem(Settings settings) {
+            super(settings);
+        }
+
+        @Override
+        public void appendTooltip(ItemStack stack, World world, List<Text> tooltip, TooltipContext context) {
+            TooltipUtils.addTooltipWithShift(
+                    stack, world, tooltip, context,
+                    // Basic info supplier
+                    () -> new Text[] {
+                            TooltipUtils.createTooltip("tooltip.verdant_arcanum.gust_flower_bloom", Formatting.WHITE)
+                    },
+                    // Detailed info supplier (shown when shift is pressed)
+                    () -> new Text[] {
+                            TooltipUtils.createTooltip("tooltip.verdant_arcanum.gust_flower_bloom.detailed.1", Formatting.GRAY),
+                            TooltipUtils.createTooltip("tooltip.verdant_arcanum.gust_flower_bloom.detailed.2", Formatting.WHITE, Formatting.ITALIC)
                     }
             );
             super.appendTooltip(stack, world, tooltip, context);

@@ -7,6 +7,7 @@
   "item.verdant_arcanum.spell_essence_blink": "Spell Essence: Blink",
   "item.verdant_arcanum.spell_essence_rootgrasp": "Spell Essence: Rootgrasp",
   "item.verdant_arcanum.spell_essence_gust": "Spell Essence: Gust",
+  "item.verdant_arcanum.spell_essence_timestop": "Spell Essence: TimeStop",
   "itemGroup.verdant_arcanum.main": "Verdant Arcanum",
 
   "tooltip.verdant_arcanum.hold_shift": "Hold §eShift§r for more information",
@@ -32,6 +33,7 @@
   "tooltip.verdant_arcanum.spell_essence.blink": "Contains the essence of teleportation",
   "tooltip.verdant_arcanum.spell_essence.rootgrasp": "Contains the essence of earth binding",
   "tooltip.verdant_arcanum.spell_essence.gust": "Contains the essence of wind",
+  "tooltip.verdant_arcanum.spell_essence.timestop": "Contains the essence of time manipulation",
   "tooltip.verdant_arcanum.spell_essence.usage": "Right-click to cast a spell",
   "tooltip.verdant_arcanum.spell_essence.detailed.1": "Can be used to graft magical properties into a Living Staff",
   "tooltip.verdant_arcanum.spell_essence.detailed.2": "Required for advanced magical crafting recipes",
@@ -39,6 +41,7 @@
   "tooltip.verdant_arcanum.spell_essence.blink.spell": "Teleports you in the direction you're looking",
   "tooltip.verdant_arcanum.spell_essence.rootgrasp.spell": "Slows down nearby entities with magical vines",
   "tooltip.verdant_arcanum.spell_essence.gust.spell": "Pushes entities away with a gust of wind",
+  "tooltip.verdant_arcanum.spell_essence.timestop.spell": "Freezes entities in time around the caster",
 
   "item.verdant_arcanum.living_staff": "Living Staff",
   "tooltip.verdant_arcanum.living_staff": "A staff that bonds with magical essences",
@@ -47,5 +50,60 @@
   "tooltip.verdant_arcanum.living_staff.spell_slot": "%s Slot %d: %s",
   "tooltip.verdant_arcanum.living_staff.detailed.1": "Right-click with spell essence in hand to graft it to the staff",
   "tooltip.verdant_arcanum.living_staff.detailed.2": "Right-click to cast the active spell",
-  "tooltip.verdant_arcanum.living_staff.detailed.3": "Sneak + Right-click to cycle between grafted spells"
+  "tooltip.verdant_arcanum.living_staff.scroll_hint": "Sneak + Scroll to switch between grafted spells",
+
+  "block.verdant_arcanum.blink_flower": "Blink Flower",
+  "block.verdant_arcanum.rootgrasp_flower": "Rootgrasp Flower",
+  "block.verdant_arcanum.gust_flower": "Gust Flower",
+  "block.verdant_arcanum.timestop_flower": "TimeStop Flower",
+
+  "item.verdant_arcanum.blink_flower_seeds": "Blink Flower Seeds",
+  "item.verdant_arcanum.rootgrasp_flower_seeds": "Rootgrasp Flower Seeds",
+  "item.verdant_arcanum.gust_flower_seeds": "Gust Flower Seeds",
+  "item.verdant_arcanum.timestop_flower_seeds": "TimeStop Flower Seeds",
+
+  "item.verdant_arcanum.blink_flower_bloom": "Blink Flower Bloom",
+  "item.verdant_arcanum.rootgrasp_flower_bloom": "Rootgrasp Flower Bloom",
+  "item.verdant_arcanum.gust_flower_bloom": "Gust Flower Bloom",
+  "item.verdant_arcanum.timestop_flower_bloom": "TimeStop Flower Bloom",
+
+  "item.verdant_arcanum.magic_infused_bee_spawn_egg": "Magic Infused Bee Spawn Egg",
+
+  "tooltip.verdant_arcanum.blink_flower_seeds": "Mystical seeds that grow into teleportation plants",
+  "tooltip.verdant_arcanum.blink_flower_seeds.detailed.1": "Must be planted on Grove Soil to grow",
+  "tooltip.verdant_arcanum.blink_flower_seeds.detailed.2": "Goes through 3 growth stages: Seed → Bud → Bloom",
+  "tooltip.verdant_arcanum.blink_flower_seeds.detailed.3": "Grows faster in moonlight",
+
+  "tooltip.verdant_arcanum.rootgrasp_flower_seeds": "Mystical seeds that grow into binding plants",
+  "tooltip.verdant_arcanum.rootgrasp_flower_seeds.detailed.1": "Must be planted on Grove Soil to grow",
+  "tooltip.verdant_arcanum.rootgrasp_flower_seeds.detailed.2": "Goes through 3 growth stages: Seed → Bud → Bloom",
+  "tooltip.verdant_arcanum.rootgrasp_flower_seeds.detailed.3": "Grows faster when near other plants",
+
+  "tooltip.verdant_arcanum.gust_flower_seeds": "Mystical seeds that grow into wind-related plants",
+  "tooltip.verdant_arcanum.gust_flower_seeds.detailed.1": "Must be planted on Grove Soil to grow",
+  "tooltip.verdant_arcanum.gust_flower_seeds.detailed.2": "Goes through 3 growth stages: Seed → Bud → Bloom",
+  "tooltip.verdant_arcanum.gust_flower_seeds.detailed.3": "Grows faster at higher elevations",
+
+  "tooltip.verdant_arcanum.timestop_flower_seeds": "Mystical seeds that grow into time-related plants",
+  "tooltip.verdant_arcanum.timestop_flower_seeds.detailed.1": "Must be planted on Grove Soil to grow",
+  "tooltip.verdant_arcanum.timestop_flower_seeds.detailed.2": "Goes through 3 growth stages: Seed → Bud → Bloom",
+  "tooltip.verdant_arcanum.timestop_flower_seeds.detailed.3": "Grows at unpredictable rates due to time fluctuations",
+
+  "tooltip.verdant_arcanum.blink_flower_bloom": "A shimmering flower with ethereal petals",
+  "tooltip.verdant_arcanum.blink_flower_bloom.detailed.1": "Can be brewed into potions of Swift Movement",
+  "tooltip.verdant_arcanum.blink_flower_bloom.detailed.2": "Occasionally shifts between dimensions when observed",
+
+  "tooltip.verdant_arcanum.rootgrasp_flower_bloom": "A sturdy flower with vine-like petals",
+  "tooltip.verdant_arcanum.rootgrasp_flower_bloom.detailed.1": "Can be brewed into potions of Stability",
+  "tooltip.verdant_arcanum.rootgrasp_flower_bloom.detailed.2": "Sometimes takes root in your inventory",
+
+  "tooltip.verdant_arcanum.gust_flower_bloom": "A light, airy flower with feather-like petals",
+  "tooltip.verdant_arcanum.gust_flower_bloom.detailed.1": "Can be brewed into potions of Feather Falling",
+  "tooltip.verdant_arcanum.gust_flower_bloom.detailed.2": "Feels weightless when held",
+
+  "tooltip.verdant_arcanum.timestop_flower_bloom": "A crystalline flower with clock-like patterns",
+  "tooltip.verdant_arcanum.timestop_flower_bloom.detailed.1": "Can be brewed into potions of Haste",
+  "tooltip.verdant_arcanum.timestop_flower_bloom.detailed.2": "Seems to exist between moments of time",
+
+  "entity.verdant_arcanum.magic_infused_bee": "Magic Infused Bee"
 }

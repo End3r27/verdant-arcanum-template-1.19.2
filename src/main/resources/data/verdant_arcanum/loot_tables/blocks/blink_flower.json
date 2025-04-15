@@ -1,0 +1,88 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:alternatives",
+          "children": [
+            {
+              "type": "minecraft:item",
+              "conditions": [
+                {
+                  "condition": "minecraft:block_state_property",
+                  "block": "verdant_arcanum:blink_flower",
+                  "properties": {
+                    "age": "2"
+                  }
+                }
+              ],
+              "name": "verdant_arcanum:blink_flower_bloom"
+            },
+            {
+              "type": "minecraft:item",
+              "name": "verdant_arcanum:blink_flower_seeds"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "function": "minecraft:apply_bonus",
+              "enchantment": "minecraft:fortune",
+              "formula": "minecraft:binomial_with_bonus_count",
+              "parameters": {
+                "extra": 1,
+                "probability": 0.5714286
+              }
+            }
+          ],
+          "conditions": [
+            {
+              "condition": "minecraft:block_state_property",
+              "block": "verdant_arcanum:blink_flower",
+              "properties": {
+                "age": "2"
+              }
+            }
+          ],
+          "name": "verdant_arcanum:blink_flower_seeds"
+        }
+      ]
+    },
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "verdant_arcanum:spell_essence_blink"
+        }
+      ],
+      "conditions": [
+        {
+          "condition": "minecraft:block_state_property",
+          "block": "verdant_arcanum:blink_flower",
+          "properties": {
+            "age": "2"
+          }
+        },
+        {
+          "condition": "minecraft:random_chance",
+          "chance": 0.75
+        }
+      ]
+    }
+  ],
+  "functions": [
+    {
+      "function": "minecraft:explosion_decay"
+    }
+  ]
+}
