@@ -1,9 +1,11 @@
 package end3r.verdant_arcanum.registry;
 
+import end3r.verdant_arcanum.VerdantArcanum;
 import net.fabricmc.fabric.api.client.itemgroup.FabricItemGroupBuilder;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Identifier;
+
 
 public class ModRegistry {
     // Custom item group (creative tab) with all mod items
@@ -42,6 +44,13 @@ public class ModRegistry {
             })
             .build();
 
+    public static void registerModTags() {
+        // This method ensures that the mod loads the tag files properly
+        // You don't actually need to put code here - simply calling this method
+        // during initialization will force the class to load, which registers the tags
+        VerdantArcanum.LOGGER.info("Registering mod tags");
+    }
+
     public static void registerAll() {
         // Register all blocks first
         end3r.verdant_arcanum.registry.ModBlocks.register();
@@ -54,8 +63,10 @@ public class ModRegistry {
         ModBlockEntities.register();
         ModScreenHandlers.register();
 
+        registerModTags();
 
 
 
     }
+
 }
