@@ -2,6 +2,7 @@ package end3r.verdant_arcanum.entity;
 
 import end3r.verdant_arcanum.block.MagicHiveBlock;
 import end3r.verdant_arcanum.block.entity.MagicHiveBlockEntity;
+import end3r.verdant_arcanum.mixin.BeeEntityAccessor;
 import end3r.verdant_arcanum.registry.ModBlocks;
 import end3r.verdant_arcanum.registry.ModEntities;
 import end3r.verdant_arcanum.registry.ModItems;
@@ -62,7 +63,7 @@ public class MagicInfusedBee extends BeeEntity {
             BlockPos flowerPos = findNearestMagicalFlower();
             if (flowerPos != null) {
                 // Force update the bee's flower position
-                this.flowerPos = flowerPos;
+                BlockPos flowerPos = ((BeeEntityAccessor) this).getFlowerPosition();
                 // Set the nectar goal to active
                 this.getMoveControl().moveTo(flowerPos.getX(), flowerPos.getY(), flowerPos.getZ(), 1.0);
             }
