@@ -1,7 +1,6 @@
 package end3r.verdant_arcanum.mixin;
 
 import end3r.verdant_arcanum.entity.MagicInfusedBee;
-import end3r.verdant_arcanum.registry.ModItems;
 import end3r.verdant_arcanum.registry.ModTags;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.passive.BeeEntity;
@@ -18,23 +17,12 @@ public class BeeFlowerEventMixin {
         BeeEntity bee = (BeeEntity)(Object)this;
 
         if (bee instanceof MagicInfusedBee) {
-            MagicInfusedBee magicBee = (MagicInfusedBee)bee;
             BlockState state = bee.world.getBlockState(pos);
 
+            // Check if it's any of our magical flowers
             if (state.isIn(ModTags.Blocks.MAGIC_FLOWERS_IN_BLOOM)) {
-                // If it's one of our magical flowers, return true
+                // Set return value to true so the bee recognizes this as a valid flower
                 cir.setReturnValue(true);
-
-                // Track which type of flower when we find one
-                if (state.isIn(ModTags.Blocks.FLAME_FLOWERS_IN_BLOOM)) {
-                    magicBee.setCurrentPollenType(ModItems.FLAME_FLOWER_BLOOM);
-                } else if (state.isIn(ModTags.Blocks.BLINK_FLOWERS_IN_BLOOM)) {
-                    magicBee.setCurrentPollenType(ModItems.BLINK_FLOWER_BLOOM);
-                } else if (state.isIn(ModTags.Blocks.ROOTGRASP_FLOWERS_IN_BLOOM)) {
-                    magicBee.setCurrentPollenType(ModItems.ROOTGRASP_FLOWER_BLOOM);
-                } else if (state.isIn(ModTags.Blocks.GUST_FLOWERS_IN_BLOOM)) {
-                    magicBee.setCurrentPollenType(ModItems.GUST_FLOWER_BLOOM);
-                }
             }
         }
     }

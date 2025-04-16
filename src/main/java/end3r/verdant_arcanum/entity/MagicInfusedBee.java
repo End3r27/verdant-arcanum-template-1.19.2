@@ -1,6 +1,7 @@
 package end3r.verdant_arcanum.entity;
 
 import end3r.verdant_arcanum.block.MagicHiveBlock;
+import end3r.verdant_arcanum.block.entity.MagicHiveBlockEntity;
 import end3r.verdant_arcanum.registry.ModBlocks;
 import end3r.verdant_arcanum.registry.ModEntities;
 import end3r.verdant_arcanum.registry.ModItems;
@@ -10,9 +11,11 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.entity.passive.BeeEntity;
 import net.minecraft.entity.attribute.DefaultAttributeContainer;
 import net.minecraft.entity.attribute.EntityAttributes;
+import net.minecraft.entity.data.DataTracker;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.passive.PassiveEntity;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -56,7 +59,7 @@ public class MagicInfusedBee extends BeeEntity {
         super.tick();
 
         // Spawn magic particles occasionally
-        if (this.world.isClient() && this.random.nextInt(10) == 0) {
+        if (this.world.isClient && this.random.nextInt(10) == 0) {
             double d = this.getX() + (this.random.nextDouble() - 0.5D) * 0.5D;
             double e = this.getY() + 0.3D;
             double f = this.getZ() + (this.random.nextDouble() - 0.5D) * 0.5D;
@@ -64,24 +67,60 @@ public class MagicInfusedBee extends BeeEntity {
             this.world.addParticle(ParticleTypes.WITCH, d, e, f, 0.0D, 0.0D, 0.0D);
         }
 
-        // Check for nectar and current pollen type
-        if (!this.world.isClient() && this.hasNectar() && this.currentPollenType != null) {
-            BlockPos pos = this.getBlockPos();
+        // Check flower positions when the bee has nectar to see if we need to set pollen type
+        if (!this.world.isClient && this.hasNectar() && this.currentPollenType == null) {
+            BlockPos flowerPos = this.getFlowerPos();
+            if (flowerPos != null) {
+                BlockState state = this.world.getBlockState(flowerPos);
 
-            // Check a 3x3x3 area around the bee for magic hives
-            for (BlockPos checkPos : BlockPos.iterate(pos.add(-1, -1, -1), pos.add(1, 1, 1))) {
-                BlockState state = this.world.getBlockState(checkPos);
-                if (state.getBlock() instanceof MagicHiveBlock) {
-                    // Deposit the pollen as essence
-                    MagicHiveBlock hiveBlock = (MagicHiveBlock) state.getBlock();
-                    Item essenceToDeposit = BLOOM_TO_ESSENCE_MAP.get(this.currentPollenType);
+                // Check if it's a magical flower and set the pollen type
+                if (state.isIn(ModTags.Blocks.FLAME_FLOWERS_IN_BLOOM)) {
+                    this.currentPollenType = ModItems.FLAME_FLOWER_BLOOM;
+                } else if (state.isIn(ModTags.Blocks.BLINK_FLOWERS_IN_BLOOM)) {
+                    this.currentPollenType = ModItems.BLINK_FLOWER_BLOOM;
+                } else if (state.isIn(ModTags.Blocks.ROOTGRASP_FLOWERS_IN_BLOOM)) {
+                    this.currentPollenType = ModItems.ROOTGRASP_FLOWER_BLOOM;
+                } else if (state.isIn(ModTags.Blocks.GUST_FLOWERS_IN_BLOOM)) {
+                    this.currentPollenType = ModItems.GUST_FLOWER_BLOOM;
+                }
+            }
+        }
 
-                    if (essenceToDeposit != null && hiveBlock.tryDepositEssence(world, checkPos, state, essenceToDeposit)) {
-                        // Reset nectar state - we need to handle this differently
-                        // Use a direct field access via reflection or let the bee naturally complete its cycle
-                        // For now, we'll let the natural behavior handle resetting nectar
-                        this.currentPollenType = null;
-                        break;
+        // Process essence delivery to magic hives
+        if (!this.world.isClient && !this.hasAngerTime()) {
+            // Only proceed if we have nectar and know which pollen type
+            if (this.hasNectar() && this.currentPollenType != null) {
+                BlockPos pos = this.getBlockPos();
+
+                // Check a 3x3x3 area around the bee for magic hives
+                for (BlockPos checkPos : BlockPos.iterate(pos.add(-1, -1, -1), pos.add(1, 1, 1))) {
+                    BlockState state = this.world.getBlockState(checkPos);
+                    if (state.getBlock() instanceof MagicHiveBlock) {
+                        // Get the essence type based on the current pollen
+                        Item essenceToDeposit = BLOOM_TO_ESSENCE_MAP.get(this.currentPollenType);
+
+                        if (essenceToDeposit != null) {
+                            boolean depositSuccessful = false;
+
+                            // First try the block method
+                            MagicHiveBlock hiveBlock = (MagicHiveBlock) state.getBlock();
+                            depositSuccessful = hiveBlock.tryDepositEssence(world, checkPos, state, essenceToDeposit);
+
+                            // If that didn't work, try using the block entity directly
+                            if (!depositSuccessful && world.getBlockEntity(checkPos) instanceof MagicHiveBlockEntity) {
+                                MagicHiveBlockEntity hiveEntity = (MagicHiveBlockEntity) world.getBlockEntity(checkPos);
+                                ItemStack essenceStack = new ItemStack(essenceToDeposit, 1);
+                                depositSuccessful = hiveEntity.addEssence(essenceStack);
+                            }
+
+                            // If deposit was successful via any method
+                            if (depositSuccessful) {
+                                // Reset nectar state using the proper BeeEntity method
+                                this.setNectarFlag(false);
+                                this.currentPollenType = null;
+                                return;
+                            }
+                        }
                     }
                 }
             }
@@ -109,21 +148,15 @@ public class MagicInfusedBee extends BeeEntity {
         return state.isIn(ModTags.Blocks.MAGIC_FLOWERS_IN_BLOOM);
     }
 
-    // Public method to be called by the BeeFlowerEventMixin when a magical flower is visited
-    public void visitFlower(BlockPos pos) {
-        if (!this.world.isClient()) {
-            BlockState blockState = this.world.getBlockState(pos);
-
-            // Determine which bloom type we're collecting from based on the block
-            if (blockState.isIn(ModTags.Blocks.FLAME_FLOWERS_IN_BLOOM)) {
-                this.currentPollenType = ModItems.FLAME_FLOWER_BLOOM;
-            } else if (blockState.isIn(ModTags.Blocks.BLINK_FLOWERS_IN_BLOOM)) {
-                this.currentPollenType = ModItems.BLINK_FLOWER_BLOOM;
-            } else if (blockState.isIn(ModTags.Blocks.ROOTGRASP_FLOWERS_IN_BLOOM)) {
-                this.currentPollenType = ModItems.ROOTGRASP_FLOWER_BLOOM;
-            } else if (blockState.isIn(ModTags.Blocks.GUST_FLOWERS_IN_BLOOM)) {
-                this.currentPollenType = ModItems.GUST_FLOWER_BLOOM;
-            }
+    // Helper method to access the protected flag setting method in BeeEntity
+    private void setNectarFlag(boolean value) {
+        // In Fabric 1.19.2, this is the appropriate way to access the BeeEntity's flags
+        // Flag 8 is HAS_NECTAR_FLAG
+        byte flags = this.getDataTracker().get(BeeEntity.FLAGS);
+        if (value) {
+            this.getDataTracker().set(BeeEntity.FLAGS, (byte)(flags | 8));
+        } else {
+            this.getDataTracker().set(BeeEntity.FLAGS, (byte)(flags & ~8));
         }
     }
 
@@ -131,8 +164,5 @@ public class MagicInfusedBee extends BeeEntity {
     public BeeEntity createChild(ServerWorld world, PassiveEntity entity) {
         // Return a new magic infused bee for breeding
         return (BeeEntity) ModEntities.MAGIC_INFUSED_BEE.create(world);
-    }
-    public void setCurrentPollenType(Item type) {
-        this.currentPollenType = type;
     }
 }
