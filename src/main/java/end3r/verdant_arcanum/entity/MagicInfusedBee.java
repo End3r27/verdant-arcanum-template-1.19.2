@@ -60,12 +60,12 @@ public class MagicInfusedBee extends BeeEntity {
         super.tick();
         // Special handling for magic bees
         if (!this.world.isClient && !this.hasNectar() && this.random.nextInt(20) == 0) {
-            BlockPos flowerPos = findNearestMagicalFlower();
-            if (flowerPos != null) {
+            BlockPos nearestFlower = findNearestMagicalFlower();
+            if (nearestFlower != null) {
                 // Force update the bee's flower position
-                BlockPos flowerPos = ((BeeEntityAccessor) this).getFlowerPosition();
+                ((BeeEntityAccessor) this).setFlowerPosition(nearestFlower);
                 // Set the nectar goal to active
-                this.getMoveControl().moveTo(flowerPos.getX(), flowerPos.getY(), flowerPos.getZ(), 1.0);
+                this.getMoveControl().moveTo(nearestFlower.getX(), nearestFlower.getY(), nearestFlower.getZ(), 1.0);
             }
         }
 
