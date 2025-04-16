@@ -1,5 +1,6 @@
 package end3r.verdant_arcanum.block;
 
+import end3r.verdant_arcanum.entity.MagicInfusedBee;
 import end3r.verdant_arcanum.registry.ModBlocks;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
@@ -22,6 +23,12 @@ public class BlinkBloomBlock extends PlacedBloomBlock {
 
     @Override
     public void onEntityCollision(BlockState state, World world, BlockPos pos, Entity entity) {
+        // Skip effects if the entity is a MagicInfusedBee
+        if (entity instanceof MagicInfusedBee) {
+            super.onEntityCollision(state, world, pos, entity);
+            return;
+        }
+
         if (!world.isClient && entity instanceof LivingEntity && world.getRandom().nextInt(10) == 0) {
             // Chance to teleport entity when touched
             teleportRandomly((ServerWorld)world, (LivingEntity)entity, world.getRandom(), 5.0);
@@ -35,7 +42,7 @@ public class BlinkBloomBlock extends PlacedBloomBlock {
         if (random.nextInt(20) == 0) {
             world.getEntitiesByClass(LivingEntity.class,
                             net.minecraft.util.math.Box.of(new Vec3d(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5), 4, 2, 4),
-                            entity -> true)
+                            entity -> !(entity instanceof MagicInfusedBee)) // Filter out MagicInfusedBee entities
                     .forEach(entity -> {
                         if (random.nextInt(4) == 0) {
                             teleportRandomly(world, entity, random, 10.0);

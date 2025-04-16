@@ -28,7 +28,7 @@ public class MagicHiveBlockEntity extends BlockEntity implements NamedScreenHand
     private int essenceProductionTicks = 0;
 
     // Debug flag
-    private static final boolean DEBUG_MODE = false;
+    private static final boolean DEBUG_MODE = true;
 
     public MagicHiveBlockEntity(BlockPos pos, BlockState state) {
         super(ModBlockEntities.MAGIC_HIVE_ENTITY, pos, state);
@@ -42,7 +42,6 @@ public class MagicHiveBlockEntity extends BlockEntity implements NamedScreenHand
         blockEntity.essenceProductionTicks--;
     }
 
-    // Add an essence item to the inventory
     public boolean addEssence(ItemStack essence) {
         if (DEBUG_MODE) {
             System.out.println("MagicHive at " + pos + " attempting to add essence: " + essence.getItem());
@@ -54,14 +53,22 @@ public class MagicHiveBlockEntity extends BlockEntity implements NamedScreenHand
             if (stack.isEmpty()) {
                 // Empty slot - add the essence
                 inventory.set(i, essence);
-                markDirty();
+                markDirty();  // Make sure this change is saved
                 if (DEBUG_MODE) System.out.println("Added essence to empty slot " + i);
+
+                // Additional sync to ensure state is updated
+                if (world != null) world.updateListeners(pos, getCachedState(), getCachedState(), 3);
+
                 return true;
             } else if (ItemStack.canCombine(stack, essence) && stack.getCount() < stack.getMaxCount()) {
                 // Matching essence with space - increase stack
                 stack.increment(1);
-                markDirty();
+                markDirty();  // Make sure this change is saved
                 if (DEBUG_MODE) System.out.println("Incremented essence in slot " + i + " to " + stack.getCount());
+
+                // Additional sync to ensure state is updated
+                if (world != null) world.updateListeners(pos, getCachedState(), getCachedState(), 3);
+
                 return true;
             }
         }

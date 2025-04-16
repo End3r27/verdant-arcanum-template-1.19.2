@@ -21,7 +21,7 @@ public class MagicHiveScreen extends HandledScreen<MagicHiveScreenHandler> {
         this.backgroundWidth = 176;
         this.backgroundHeight = 176;
 
-        // Adjust player inventory label position
+        // Inventory label position is set but we'll override the drawing of the text
         this.playerInventoryTitleY = this.backgroundHeight - 94;
     }
 
@@ -40,14 +40,22 @@ public class MagicHiveScreen extends HandledScreen<MagicHiveScreenHandler> {
     @Override
     public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
         renderBackground(matrices);
+        // Call the parent's render method but override drawForeground to prevent text rendering
         super.render(matrices, mouseX, mouseY, delta);
         drawMouseoverTooltip(matrices, mouseX, mouseY);
+    }
+
+    // Override to prevent drawing the title text
+    @Override
+    protected void drawForeground(MatrixStack matrices, int mouseX, int mouseY) {
+        // Do not call super.drawForeground() to avoid rendering any text
+        // This overrides the default behavior which would draw the title and inventory text
     }
 
     @Override
     protected void init() {
         super.init();
-        // Center the title
+        // Title position is set but we've overridden drawForeground so it won't be displayed
         titleX = (backgroundWidth - textRenderer.getWidth(title)) / 2;
     }
 }

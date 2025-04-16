@@ -1,5 +1,6 @@
 package end3r.verdant_arcanum.block;
 
+import end3r.verdant_arcanum.entity.MagicInfusedBee;
 import end3r.verdant_arcanum.registry.ModBlocks;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
@@ -24,6 +25,12 @@ public class GustBloomBlock extends PlacedBloomBlock {
 
     @Override
     public void onEntityCollision(BlockState state, World world, BlockPos pos, Entity entity) {
+        // Skip effects if the entity is a MagicInfusedBee
+        if (entity instanceof MagicInfusedBee) {
+            super.onEntityCollision(state, world, pos, entity);
+            return;
+        }
+
         if (!world.isClient && entity instanceof LivingEntity && world.getRandom().nextInt(5) == 0) {
             // Push the entity upward and away
             Vec3d entityPos = entity.getPos();
@@ -66,6 +73,11 @@ public class GustBloomBlock extends PlacedBloomBlock {
         // Push entities away
         Box area = new Box(pos).expand(4.0);
         for (Entity entity : world.getOtherEntities(null, area)) {
+            // Skip effects for MagicInfusedBee entities
+            if (entity instanceof MagicInfusedBee) {
+                continue;
+            }
+
             if (entity instanceof LivingEntity) {
                 // Calculate push direction - away from the flower
                 Vec3d entityPos = entity.getPos();

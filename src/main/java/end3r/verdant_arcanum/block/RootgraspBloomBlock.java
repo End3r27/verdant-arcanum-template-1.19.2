@@ -1,5 +1,6 @@
 package end3r.verdant_arcanum.block;
 
+import end3r.verdant_arcanum.entity.MagicInfusedBee;
 import end3r.verdant_arcanum.registry.ModBlocks;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
@@ -23,6 +24,12 @@ public class RootgraspBloomBlock extends PlacedBloomBlock {
 
     @Override
     public void onEntityCollision(BlockState state, World world, BlockPos pos, Entity entity) {
+        // Skip effects if the entity is a MagicInfusedBee
+        if (entity instanceof MagicInfusedBee) {
+            super.onEntityCollision(state, world, pos, entity);
+            return;
+        }
+
         if (!world.isClient && entity instanceof LivingEntity) {
             LivingEntity livingEntity = (LivingEntity) entity;
 
@@ -38,7 +45,8 @@ public class RootgraspBloomBlock extends PlacedBloomBlock {
     public void randomTick(BlockState state, ServerWorld world, BlockPos pos, Random random) {
         if (random.nextInt(10) == 0) {
             world.getEntitiesByClass(LivingEntity.class,
-                            net.minecraft.util.math.Box.of(new Vec3d(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5), 4, 2, 4),                            entity -> true)
+                            net.minecraft.util.math.Box.of(new Vec3d(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5), 4, 2, 4),
+                            entity -> !(entity instanceof MagicInfusedBee)) // Filter out MagicInfusedBee entities
                     .forEach(entity -> {
                         // Add slowness effect
                         entity.addStatusEffect(new StatusEffectInstance(StatusEffects.SLOWNESS, 100, 0));

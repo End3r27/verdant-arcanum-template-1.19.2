@@ -2,6 +2,7 @@ package end3r.verdant_arcanum;
 
 import end3r.verdant_arcanum.client.gui.MagicHiveScreen;
 import end3r.verdant_arcanum.entity.client.MagicInfusedBeeRenderer;
+import end3r.verdant_arcanum.registry.ModBlocks;
 import end3r.verdant_arcanum.registry.ModEntities;
 import end3r.verdant_arcanum.registry.ModScreenHandlers;
 import end3r.verdant_arcanum.screen.LivingStaffScreen;
@@ -14,6 +15,7 @@ import end3r.verdant_arcanum.spell.Spell;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
@@ -25,6 +27,7 @@ import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.gui.screen.ingame.HandledScreens;
 import net.minecraft.client.option.KeyBinding;
+import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.player.PlayerEntity;
@@ -78,6 +81,12 @@ public class VerdantArcanumClient implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
         LOGGER.info("Initializing Verdant Arcanum Client...");
+
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.FLAME_BLOOM, RenderLayer.getCutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.BLINK_BLOOM, RenderLayer.getCutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.ROOTGRASP_BLOOM, RenderLayer.getCutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.GUST_BLOOM, RenderLayer.getCutout());
+
 
         HandledScreens.register(ModScreenHandlers.MAGIC_HIVE_SCREEN_HANDLER, MagicHiveScreen::new);
 

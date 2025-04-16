@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/cross",
+  "textures": {
+    "cross": "verdant_arcanum:block/flame_bloom",
+    "particle": "verdant_arcanum:block/flame_bloom"
+  }
+}

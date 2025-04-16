@@ -131,6 +131,24 @@ public class MagicInfusedBee extends BeeEntity {
                 return; // Skip the rest of the tick logic
             }
         }
+        // The key change - use a proximity check instead of relying on the path finding
+        if (this.hasNectar() && this.currentPollenType != null && !this.hasAngerTime()) {
+            // Check if we're near a hive, regardless of deposit cooldown
+            BlockPos nearestHive = findNearbyMagicHive(); // Check a much smaller radius
+            if (nearestHive != null && depositCooldown <= 0) {
+                // We're close to a hive, try to deposit
+                boolean didDeposit = tryDepositEssence();
+                if (didDeposit) {
+                    // Successfully deposited, set a cooldown to prevent spam
+                    depositCooldown = 20; // 1-second cooldown
+
+                    // Debug output for successful deposit
+                    if (DEBUG_MODE) {
+                        System.out.println("Magic bee successfully deposited essence and reset nectar");
+                    }
+                }
+            }
+        }
 
         // ========= FLOWER/HIVE FINDING LOGIC =========
         // When we have nectar, prioritize going to hives instead of flowers
@@ -373,6 +391,24 @@ public class MagicInfusedBee extends BeeEntity {
             this.world.playSound(null, hivePos, soundEvent, this.getSoundCategory(), volume, pitch);
             return soundEvent;
         }
+        return null;
+    }
+    // Add this new method to check for magic hives in a very close proximity
+    private BlockPos findNearbyMagicHive() {
+        BlockPos beePos = this.getBlockPos();
+        int searchRadius = 2; // Very small radius - just checking immediate vicinity
+
+        // Check a smaller area for more immediate deposits
+        for (BlockPos checkPos : BlockPos.iterate(
+                beePos.add(-searchRadius, -searchRadius, -searchRadius),
+                beePos.add(searchRadius, searchRadius, searchRadius))) {
+
+            BlockState state = this.world.getBlockState(checkPos);
+            if (state.getBlock() instanceof MagicHiveBlock) {
+                return checkPos.toImmutable();
+            }
+        }
+
         return null;
     }
 }

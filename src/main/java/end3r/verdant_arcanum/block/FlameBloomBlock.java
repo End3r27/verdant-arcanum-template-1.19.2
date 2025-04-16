@@ -1,5 +1,6 @@
 package end3r.verdant_arcanum.block;
 
+import end3r.verdant_arcanum.entity.MagicInfusedBee;
 import end3r.verdant_arcanum.registry.ModBlocks;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.minecraft.block.BlockState;
@@ -22,6 +23,12 @@ public class FlameBloomBlock extends PlacedBloomBlock {
 
     @Override
     public void onEntityCollision(BlockState state, World world, BlockPos pos, Entity entity) {
+        // Skip effects if the entity is a MagicInfusedBee
+        if (entity instanceof MagicInfusedBee) {
+            super.onEntityCollision(state, world, pos, entity);
+            return;
+        }
+
         if (!world.isClient && entity instanceof LivingEntity) {
             // Apply fire resistance when touching the placed flame bloom
             ((LivingEntity) entity).addStatusEffect(
