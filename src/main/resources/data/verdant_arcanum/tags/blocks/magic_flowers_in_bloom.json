@@ -1,9 +1,9 @@
 {
   "replace": false,
   "values": [
-    "verdant_arcanum:flame_flower_bloom",
-    "verdant_arcanum:blink_flower_bloom",
-    "verdant_arcanum:rootgrasp_flower_bloom",
-    "verdant_arcanum:gust_flower_bloom"
+    "verdant_arcanum:flame_bloom",
+    "verdant_arcanum:blink_bloom",
+    "verdant_arcanum:rootgrasp_bloom",
+    "verdant_arcanum:gust_bloom"
   ]
 }

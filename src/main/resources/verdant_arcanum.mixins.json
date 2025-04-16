@@ -6,7 +6,8 @@
 		"ExampleMixin",
 		"PlayerEntityMixin",
 		"BeeEntityMixin",
-		"BeeFlowerEventMixin"
+		"BeeFlowerEventMixin",
+		"BeePollinateGoalMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1

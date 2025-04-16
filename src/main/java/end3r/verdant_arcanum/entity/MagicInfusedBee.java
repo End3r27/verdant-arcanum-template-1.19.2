@@ -57,6 +57,40 @@ public class MagicInfusedBee extends BeeEntity {
     @Override
     public void tick() {
         super.tick();
+        // Special handling for magic bees
+        if (!this.world.isClient && !this.hasNectar() && this.random.nextInt(20) == 0) {
+            BlockPos flowerPos = findNearestMagicalFlower();
+            if (flowerPos != null) {
+                // Force update the bee's flower position
+                this.flowerPos = flowerPos;
+                // Set the nectar goal to active
+                this.getMoveControl().moveTo(flowerPos.getX(), flowerPos.getY(), flowerPos.getZ(), 1.0);
+            }
+        }
+
+        if (!this.world.isClient && this.random.nextInt(100) == 0) {
+            BlockPos flowerPos = this.getFlowerPos();
+            System.out.println("MagicBee at " + this.getBlockPos() + " has flower pos: " + flowerPos);
+            System.out.println("Has nectar: " + this.hasNectar());
+            System.out.println("Current pollen type: " + this.currentPollenType);
+
+            // Try to find nearby magical flowers
+            int checkRadius = 10;
+            boolean foundAny = false;
+            for (BlockPos checkPos : BlockPos.iterate(
+                    this.getBlockPos().add(-checkRadius, -checkRadius, -checkRadius),
+                    this.getBlockPos().add(checkRadius, checkRadius, checkRadius))) {
+
+                if (this.world.getBlockState(checkPos).isIn(ModTags.Blocks.MAGIC_FLOWERS_IN_BLOOM)) {
+                    System.out.println("Found magical flower at " + checkPos);
+                    foundAny = true;
+                }
+            }
+
+            if (!foundAny) {
+                System.out.println("No magical flowers found in " + checkRadius + " block radius");
+            }
+        }
 
         // Spawn magic particles occasionally
         if (this.world.isClient && this.random.nextInt(10) == 0) {
@@ -159,10 +193,30 @@ public class MagicInfusedBee extends BeeEntity {
             this.getDataTracker().set(BeeEntity.FLAGS, (byte)(flags & ~8));
         }
     }
+    public BlockPos findNearestMagicalFlower() {
+        BlockPos beePos = this.getBlockPos();
+        int searchRadius = 16; // Increase this to search more blocks
+        int verticalSearch = 8; // Search 8 blocks up and down
 
-    @Override
-    public BeeEntity createChild(ServerWorld world, PassiveEntity entity) {
-        // Return a new magic infused bee for breeding
-        return (BeeEntity) ModEntities.MAGIC_INFUSED_BEE.create(world);
+        // Start with the closest possible block to make search more efficient
+        BlockPos nearestFlower = null;
+        double nearestDistance = Double.MAX_VALUE;
+
+        for (BlockPos checkPos : BlockPos.iterate(
+                beePos.add(-searchRadius, -verticalSearch, -searchRadius),
+                beePos.add(searchRadius, verticalSearch, searchRadius))) {
+
+            BlockState state = this.world.getBlockState(checkPos);
+            if (state.isIn(ModTags.Blocks.MAGIC_FLOWERS_IN_BLOOM)) {
+                double distance = checkPos.getSquaredDistance(beePos);
+                if (distance < nearestDistance) {
+                    nearestDistance = distance;
+                    nearestFlower = checkPos.toImmutable();
+                }
+            }
+        }
+
+        return nearestFlower;
     }
+
 }
