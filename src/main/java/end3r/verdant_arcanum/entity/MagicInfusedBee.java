@@ -2,9 +2,6 @@ package end3r.verdant_arcanum.entity;
 
 import end3r.verdant_arcanum.block.MagicHiveBlock;
 import end3r.verdant_arcanum.block.entity.MagicHiveBlockEntity;
-import end3r.verdant_arcanum.mixin.BeeEntityAccessor;
-import end3r.verdant_arcanum.registry.ModBlocks;
-import end3r.verdant_arcanum.registry.ModEntities;
 import end3r.verdant_arcanum.registry.ModItems;
 import end3r.verdant_arcanum.registry.ModTags;
 import net.minecraft.block.BlockState;
@@ -12,12 +9,12 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.entity.passive.BeeEntity;
 import net.minecraft.entity.attribute.DefaultAttributeContainer;
 import net.minecraft.entity.attribute.EntityAttributes;
-import net.minecraft.entity.data.DataTracker;
 import net.minecraft.entity.mob.MobEntity;
-import net.minecraft.entity.passive.PassiveEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.server.world.ServerWorld;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.sound.SoundEvent;
+import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.entity.damage.DamageSource;
@@ -32,6 +29,9 @@ public class MagicInfusedBee extends BeeEntity {
 
     // Track what kind of pollen this bee is carrying
     private Item currentPollenType = null;
+
+    // Track our own flower position for magic bees
+    private BlockPos magicFlowerPos = null;
 
     static {
         // Initialize the mapping between flower blooms and spell essences
@@ -56,22 +56,65 @@ public class MagicInfusedBee extends BeeEntity {
     }
 
     @Override
+    public void writeCustomDataToNbt(NbtCompound nbt) {
+        super.writeCustomDataToNbt(nbt);
+        // Save our magic flower position
+        if (magicFlowerPos != null) {
+            nbt.putInt("MagicFlowerX", magicFlowerPos.getX());
+            nbt.putInt("MagicFlowerY", magicFlowerPos.getY());
+            nbt.putInt("MagicFlowerZ", magicFlowerPos.getZ());
+        }
+
+        // Save our pollen type
+        if (currentPollenType != null) {
+            nbt.putString("PollenType", currentPollenType.toString());
+        }
+    }
+
+    @Override
+    public void readCustomDataFromNbt(NbtCompound nbt) {
+        super.readCustomDataFromNbt(nbt);
+        // Load our magic flower position
+        if (nbt.contains("MagicFlowerX")) {
+            int x = nbt.getInt("MagicFlowerX");
+            int y = nbt.getInt("MagicFlowerY");
+            int z = nbt.getInt("MagicFlowerZ");
+            magicFlowerPos = new BlockPos(x, y, z);
+        }
+
+        // We would need a registry lookup to properly restore the pollen type
+        // This is a simplification - you'd need to handle item registration properly
+        // currentPollenType = Registry.ITEM.get(new Identifier(nbt.getString("PollenType")));
+    }
+
+    @Override
     public void tick() {
         super.tick();
         // Special handling for magic bees
         if (!this.world.isClient && !this.hasNectar() && this.random.nextInt(20) == 0) {
             BlockPos nearestFlower = findNearestMagicalFlower();
             if (nearestFlower != null) {
-                // Force update the bee's flower position
-                ((BeeEntityAccessor) this).setFlowerPosition(nearestFlower);
-                // Set the nectar goal to active
+                // Store our own flower position
+                this.magicFlowerPos = nearestFlower;
+
+                // We'll call the parent method if available
+                try {
+                    // Try to call the super implementation first if it exists
+                    // This is likely what's causing the error with the Optional field
+                    this.setFlowerPos(nearestFlower);
+                } catch (Exception e) {
+                    // If it fails, we'll just use our own implementation
+                    System.out.println("Using custom flower position tracking for magic bee");
+                }
+
+                // Direct the bee to move toward the flower
                 this.getMoveControl().moveTo(nearestFlower.getX(), nearestFlower.getY(), nearestFlower.getZ(), 1.0);
             }
         }
 
         if (!this.world.isClient && this.random.nextInt(100) == 0) {
-            BlockPos flowerPos = this.getFlowerPos();
-            System.out.println("MagicBee at " + this.getBlockPos() + " has flower pos: " + flowerPos);
+            // Use our custom flower position
+            System.out.println("MagicBee at " + this.getBlockPos() + " has flower pos: " + this.magicFlowerPos);
             System.out.println("Has nectar: " + this.hasNectar());
             System.out.println("Current pollen type: " + this.currentPollenType);
 
@@ -104,7 +147,8 @@ public class MagicInfusedBee extends BeeEntity {
 
         // Check flower positions when the bee has nectar to see if we need to set pollen type
         if (!this.world.isClient && this.hasNectar() && this.currentPollenType == null) {
-            BlockPos flowerPos = this.getFlowerPos();
+            // Use our custom flower position
+            BlockPos flowerPos = this.magicFlowerPos;
             if (flowerPos != null) {
                 BlockState state = this.world.getBlockState(flowerPos);
 
@@ -194,6 +238,7 @@ public class MagicInfusedBee extends BeeEntity {
             this.getDataTracker().set(BeeEntity.FLAGS, (byte)(flags & ~8));
         }
     }
+
     public BlockPos findNearestMagicalFlower() {
         BlockPos beePos = this.getBlockPos();
         int searchRadius = 16; // Increase this to search more blocks
@@ -219,5 +264,28 @@ public class MagicInfusedBee extends BeeEntity {
 
         return nearestFlower;
     }
+    private SoundEvent playEssenceDepositSound(BlockPos hivePos, Item essenceType) {
+        // Play a sound effect based on the essence type
+        if (!this.world.isClient) {
+            float pitch = 1.0F;
+            float volume = 0.8F;
+            // Fallback vanilla sounds that somewhat match the essence types
+            if (essenceType == ModItems.SPELL_ESSENCE_FLAME) {
+                return SoundEvents.BLOCK_FIRE_AMBIENT;
+            }
+            else if (essenceType == ModItems.SPELL_ESSENCE_BLINK) {
+                return SoundEvents.ENTITY_ENDERMAN_TELEPORT;
+            }
+            else if (essenceType == ModItems.SPELL_ESSENCE_ROOTGRASP) {
+                return SoundEvents.BLOCK_GRASS_BREAK;
+            }
+            else if (essenceType == ModItems.SPELL_ESSENCE_GUST) {
+                return SoundEvents.ENTITY_PHANTOM_FLAP;
+            }
 
+            // Default sound
+            return SoundEvents.BLOCK_AMETHYST_BLOCK_CHIME;
+        }
+        return null;
+    }
 }

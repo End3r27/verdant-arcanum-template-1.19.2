@@ -9,23 +9,25 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+import java.util.Optional;
+
 @Mixin(targets = "net.minecraft.entity.passive.BeeEntity$PollinateGoal")
 public class BeePollinateGoalMixin {
     @Shadow(remap = false)
     private BeeEntity field_20377; // This is the outer BeeEntity instance
 
     @Inject(method = "getFlower", at = @At("HEAD"), cancellable = true)
-    private void findClosestMagicalFlower(CallbackInfoReturnable<BlockPos> cir) {
+    private void findClosestMagicalFlower(CallbackInfoReturnable<Optional<BlockPos>> cir) {
         // Access the bee entity using the shadowed field
         BeeEntity bee = this.field_20377;
 
         if (bee instanceof MagicInfusedBee) {
             // Your custom logic here
             MagicInfusedBee magicBee = (MagicInfusedBee) bee;
-            BlockPos flowerPos = magicBee.findNearestMagicalFlower(); // Assuming you add this method
+            BlockPos flowerPos = magicBee.findNearestMagicalFlower();
 
             if (flowerPos != null) {
-                cir.setReturnValue(flowerPos);
+                cir.setReturnValue(Optional.of(flowerPos));
             }
         }
     }
