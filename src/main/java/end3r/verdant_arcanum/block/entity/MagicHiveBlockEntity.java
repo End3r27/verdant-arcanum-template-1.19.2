@@ -27,6 +27,9 @@ public class MagicHiveBlockEntity extends BlockEntity implements NamedScreenHand
     // Tracks when to produce new essences
     private int essenceProductionTicks = 0;
 
+    // Debug flag
+    private static final boolean DEBUG_MODE = false;
+
     public MagicHiveBlockEntity(BlockPos pos, BlockState state) {
         super(ModBlockEntities.MAGIC_HIVE_ENTITY, pos, state);
     }
@@ -41,6 +44,10 @@ public class MagicHiveBlockEntity extends BlockEntity implements NamedScreenHand
 
     // Add an essence item to the inventory
     public boolean addEssence(ItemStack essence) {
+        if (DEBUG_MODE) {
+            System.out.println("MagicHive at " + pos + " attempting to add essence: " + essence.getItem());
+        }
+
         for (int i = 0; i < inventory.size(); i++) {
             ItemStack stack = inventory.get(i);
 
@@ -48,14 +55,18 @@ public class MagicHiveBlockEntity extends BlockEntity implements NamedScreenHand
                 // Empty slot - add the essence
                 inventory.set(i, essence);
                 markDirty();
+                if (DEBUG_MODE) System.out.println("Added essence to empty slot " + i);
                 return true;
             } else if (ItemStack.canCombine(stack, essence) && stack.getCount() < stack.getMaxCount()) {
                 // Matching essence with space - increase stack
                 stack.increment(1);
                 markDirty();
+                if (DEBUG_MODE) System.out.println("Incremented essence in slot " + i + " to " + stack.getCount());
                 return true;
             }
         }
+
+        if (DEBUG_MODE) System.out.println("Failed to add essence - inventory full");
         return false; // Inventory is full
     }
 

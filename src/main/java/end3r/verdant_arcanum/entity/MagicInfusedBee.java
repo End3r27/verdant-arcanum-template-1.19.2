@@ -33,6 +33,12 @@ public class MagicInfusedBee extends BeeEntity {
     // Track our own flower position for magic bees
     private BlockPos magicFlowerPos = null;
 
+    // Track deposit cooldown to prevent multiple attempts in one tick
+    private int depositCooldown = 100;
+
+    // Debug flag to show more detailed output
+    private static final boolean DEBUG_MODE = false;
+
     static {
         // Initialize the mapping between flower blooms and spell essences
         BLOOM_TO_ESSENCE_MAP.put(ModItems.FLAME_FLOWER_BLOOM, ModItems.SPELL_ESSENCE_FLAME);
@@ -90,50 +96,10 @@ public class MagicInfusedBee extends BeeEntity {
     @Override
     public void tick() {
         super.tick();
-        // Special handling for magic bees
-        if (!this.world.isClient && !this.hasNectar() && this.random.nextInt(20) == 0) {
-            BlockPos nearestFlower = findNearestMagicalFlower();
-            if (nearestFlower != null) {
-                // Store our own flower position
-                this.magicFlowerPos = nearestFlower;
 
-                // We'll call the parent method if available
-                try {
-                    // Try to call the super implementation first if it exists
-                    // This is likely what's causing the error with the Optional field
-                    this.setFlowerPos(nearestFlower);
-                } catch (Exception e) {
-                    // If it fails, we'll just use our own implementation
-                    System.out.println("Using custom flower position tracking for magic bee");
-                }
-
-                // Direct the bee to move toward the flower
-                this.getMoveControl().moveTo(nearestFlower.getX(), nearestFlower.getY(), nearestFlower.getZ(), 1.0);
-            }
-        }
-
-        if (!this.world.isClient && this.random.nextInt(100) == 0) {
-            // Use our custom flower position
-            System.out.println("MagicBee at " + this.getBlockPos() + " has flower pos: " + this.magicFlowerPos);
-            System.out.println("Has nectar: " + this.hasNectar());
-            System.out.println("Current pollen type: " + this.currentPollenType);
-
-            // Try to find nearby magical flowers
-            int checkRadius = 10;
-            boolean foundAny = false;
-            for (BlockPos checkPos : BlockPos.iterate(
-                    this.getBlockPos().add(-checkRadius, -checkRadius, -checkRadius),
-                    this.getBlockPos().add(checkRadius, checkRadius, checkRadius))) {
-
-                if (this.world.getBlockState(checkPos).isIn(ModTags.Blocks.MAGIC_FLOWERS_IN_BLOOM)) {
-                    System.out.println("Found magical flower at " + checkPos);
-                    foundAny = true;
-                }
-            }
-
-            if (!foundAny) {
-                System.out.println("No magical flowers found in " + checkRadius + " block radius");
-            }
+        // Decrease deposit cooldown if it's active
+        if (depositCooldown > 0) {
+            depositCooldown--;
         }
 
         // Spawn magic particles occasionally
@@ -145,63 +111,153 @@ public class MagicInfusedBee extends BeeEntity {
             this.world.addParticle(ParticleTypes.WITCH, d, e, f, 0.0D, 0.0D, 0.0D);
         }
 
-        // Check flower positions when the bee has nectar to see if we need to set pollen type
-        if (!this.world.isClient && this.hasNectar() && this.currentPollenType == null) {
-            // Use our custom flower position
-            BlockPos flowerPos = this.magicFlowerPos;
-            if (flowerPos != null) {
-                BlockState state = this.world.getBlockState(flowerPos);
+        // Client-side processing ends here
+        if (this.world.isClient) return;
 
-                // Check if it's a magical flower and set the pollen type
-                if (state.isIn(ModTags.Blocks.FLAME_FLOWERS_IN_BLOOM)) {
-                    this.currentPollenType = ModItems.FLAME_FLOWER_BLOOM;
-                } else if (state.isIn(ModTags.Blocks.BLINK_FLOWERS_IN_BLOOM)) {
-                    this.currentPollenType = ModItems.BLINK_FLOWER_BLOOM;
-                } else if (state.isIn(ModTags.Blocks.ROOTGRASP_FLOWERS_IN_BLOOM)) {
-                    this.currentPollenType = ModItems.ROOTGRASP_FLOWER_BLOOM;
-                } else if (state.isIn(ModTags.Blocks.GUST_FLOWERS_IN_BLOOM)) {
-                    this.currentPollenType = ModItems.GUST_FLOWER_BLOOM;
+        // Check flower positions when the bee has nectar to see if we need to set pollen type
+        if (this.hasNectar() && this.currentPollenType == null) {
+            updatePollenTypeFromFlower();
+        }
+
+        // ========= ESSENCE DEPOSIT HANDLING =========
+        // Only process essence delivery if we have nectar, know the pollen type, and aren't angry
+        if (this.hasNectar() && this.currentPollenType != null && !this.hasAngerTime() && depositCooldown <= 0) {
+            // Try to deposit essence at nearby hives
+            boolean didDeposit = tryDepositEssence();
+
+            // If we deposited, add a cooldown to prevent repeated attempts
+            if (didDeposit) {
+                depositCooldown = 20; // 1-second cooldown
+                return; // Skip the rest of the tick logic
+            }
+        }
+
+        // ========= FLOWER/HIVE FINDING LOGIC =========
+        // When we have nectar, prioritize going to hives instead of flowers
+        if (this.hasNectar()) {
+            // Try to find a nearby magic hive to deposit essence if we have nectar
+            BlockPos nearestHive = findNearestMagicHive();
+            if (nearestHive != null) {
+                if (DEBUG_MODE && this.random.nextInt(100) == 0) {
+                    System.out.println("Magic bee has nectar and is heading to hive at " + nearestHive);
+                }
+
+                // Direct the bee to move toward the hive - aim slightly above for better landing
+                this.getMoveControl().moveTo(nearestHive.getX() + 0.5, nearestHive.getY() + 1.0, nearestHive.getZ() + 0.5, 1.0);
+                return; // Skip the flower-finding logic since we're heading to a hive
+            }
+        }
+        // Only look for flowers if we don't have nectar
+        else if (!this.hasNectar() && this.random.nextInt(20) == 0) {
+            BlockPos nearestFlower = findNearestMagicalFlower();
+            if (nearestFlower != null) {
+                // Store our own flower position
+                this.magicFlowerPos = nearestFlower;
+
+                if (DEBUG_MODE && this.random.nextInt(100) == 0) {
+                    System.out.println("Magic bee found flower at " + nearestFlower);
+                }
+
+                // We'll call the parent method if available
+                try {
+                    // Try to call the super implementation first if it exists
+                    this.setFlowerPos(nearestFlower);
+                } catch (Exception e) {
+                    // If it fails, we'll just use our own implementation
+                    if (DEBUG_MODE) {
+                        System.out.println("Using custom flower position tracking for magic bee");
+                    }
+                }
+
+                // Direct the bee to move toward the flower
+                this.getMoveControl().moveTo(nearestFlower.getX() + 0.5, nearestFlower.getY() + 0.5, nearestFlower.getZ() + 0.5, 1.0);
+            }
+        }
+
+        // Debug output every so often
+        if (DEBUG_MODE && this.random.nextInt(400) == 0) {
+            System.out.println("MagicBee at " + this.getBlockPos() + " has flower pos: " + this.magicFlowerPos);
+            System.out.println("Has nectar: " + this.hasNectar() + ", Current pollen type: " + this.currentPollenType);
+        }
+    }
+
+    /**
+     * Try to deposit essence at any nearby hives
+     * @return true if essence was successfully deposited
+     */
+    private boolean tryDepositEssence() {
+        // Only proceed if we have nectar and know which pollen type
+        if (!this.hasNectar() || this.currentPollenType == null) {
+            return false;
+        }
+
+        BlockPos pos = this.getBlockPos();
+
+        // Check a 3x3x3 area around the bee for magic hives
+        for (BlockPos checkPos : BlockPos.iterate(pos.add(-1, -1, -1), pos.add(1, 1, 1))) {
+            BlockState state = this.world.getBlockState(checkPos);
+            if (state.getBlock() instanceof MagicHiveBlock) {
+                // Get the essence type based on the current pollen
+                Item essenceToDeposit = BLOOM_TO_ESSENCE_MAP.get(this.currentPollenType);
+
+                if (essenceToDeposit != null) {
+                    boolean depositSuccessful = false;
+
+                    // First try the block method
+                    MagicHiveBlock hiveBlock = (MagicHiveBlock) state.getBlock();
+                    depositSuccessful = hiveBlock.tryDepositEssence(world, checkPos, state, essenceToDeposit);
+
+                    // If that didn't work, try using the block entity directly
+                    if (!depositSuccessful && world.getBlockEntity(checkPos) instanceof MagicHiveBlockEntity) {
+                        MagicHiveBlockEntity hiveEntity = (MagicHiveBlockEntity) world.getBlockEntity(checkPos);
+                        ItemStack essenceStack = new ItemStack(essenceToDeposit, 1);
+                        depositSuccessful = hiveEntity.addEssence(essenceStack);
+                    }
+
+                    // If deposit was successful via any method
+                    if (depositSuccessful) {
+                        if (DEBUG_MODE) {
+                            System.out.println("Magic bee successfully deposited " + essenceToDeposit + " at " + checkPos);
+                        }
+
+                        // Play sound for successful deposit
+                        playEssenceDepositSound(checkPos, essenceToDeposit);
+
+                        // Reset nectar state using the proper BeeEntity method
+                        this.setNectarFlag(false);
+                        this.currentPollenType = null;
+                        return true;
+                    } else if (DEBUG_MODE) {
+                        System.out.println("Magic bee failed to deposit essence - hive may be full");
+                    }
                 }
             }
         }
 
-        // Process essence delivery to magic hives
-        if (!this.world.isClient && !this.hasAngerTime()) {
-            // Only proceed if we have nectar and know which pollen type
-            if (this.hasNectar() && this.currentPollenType != null) {
-                BlockPos pos = this.getBlockPos();
+        return false;
+    }
 
-                // Check a 3x3x3 area around the bee for magic hives
-                for (BlockPos checkPos : BlockPos.iterate(pos.add(-1, -1, -1), pos.add(1, 1, 1))) {
-                    BlockState state = this.world.getBlockState(checkPos);
-                    if (state.getBlock() instanceof MagicHiveBlock) {
-                        // Get the essence type based on the current pollen
-                        Item essenceToDeposit = BLOOM_TO_ESSENCE_MAP.get(this.currentPollenType);
+    /**
+     * Updates the pollen type based on the flower the bee visited
+     */
+    private void updatePollenTypeFromFlower() {
+        BlockPos flowerPos = this.magicFlowerPos;
+        if (flowerPos != null) {
+            BlockState state = this.world.getBlockState(flowerPos);
 
-                        if (essenceToDeposit != null) {
-                            boolean depositSuccessful = false;
-
-                            // First try the block method
-                            MagicHiveBlock hiveBlock = (MagicHiveBlock) state.getBlock();
-                            depositSuccessful = hiveBlock.tryDepositEssence(world, checkPos, state, essenceToDeposit);
-
-                            // If that didn't work, try using the block entity directly
-                            if (!depositSuccessful && world.getBlockEntity(checkPos) instanceof MagicHiveBlockEntity) {
-                                MagicHiveBlockEntity hiveEntity = (MagicHiveBlockEntity) world.getBlockEntity(checkPos);
-                                ItemStack essenceStack = new ItemStack(essenceToDeposit, 1);
-                                depositSuccessful = hiveEntity.addEssence(essenceStack);
-                            }
-
-                            // If deposit was successful via any method
-                            if (depositSuccessful) {
-                                // Reset nectar state using the proper BeeEntity method
-                                this.setNectarFlag(false);
-                                this.currentPollenType = null;
-                                return;
-                            }
-                        }
-                    }
-                }
+            // Check if it's a magical flower and set the pollen type
+            if (state.isIn(ModTags.Blocks.FLAME_FLOWERS_IN_BLOOM)) {
+                this.currentPollenType = ModItems.FLAME_FLOWER_BLOOM;
+                if (DEBUG_MODE) System.out.println("Magic bee collected FLAME pollen");
+            } else if (state.isIn(ModTags.Blocks.BLINK_FLOWERS_IN_BLOOM)) {
+                this.currentPollenType = ModItems.BLINK_FLOWER_BLOOM;
+                if (DEBUG_MODE) System.out.println("Magic bee collected BLINK pollen");
+            } else if (state.isIn(ModTags.Blocks.ROOTGRASP_FLOWERS_IN_BLOOM)) {
+                this.currentPollenType = ModItems.ROOTGRASP_FLOWER_BLOOM;
+                if (DEBUG_MODE) System.out.println("Magic bee collected ROOTGRASP pollen");
+            } else if (state.isIn(ModTags.Blocks.GUST_FLOWERS_IN_BLOOM)) {
+                this.currentPollenType = ModItems.GUST_FLOWER_BLOOM;
+                if (DEBUG_MODE) System.out.println("Magic bee collected GUST pollen");
             }
         }
     }
@@ -264,27 +320,58 @@ public class MagicInfusedBee extends BeeEntity {
 
         return nearestFlower;
     }
+
+    // Find the nearest magic hive
+    public BlockPos findNearestMagicHive() {
+        BlockPos beePos = this.getBlockPos();
+        int searchRadius = 24; // Large radius to find hives
+        int verticalSearch = 8; // Search 8 blocks up and down
+
+        // Start with the closest possible block to make search more efficient
+        BlockPos nearestHive = null;
+        double nearestDistance = Double.MAX_VALUE;
+
+        for (BlockPos checkPos : BlockPos.iterate(
+                beePos.add(-searchRadius, -verticalSearch, -searchRadius),
+                beePos.add(searchRadius, verticalSearch, searchRadius))) {
+
+            BlockState state = this.world.getBlockState(checkPos);
+            if (state.getBlock() instanceof MagicHiveBlock) {
+                double distance = checkPos.getSquaredDistance(beePos);
+                if (distance < nearestDistance) {
+                    nearestDistance = distance;
+                    nearestHive = checkPos.toImmutable();
+                }
+            }
+        }
+
+        return nearestHive;
+    }
+
     private SoundEvent playEssenceDepositSound(BlockPos hivePos, Item essenceType) {
         // Play a sound effect based on the essence type
         if (!this.world.isClient) {
             float pitch = 1.0F;
             float volume = 0.8F;
+            SoundEvent soundEvent = SoundEvents.BLOCK_AMETHYST_BLOCK_CHIME; // Default sound
+
             // Fallback vanilla sounds that somewhat match the essence types
             if (essenceType == ModItems.SPELL_ESSENCE_FLAME) {
-                return SoundEvents.BLOCK_FIRE_AMBIENT;
+                soundEvent = SoundEvents.BLOCK_FIRE_AMBIENT;
             }
             else if (essenceType == ModItems.SPELL_ESSENCE_BLINK) {
-                return SoundEvents.ENTITY_ENDERMAN_TELEPORT;
+                soundEvent = SoundEvents.ENTITY_ENDERMAN_TELEPORT;
             }
             else if (essenceType == ModItems.SPELL_ESSENCE_ROOTGRASP) {
-                return SoundEvents.BLOCK_GRASS_BREAK;
+                soundEvent = SoundEvents.BLOCK_GRASS_BREAK;
             }
             else if (essenceType == ModItems.SPELL_ESSENCE_GUST) {
-                return SoundEvents.ENTITY_PHANTOM_FLAP;
+                soundEvent = SoundEvents.ENTITY_PHANTOM_FLAP;
             }
 
-            // Default sound
-            return SoundEvents.BLOCK_AMETHYST_BLOCK_CHIME;
+            // Play the sound at the hive location
+            this.world.playSound(null, hivePos, soundEvent, this.getSoundCategory(), volume, pitch);
+            return soundEvent;
         }
         return null;
     }
