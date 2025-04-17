@@ -39,6 +39,16 @@ public class MagicInfusedBee extends BeeEntity {
     // Track deposit cooldown to prevent multiple attempts in one tick
     private int depositCooldown = 100;
 
+    private boolean hasNectarOverride = false;
+
+    @Override
+    public boolean hasNectar() {
+        // Either use our override or check the parent method
+        return hasNectarOverride || super.hasNectar();
+    }
+
+
+
     // Debug flag to show more detailed output
     public static final boolean DEBUG_MODE = true;
 
@@ -75,6 +85,8 @@ public class MagicInfusedBee extends BeeEntity {
     @Override
     public void writeCustomDataToNbt(NbtCompound nbt) {
         super.writeCustomDataToNbt(nbt);
+        // Save our override state
+        nbt.putBoolean("HasNectarOverride", hasNectarOverride);
         // Save our magic flower position
         if (magicFlowerPos != null) {
             nbt.putInt("MagicFlowerX", magicFlowerPos.getX());
@@ -91,6 +103,8 @@ public class MagicInfusedBee extends BeeEntity {
     @Override
     public void readCustomDataFromNbt(NbtCompound nbt) {
         super.readCustomDataFromNbt(nbt);
+        // Load our override state
+        hasNectarOverride = nbt.getBoolean("HasNectarOverride");
         // Load our magic flower position
         if (nbt.contains("MagicFlowerX")) {
             int x = nbt.getInt("MagicFlowerX");
@@ -239,19 +253,32 @@ public class MagicInfusedBee extends BeeEntity {
                     if (depositSuccessful) {
                         if (DEBUG_MODE) {
                             System.out.println("Magic bee successfully deposited " + essenceToDeposit + " at " + checkPos);
+                            System.out.println("Before reset - hasNectar(): " + this.hasNectar());
                         }
 
                         // Play sound for successful deposit
                         playEssenceDepositSound(checkPos, essenceToDeposit);
 
-                        // Reset nectar state using the proper BeeEntity method
-                        this.setNectarFlag(false);
+                        // FORCED RESET - Multiple approaches to ensure it's reset
+                        // 1. Try the data tracker approach
+                        byte flags = this.getDataTracker().get(BeeEntity.FLAGS);
+                        this.getDataTracker().set(BeeEntity.FLAGS, (byte) (flags & ~8));
+
+                        // 2. Use our override field
+                        this.hasNectarOverride = false;
+
+                        // 3. Reset the pollen type
                         this.currentPollenType = null;
+
+                        if (DEBUG_MODE) {
+                            System.out.println("After FORCED reset - hasNectar(): " + this.hasNectar());
+                            System.out.println("New flags value: " + this.getDataTracker().get(BeeEntity.FLAGS));
+                        }
+
                         return true;
-                    } else if (DEBUG_MODE) {
-                        System.out.println("Magic bee failed to deposit essence - hive may be full");
                     }
                 }
+
             }
         }
 
@@ -296,24 +323,6 @@ public class MagicInfusedBee extends BeeEntity {
             amount = amount * 0.75f;
         }
         return super.damage(source, amount);
-    }
-
-    // Helper method for magical flower checking
-    public boolean isMagicalFlower(BlockPos pos) {
-        BlockState state = this.world.getBlockState(pos);
-        return state.isIn(ModTags.Blocks.MAGIC_FLOWERS_IN_BLOOM);
-    }
-
-    // Helper method to access the protected flag setting method in BeeEntity
-    private void setNectarFlag(boolean value) {
-        // In Fabric 1.19.2, this is the appropriate way to access the BeeEntity's flags
-        // Flag 8 is HAS_NECTAR_FLAG
-        byte flags = this.getDataTracker().get(BeeEntity.FLAGS);
-        if (value) {
-            this.getDataTracker().set(BeeEntity.FLAGS, (byte)(flags | 8));
-        } else {
-            this.getDataTracker().set(BeeEntity.FLAGS, (byte)(flags & ~8));
-        }
     }
 
     public BlockPos findNearestMagicalFlower() {
@@ -408,33 +417,9 @@ public class MagicInfusedBee extends BeeEntity {
         return null;
     }
 
-    // Add this new method to check for magic hives in a very close proximity
-    private BlockPos findNearbyMagicHive() {
-        BlockPos beePos = this.getBlockPos();
-        int searchRadius = 2; // Very small radius - just checking immediate vicinity
-
-        // Check a smaller area for more immediate deposits
-        for (BlockPos checkPos : BlockPos.iterate(
-                beePos.add(-searchRadius, -searchRadius, -searchRadius),
-                beePos.add(searchRadius, searchRadius, searchRadius))) {
-
-            BlockState state = this.world.getBlockState(checkPos);
-            if (state.getBlock() instanceof MagicHiveBlock) {
-                return checkPos.toImmutable();
-            }
-        }
-
-        return null;
-    }
-
     // Getter for currentPollenType
     public Item getCurrentPollenType() {
         return this.currentPollenType;
-    }
-
-    // Setter for currentPollenType
-    public void setCurrentPollenType(Item pollenType) {
-        this.currentPollenType = pollenType;
     }
 
     // Custom goal for magic bees to return to magic hives
