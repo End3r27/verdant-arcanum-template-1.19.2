@@ -118,6 +118,19 @@ public class MagicInfusedBee extends BeeEntity {
         // currentPollenType = Registry.ITEM.get(new Identifier(nbt.getString("PollenType")));
     }
 
+    public void setHasNectar(boolean hasNectar) {
+        // Set the override field
+        this.hasNectarOverride = hasNectar;
+
+        // Also try to set the flag in the data tracker
+        byte flags = this.getDataTracker().get(BeeEntity.FLAGS);
+        if (hasNectar) {
+            this.getDataTracker().set(BeeEntity.FLAGS, (byte)(flags | 8));
+        } else {
+            this.getDataTracker().set(BeeEntity.FLAGS, (byte)(flags & ~8));
+        }
+    }
+
     @Override
     public void tick() {
         super.tick();
@@ -325,6 +338,24 @@ public class MagicInfusedBee extends BeeEntity {
         return super.damage(source, amount);
     }
 
+    // Helper method for magical flower checking
+    public boolean isMagicalFlower(BlockPos pos) {
+        BlockState state = this.world.getBlockState(pos);
+        return state.isIn(ModTags.Blocks.MAGIC_FLOWERS_IN_BLOOM);
+    }
+
+    // Helper method to access the protected flag setting method in BeeEntity
+    private void setNectarFlag(boolean value) {
+        // In Fabric 1.19.2, this is the appropriate way to access the BeeEntity's flags
+        // Flag 8 is HAS_NECTAR_FLAG
+        byte flags = this.getDataTracker().get(BeeEntity.FLAGS);
+        if (value) {
+            this.getDataTracker().set(BeeEntity.FLAGS, (byte)(flags | 8));
+        } else {
+            this.getDataTracker().set(BeeEntity.FLAGS, (byte)(flags & ~8));
+        }
+    }
+
     public BlockPos findNearestMagicalFlower() {
         BlockPos beePos = this.getBlockPos();
         int searchRadius = 16; // Increase this to search more blocks
@@ -417,9 +448,33 @@ public class MagicInfusedBee extends BeeEntity {
         return null;
     }
 
+    // Add this new method to check for magic hives in a very close proximity
+    private BlockPos findNearbyMagicHive() {
+        BlockPos beePos = this.getBlockPos();
+        int searchRadius = 2; // Very small radius - just checking immediate vicinity
+
+        // Check a smaller area for more immediate deposits
+        for (BlockPos checkPos : BlockPos.iterate(
+                beePos.add(-searchRadius, -searchRadius, -searchRadius),
+                beePos.add(searchRadius, searchRadius, searchRadius))) {
+
+            BlockState state = this.world.getBlockState(checkPos);
+            if (state.getBlock() instanceof MagicHiveBlock) {
+                return checkPos.toImmutable();
+            }
+        }
+
+        return null;
+    }
+
     // Getter for currentPollenType
     public Item getCurrentPollenType() {
         return this.currentPollenType;
+    }
+
+    // Setter for currentPollenType
+    public void setCurrentPollenType(Item pollenType) {
+        this.currentPollenType = pollenType;
     }
 
     // Custom goal for magic bees to return to magic hives

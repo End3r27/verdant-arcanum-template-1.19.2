@@ -57,12 +57,10 @@
   "item.verdant_arcanum.blink_flower_seeds": "Blink Flower Seeds",
   "item.verdant_arcanum.rootgrasp_flower_seeds": "Rootgrasp Flower Seeds",
   "item.verdant_arcanum.gust_flower_seeds": "Gust Flower Seeds",
-  "item.verdant_arcanum.timestop_flower_seeds": "TimeStop Flower Seeds",
 
   "item.verdant_arcanum.blink_flower_bloom": "Blink Flower Bloom",
   "item.verdant_arcanum.rootgrasp_flower_bloom": "Rootgrasp Flower Bloom",
   "item.verdant_arcanum.gust_flower_bloom": "Gust Flower Bloom",
-  "item.verdant_arcanum.timestop_flower_bloom": "TimeStop Flower Bloom",
 
   "item.verdant_arcanum.magic_infused_bee_spawn_egg": "Magic Infused Bee Spawn Egg",
 
@@ -81,11 +79,6 @@
   "tooltip.verdant_arcanum.gust_flower_seeds.detailed.2": "Goes through 3 growth stages: Seed → Bud → Bloom",
   "tooltip.verdant_arcanum.gust_flower_seeds.detailed.3": "Grows faster at higher elevations",
 
-  "tooltip.verdant_arcanum.timestop_flower_seeds": "Mystical seeds that grow into time-related plants",
-  "tooltip.verdant_arcanum.timestop_flower_seeds.detailed.1": "Must be planted on Grove Soil to grow",
-  "tooltip.verdant_arcanum.timestop_flower_seeds.detailed.2": "Goes through 3 growth stages: Seed → Bud → Bloom",
-  "tooltip.verdant_arcanum.timestop_flower_seeds.detailed.3": "Grows at unpredictable rates due to time fluctuations",
-
   "tooltip.verdant_arcanum.blink_flower_bloom": "A shimmering flower with ethereal petals",
   "tooltip.verdant_arcanum.blink_flower_bloom.detailed.1": "Teleports you randomly when stepped on",
   "tooltip.verdant_arcanum.blink_flower_bloom.detailed.2": "Occasionally shifts between dimensions when observed",
@@ -98,12 +91,15 @@
   "tooltip.verdant_arcanum.gust_flower_bloom.detailed.1": "Pushes you when stepped on",
   "tooltip.verdant_arcanum.gust_flower_bloom.detailed.2": "Feels weightless when held",
 
-  "tooltip.verdant_arcanum.timestop_flower_bloom": "A crystalline flower with clock-like patterns",
-  "tooltip.verdant_arcanum.timestop_flower_bloom.detailed.1": "Can be brewed into potions of Haste",
-  "tooltip.verdant_arcanum.timestop_flower_bloom.detailed.2": "Seems to exist between moments of time",
 
   "entity.verdant_arcanum.magic_infused_bee": "Magic Infused Bee",
 
-  "container.verdant_arcanum.living_staff": "Living Staff"
+  "container.verdant_arcanum.living_staff": "Living Staff",
 
+  "block.verdant_arcanum.magic_hive": "Magic Hive",
+
+  "block.verdant_arcanum.flame_bloom": "Flame Flower Bloom",
+  "block.verdant_arcanum.blink_bloom": "Blink Flower Bloom",
+  "block.verdant_arcanum.rootgrasp_bloom": "Rootgrasp Flower Bloom",
+  "block.verdant_arcanum.gust_bloom": "Gust Flower Bloom"
 }
