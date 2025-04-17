@@ -6,6 +6,8 @@ import end3r.verdant_arcanum.registry.ModItems;
 import end3r.verdant_arcanum.registry.ModTags;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.ai.goal.Goal;
+import net.minecraft.entity.ai.pathing.Path;
 import net.minecraft.entity.passive.BeeEntity;
 import net.minecraft.entity.attribute.DefaultAttributeContainer;
 import net.minecraft.entity.attribute.EntityAttributes;
@@ -20,6 +22,7 @@ import net.minecraft.world.World;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.particle.ParticleTypes;
 
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -37,7 +40,7 @@ public class MagicInfusedBee extends BeeEntity {
     private int depositCooldown = 100;
 
     // Debug flag to show more detailed output
-    private static final boolean DEBUG_MODE = false;
+    public static final boolean DEBUG_MODE = true;
 
     static {
         // Initialize the mapping between flower blooms and spell essences
@@ -59,6 +62,14 @@ public class MagicInfusedBee extends BeeEntity {
                 .add(EntityAttributes.GENERIC_MOVEMENT_SPEED, 0.3F)
                 .add(EntityAttributes.GENERIC_ATTACK_DAMAGE, 3.0D)
                 .add(EntityAttributes.GENERIC_FOLLOW_RANGE, 48.0D);
+    }
+
+    @Override
+    protected void initGoals() {
+        super.initGoals();
+
+        // Add our custom goal with VERY HIGH priority
+        this.goalSelector.add(1, new MagicBeeReturnToHiveGoal(this));
     }
 
     @Override
@@ -102,16 +113,17 @@ public class MagicInfusedBee extends BeeEntity {
             depositCooldown--;
         }
 
-        // Spawn magic particles occasionally
+        // Spawn magic particles occasionally - client side code
         if (this.world.isClient && this.random.nextInt(10) == 0) {
             double d = this.getX() + (this.random.nextDouble() - 0.5D) * 0.5D;
             double e = this.getY() + 0.3D;
             double f = this.getZ() + (this.random.nextDouble() - 0.5D) * 0.5D;
 
             this.world.addParticle(ParticleTypes.WITCH, d, e, f, 0.0D, 0.0D, 0.0D);
+            return; // End client-side processing here
         }
 
-        // Client-side processing ends here
+        // Server-side processing below
         if (this.world.isClient) return;
 
         // Check flower positions when the bee has nectar to see if we need to set pollen type
@@ -119,64 +131,14 @@ public class MagicInfusedBee extends BeeEntity {
             updatePollenTypeFromFlower();
         }
 
-        // ========= ESSENCE DEPOSIT HANDLING =========
-        // Only process essence delivery if we have nectar, know the pollen type, and aren't angry
-        if (this.hasNectar() && this.currentPollenType != null && !this.hasAngerTime() && depositCooldown <= 0) {
-            // Try to deposit essence at nearby hives
-            boolean didDeposit = tryDepositEssence();
-
-            // If we deposited, add a cooldown to prevent repeated attempts
-            if (didDeposit) {
-                depositCooldown = 20; // 1-second cooldown
-                return; // Skip the rest of the tick logic
-            }
-        }
-        // The key change - use a proximity check instead of relying on the path finding
-        if (this.hasNectar() && this.currentPollenType != null && !this.hasAngerTime()) {
-            // Check if we're near a hive, regardless of deposit cooldown
-            BlockPos nearestHive = findNearbyMagicHive(); // Check a much smaller radius
-            if (nearestHive != null && depositCooldown <= 0) {
-                // We're close to a hive, try to deposit
-                boolean didDeposit = tryDepositEssence();
-                if (didDeposit) {
-                    // Successfully deposited, set a cooldown to prevent spam
-                    depositCooldown = 20; // 1-second cooldown
-
-                    // Debug output for successful deposit
-                    if (DEBUG_MODE) {
-                        System.out.println("Magic bee successfully deposited essence and reset nectar");
-                    }
-                }
-            }
-        }
-
-        // ========= FLOWER/HIVE FINDING LOGIC =========
-        // When we have nectar, prioritize going to hives instead of flowers
-        if (this.hasNectar()) {
-            // Try to find a nearby magic hive to deposit essence if we have nectar
-            BlockPos nearestHive = findNearestMagicHive();
-            if (nearestHive != null) {
-                if (DEBUG_MODE && this.random.nextInt(100) == 0) {
-                    System.out.println("Magic bee has nectar and is heading to hive at " + nearestHive);
-                }
-
-                // Direct the bee to move toward the hive - aim slightly above for better landing
-                this.getMoveControl().moveTo(nearestHive.getX() + 0.5, nearestHive.getY() + 1.0, nearestHive.getZ() + 0.5, 1.0);
-                return; // Skip the flower-finding logic since we're heading to a hive
-            }
-        }
+        // ========= FLOWER FINDING LOGIC =========
         // Only look for flowers if we don't have nectar
-        else if (!this.hasNectar() && this.random.nextInt(20) == 0) {
+        if (!this.hasNectar() && this.random.nextInt(20) == 0) {
             BlockPos nearestFlower = findNearestMagicalFlower();
             if (nearestFlower != null) {
                 // Store our own flower position
                 this.magicFlowerPos = nearestFlower;
 
-                if (DEBUG_MODE && this.random.nextInt(100) == 0) {
-                    System.out.println("Magic bee found flower at " + nearestFlower);
-                }
-
-                // We'll call the parent method if available
                 try {
                     // Try to call the super implementation first if it exists
                     this.setFlowerPos(nearestFlower);
@@ -188,14 +150,55 @@ public class MagicInfusedBee extends BeeEntity {
                 }
 
                 // Direct the bee to move toward the flower
-                this.getMoveControl().moveTo(nearestFlower.getX() + 0.5, nearestFlower.getY() + 0.5, nearestFlower.getZ() + 0.5, 1.0);
+                this.getMoveControl().moveTo(
+                        nearestFlower.getX() + 0.5,
+                        nearestFlower.getY() + 0.5,
+                        nearestFlower.getZ() + 0.5,
+                        1.0
+                );
+
+                if (DEBUG_MODE && this.random.nextInt(100) == 0) {
+                    System.out.println("Magic bee found flower at " + nearestFlower);
+                }
             }
         }
 
-        // Debug output every so often
-        if (DEBUG_MODE && this.random.nextInt(400) == 0) {
-            System.out.println("MagicBee at " + this.getBlockPos() + " has flower pos: " + this.magicFlowerPos);
-            System.out.println("Has nectar: " + this.hasNectar() + ", Current pollen type: " + this.currentPollenType);
+        // Add this to the tick method
+        if (DEBUG_MODE && this.random.nextInt(200) == 0) {
+            BlockPos hive = findNearestMagicHive();
+            if (hive != null) {
+                System.out.println("Magic bee can detect hive at " + hive +
+                        " (distance: " + Math.sqrt(this.getBlockPos().getSquaredDistance(hive)) + ")");
+            } else {
+                System.out.println("Magic bee cannot find any magic hive in range!");
+            }
+        }
+    }
+
+    // Method to force the bee to navigate to a specific hive
+    public void forceNavigateToHive(BlockPos hivePos) {
+        if (hivePos != null) {
+            // Force stop any current path
+            this.getNavigation().stop();
+
+            // Create a new path to the hive - use pathfinding
+            Path path = this.getNavigation().findPathTo(hivePos, 0);
+            if (path != null) {
+                this.getNavigation().startMovingAlong(path, 1.0);
+                if (DEBUG_MODE) {
+                    System.out.println("FORCE: Magic bee is now navigating to hive at " + hivePos);
+                }
+            } else {
+                // Fallback - direct movement if pathfinding fails
+                this.getMoveControl().moveTo(
+                        hivePos.getX() + 0.5,
+                        hivePos.getY() + 1.0,
+                        hivePos.getZ() + 0.5,
+                        1.0);
+                if (DEBUG_MODE) {
+                    System.out.println("FORCE: Magic bee using direct movement to hive at " + hivePos);
+                }
+            }
         }
     }
 
@@ -203,7 +206,7 @@ public class MagicInfusedBee extends BeeEntity {
      * Try to deposit essence at any nearby hives
      * @return true if essence was successfully deposited
      */
-    private boolean tryDepositEssence() {
+    public boolean tryDepositEssence() {
         // Only proceed if we have nectar and know which pollen type
         if (!this.hasNectar() || this.currentPollenType == null) {
             return false;
@@ -342,8 +345,14 @@ public class MagicInfusedBee extends BeeEntity {
     // Find the nearest magic hive
     public BlockPos findNearestMagicHive() {
         BlockPos beePos = this.getBlockPos();
-        int searchRadius = 24; // Large radius to find hives
-        int verticalSearch = 8; // Search 8 blocks up and down
+        int searchRadius = 32; // Increase search radius
+        int verticalSearch = 16; // Increase vertical search radius
+
+        // Debug output
+        if (DEBUG_MODE && this.random.nextInt(400) == 0) {
+            System.out.println("Magic bee searching for hive in radius " + searchRadius +
+                    " around " + beePos);
+        }
 
         // Start with the closest possible block to make search more efficient
         BlockPos nearestHive = null;
@@ -359,6 +368,11 @@ public class MagicInfusedBee extends BeeEntity {
                 if (distance < nearestDistance) {
                     nearestDistance = distance;
                     nearestHive = checkPos.toImmutable();
+
+                    if (DEBUG_MODE) {
+                        System.out.println("Found magic hive at " + nearestHive +
+                                " (distance: " + Math.sqrt(distance) + ")");
+                    }
                 }
             }
         }
@@ -393,6 +407,7 @@ public class MagicInfusedBee extends BeeEntity {
         }
         return null;
     }
+
     // Add this new method to check for magic hives in a very close proximity
     private BlockPos findNearbyMagicHive() {
         BlockPos beePos = this.getBlockPos();
@@ -410,5 +425,131 @@ public class MagicInfusedBee extends BeeEntity {
         }
 
         return null;
+    }
+
+    // Getter for currentPollenType
+    public Item getCurrentPollenType() {
+        return this.currentPollenType;
+    }
+
+    // Setter for currentPollenType
+    public void setCurrentPollenType(Item pollenType) {
+        this.currentPollenType = pollenType;
+    }
+
+    // Custom goal for magic bees to return to magic hives
+    public static class MagicBeeReturnToHiveGoal extends Goal {
+        private final MagicInfusedBee bee;
+        private BlockPos targetHivePos = null;
+        private int searchCooldown = 0;
+        private int goToHiveCounter = 0;
+
+        public MagicBeeReturnToHiveGoal(MagicInfusedBee bee) {
+            this.bee = bee;
+            // Set control flags
+            this.setControls(EnumSet.of(Goal.Control.MOVE));
+        }
+
+        @Override
+        public boolean canStart() {
+            // This goal can start if the bee has nectar and pollen
+            if (!bee.hasNectar() || bee.getCurrentPollenType() == null) {
+                return false;
+            }
+
+            // If we're on cooldown, decrement and skip
+            if (searchCooldown > 0) {
+                searchCooldown--;
+                return false;
+            }
+
+            // Find a hive if we don't already have one
+            if (targetHivePos == null) {
+                targetHivePos = bee.findNearestMagicHive();
+
+                // If still no hive found, set a longer cooldown
+                if (targetHivePos == null) {
+                    searchCooldown = 60; // 3 seconds
+                    return false;
+                }
+            }
+
+            // Double-check the hive still exists and is valid
+            if (!isMagicHiveAt(targetHivePos)) {
+                targetHivePos = null;
+                return false;
+            }
+
+            return true;
+        }
+
+        @Override
+        public boolean shouldContinue() {
+            // Continue as long as the bee has nectar, pollen, and a valid hive
+            return bee.hasNectar() &&
+                    bee.getCurrentPollenType() != null &&
+                    targetHivePos != null &&
+                    isMagicHiveAt(targetHivePos);
+        }
+
+        @Override
+        public void start() {
+            if (DEBUG_MODE) {
+                System.out.println("GOAL START: Magic bee beginning navigation to hive at " + targetHivePos);
+            }
+            goToHiveCounter = 0;
+        }
+
+        @Override
+        public void stop() {
+            if (DEBUG_MODE) {
+                System.out.println("GOAL STOP: Magic bee stopping hive navigation");
+            }
+        }
+
+        @Override
+        public void tick() {
+            // If we somehow lost our target, try to find a new one
+            if (targetHivePos == null) {
+                targetHivePos = bee.findNearestMagicHive();
+                if (targetHivePos == null) return;
+            }
+
+            // Verify hive still exists
+            if (!isMagicHiveAt(targetHivePos)) {
+                targetHivePos = null;
+                return;
+            }
+
+            // Calculate distance to hive
+            double distanceToHive = bee.getBlockPos().getSquaredDistance(targetHivePos);
+
+            // Try to deposit if we're close enough
+            if (distanceToHive < 4.0) {
+                boolean success = bee.tryDepositEssence();
+                if (success) {
+                    // Reset everything on successful deposit
+                    targetHivePos = null;
+                    return;
+                }
+            }
+
+            // Force navigation more aggressively every 20 ticks
+            goToHiveCounter++;
+            if (goToHiveCounter % 20 == 0 || bee.getNavigation().isIdle()) {
+                bee.forceNavigateToHive(targetHivePos);
+            }
+
+            if (DEBUG_MODE && bee.getRandom().nextInt(40) == 0) {
+                System.out.println("GOAL TICK: Magic bee navigating to hive at " + targetHivePos +
+                        " (distance: " + Math.sqrt(distanceToHive) +
+                        ", counter: " + goToHiveCounter + ")");
+            }
+        }
+
+        private boolean isMagicHiveAt(BlockPos pos) {
+            // Check if the block at the position is still a magic hive
+            return bee.world.getBlockState(pos).getBlock() instanceof MagicHiveBlock;
+        }
     }
 }
