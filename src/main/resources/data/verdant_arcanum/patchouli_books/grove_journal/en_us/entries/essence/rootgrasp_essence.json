@@ -1,0 +1,29 @@
+{
+  "name": "Rootgrasp Spell Essence",
+  "icon": "verdant_arcanum:spell_essence_rootgrasp",
+  "category": "verdant_arcanum:essences",
+  "sortnum": 3,
+  "pages": [
+    {
+      "type": "patchouli:spotlight",
+      "item": "verdant_arcanum:spell_essence_rootgrasp",
+      "text": "Rootgrasp Spell Essence contains the concentrated magical properties of earth binding. Extracted from the Rootgrasp Flower Bloom, it embodies the steadfast nature of earth and the binding power of roots."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "Properties",
+      "text": "When cast directly, Rootgrasp Essence slows down nearby entities by conjuring magical vines that temporarily bind them to the earth.$(br2)Mana Cost: [value]$(br)Single-use when cast directly"
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "verdant_arcanum:spell_essence_rootgrasp",
+      "title": "Extraction",
+      "text": "The extraction process requires a Rootgrasp Flower Bloom and earthy catalysts to maintain the binding properties during transformation."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "Applications",
+      "text": "- Direct casting for crowd control$(br)- Grafting onto a Living Staff$(br)- Creating traps and binding mechanisms$(br)- As a component in stability-focused magical items$(br)- Ground reinforcement in magical construction"
+    }
+  ]
+}

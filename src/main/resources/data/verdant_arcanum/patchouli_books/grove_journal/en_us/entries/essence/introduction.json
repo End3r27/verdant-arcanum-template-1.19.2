@@ -1,0 +1,21 @@
+{
+  "name": "Understanding Spell Essences",
+  "icon": "verdant_arcanum:spell_essence_flame",
+  "category": "verdant_arcanum:essences",
+  "sortnum": 0,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "Spell Essences are concentrated magical extracts derived from magical flowers. They contain pure arcane energy tied to their source plant's elemental or magical affinity.$(br2)These essences are the primary components used in spellcasting and magical crafting."
+    },
+    {
+      "type": "patchouli:text",
+      "text": "Each essence can be used in three primary ways:$(br)1. Direct casting as a single-use spell$(br)2. Grafting onto a Living Staff for repeated casting$(br)3. As an ingredient in crafting magical items$(br2)All essences are consumed upon use when cast directly."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "Extraction Process",
+      "text": "To extract essence from a magical bloom, you must...[extraction method details will go here once implemented].$(br2)The process requires precision and care, as the magical properties are volatile during extraction."
+    }
+  ]
+}

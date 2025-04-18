@@ -1,0 +1,42 @@
+{
+  "name": "Producing Spell Essences",
+  "icon": "verdant_arcanum:magic_hive",
+  "category": "verdant_arcanum:basics",
+  "sortnum": 1,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "Magic Infused Bees are essential creatures for any botanical mage. These special bees gather magical pollen from flowering plants and convert it into powerful spell essences.$(br2)Unlike ordinary bees, Magic Infused Bees can sense magical flowers from greater distances and are naturally drawn to them."
+    },
+    {
+      "type": "patchouli:entity",
+      "entity": "verdant_arcanum:magic_infused_bee",
+      "scale": 1.0,
+      "text": "Emits magical particles when flying"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "When a Magic Infused Bee visits a magical flower in bloom, it collects specialized pollen unique to that flower type. The bee will then return to a Magic Hive to deposit its gathered essence.$(br2)Each type of magical flower produces a different spell essence, which can be used in various magical crafting recipes."
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "verdant_arcanum:magic_hive",
+      "text": "The Magic Hive stores spell essences produced by your bees. It has 20 inventory slots and can be accessed by right-clicking. Hoppers and other automation can extract essences from all sides."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "Magical Flowers",
+      "text": "There are five types of magical flowers that produce unique essences:$(li)Flame Flowers - Fire magic$(li)Blink Flowers - Teleportation magic$(li)Rootgrasp Flowers - Earth magic$(li)Gust Flowers - Wind magic$(li)Breezevine Flowers - Levitation magic"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "Bee Behavior",
+      "text": "Magic Infused Bees have several unique traits:$(li)They can detect magical flowers up to 16 blocks away$(li)They take less damage from non-magical attacks$(li)They emit magical particles while flying$(li)They can fly more effectively than normal bees"
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "verdant_arcanum:magic_hive",
+      "recipe2": "verdant_arcanum:magic_bee_spawn_egg"
+    }
+  ]
+}

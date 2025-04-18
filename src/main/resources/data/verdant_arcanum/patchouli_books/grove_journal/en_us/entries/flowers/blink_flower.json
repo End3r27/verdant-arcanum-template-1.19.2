@@ -1,0 +1,29 @@
+{
+  "name": "Blink Flower",
+  "icon": "verdant_arcanum:blink_flower_bloom",
+  "category": "verdant_arcanum:flowers",
+  "sortnum": 1,
+  "pages": [
+    {
+      "type": "patchouli:spotlight",
+      "item": "verdant_arcanum:blink_flower_bloom",
+      "text": "The Blink Flower possesses ethereal, shimmering petals that seem to exist between dimensions. These fascinating plants occasionally appear to shift in and out of reality when observed."
+    },
+    {
+      "type": "patchouli:text",
+      "text": "Cultivation Notes:$(br)- Must be planted on Grove Soil$(br)- Goes through 3 growth stages: Seed → Bud → Bloom$(br)- Growth is accelerated during nighttime and in moonlight$(br)- When fully bloomed, will teleport entities that step on it to a random nearby location"
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "verdant_arcanum:blink_flower_seeds",
+      "title": "Seeds",
+      "text": "Blink Flower Seeds must be planted on Grove Soil. They grow best under moonlight, making nocturnal cultivation optimal for these dimensional plants."
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "verdant_arcanum:blink_flower_bloom",
+      "title": "Bloom",
+      "text": "The harvested Blink Flower Bloom continues to exhibit unusual dimensional properties, occasionally shifting between dimensions. It is used to create Blink Spell Essence for teleportation magic."
+    }
+  ]
+}

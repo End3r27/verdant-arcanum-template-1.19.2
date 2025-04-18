@@ -1,7 +1,7 @@
 {
   "name": "Grove Soil",
   "icon": "verdant_arcanum:grove_soil",
-  "category": "basics",
+  "category": "verdant_arcanum:basics",
   "sortnum": 1,
   "pages": [
     {

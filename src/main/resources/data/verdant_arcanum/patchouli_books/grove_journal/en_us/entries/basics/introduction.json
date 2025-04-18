@@ -1,7 +1,7 @@
 {
   "name": "Introduction to Botanical Magic",
   "icon": "minecraft:book",
-  "category": "basics",
+  "category": "verdant_arcanum:basics",
   "sortnum": 0,
   "pages": [
     {

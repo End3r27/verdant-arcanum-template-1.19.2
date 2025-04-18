@@ -1,0 +1,29 @@
+{
+  "name": "Flame Spell Essence",
+  "icon": "verdant_arcanum:spell_essence_flame",
+  "category": "verdant_arcanum:essences",
+  "sortnum": 1,
+  "pages": [
+    {
+      "type": "patchouli:spotlight",
+      "item": "verdant_arcanum:spell_essence_flame",
+      "text": "Flame Spell Essence contains the concentrated magical properties of fire. Extracted from the Flame Flower Bloom, it embodies the volatile yet controlled nature of flame."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "Properties",
+      "text": "When cast directly, Flame Essence releases a small fireball in the direction you're facing, causing fire damage to entities and potentially igniting blocks.$(br2)Mana Cost: [value]$(br)Single-use when cast directly"
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "verdant_arcanum:spell_essence_flame",
+      "title": "Extraction",
+      "text": "The extraction process requires a Flame Flower Bloom and specific catalysts to stabilize the fiery essence during transformation."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "Applications",
+      "text": "- Direct casting for offense$(br)- Grafting onto a Living Staff$(br)- Crafting fire-resistant items$(br)- Creating heat-based magical devices$(br)- As a catalyst in other fire-related magical processes"
+    }
+  ]
+}

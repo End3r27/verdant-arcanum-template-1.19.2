@@ -1,0 +1,29 @@
+{
+  "name": "Breezevine Spell Essence",
+  "icon": "verdant_arcanum:spell_essence_breezevine",
+  "category": "verdant_arcanum:essences",
+  "sortnum": 5,
+  "pages": [
+    {
+      "type": "patchouli:spotlight",
+      "item": "verdant_arcanum:spell_essence_breezevine",
+      "text": "Breezevine Spell Essence contains the concentrated magical properties of directional wind. Extracted from the Breezevine Flower Bloom, it embodies the focused nature of controlled air currents."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "Properties",
+      "text": "When cast directly, Breezevine Essence propels you backwards with a powerful gust of wind while granting brief fall protection, making it excellent for mobility and escape.$(br2)Mana Cost: [value]$(br)Single-use when cast directly"
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "verdant_arcanum:spell_essence_breezevine",
+      "title": "Extraction",
+      "text": "The extraction process requires a Breezevine Flower Bloom and special directional catalysts to focus the wind properties during transformation."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "Applications",
+      "text": "- Direct casting for mobility$(br)- Grafting onto a Living Staff$(br)- Creating propulsion devices$(br)- As a component in directional air-based magical items$(br)- Used in crafting items that provide fall protection"
+    }
+  ]
+}

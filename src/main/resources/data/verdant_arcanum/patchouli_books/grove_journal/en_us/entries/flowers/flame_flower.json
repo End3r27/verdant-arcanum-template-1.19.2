@@ -1,0 +1,29 @@
+{
+  "name": "Flame Flower",
+  "icon": "verdant_arcanum:flame_flower_bloom",
+  "category": "verdant_arcanum:flowers",
+  "sortnum": 0,
+  "pages": [
+    {
+      "type": "patchouli:spotlight",
+      "item": "verdant_arcanum:flame_flower_bloom",
+      "text": "The Flame Flower is a vibrant bloom with ember-like petals that radiate a gentle warmth. These remarkable plants are completely fire-resistant and thrive in higher temperatures."
+    },
+    {
+      "type": "patchouli:text",
+      "text": "Cultivation Notes:$(br)- Must be planted on Grove Soil$(br)- Goes through 3 growth stages: Seed → Bud → Bloom$(br)- Growth is accelerated in warmer environments$(br)- When fully bloomed, provides Fire Resistance to entities that step on it"
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "verdant_arcanum:flame_flower_seeds",
+      "title": "Seeds",
+      "text": "Flame Flower Seeds must be planted on Grove Soil. Their growth can be accelerated by placing heat sources nearby such as lava or fire (safely contained, of course)."
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "verdant_arcanum:flame_flower_bloom",
+      "title": "Bloom",
+      "text": "When harvested, the Flame Flower Bloom continues to emit a faint warmth. It is used to create Flame Spell Essence and serves as a component in various heat-resistant magical items."
+    }
+  ]
+}

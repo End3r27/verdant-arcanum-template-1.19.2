@@ -1,0 +1,13 @@
+{
+  "name": "Breezevine Flower",
+  "icon": "verdant_arcanum:breezevine_flower_bloom",
+  "category": "verdant_arcanum:flowers",
+  "sortnum": 4,
+  "pages": [
+    {
+      "type": "patchouli:spotlight",
+      "item": "verdant_arcanum:breezevine_flower_bloom",
+      "text": "The Breezevine Flower is a unique magical plant that harnesses the power of wind to create directional gusts. Its vine-like structure allows it to channel air in specific patterns."
+    }
+  ]
+}

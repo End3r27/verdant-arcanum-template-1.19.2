@@ -1,0 +1,29 @@
+{
+  "name": "Gust Flower",
+  "icon": "verdant_arcanum:gust_flower_bloom",
+  "category": "verdant_arcanum:flowers",
+  "sortnum": 3,
+  "pages": [
+    {
+      "type": "patchouli:spotlight",
+      "item": "verdant_arcanum:gust_flower_bloom",
+      "text": "The Gust Flower is a light, airy plant with feather-like petals that are in constant motion even in still air. These remarkable plants manipulate air currents around them."
+    },
+    {
+      "type": "patchouli:text",
+      "text": "Cultivation Notes:$(br)- Must be planted on Grove Soil$(br)- Goes through 3 growth stages: Seed → Bud → Bloom$(br)- Growth is accelerated at higher elevations$(br)- When fully bloomed, pushes entities that step on it"
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "verdant_arcanum:gust_flower_seeds",
+      "title": "Seeds",
+      "text": "Gust Flower Seeds must be planted on Grove Soil. They grow best at higher altitudes, making mountaintops and elevated gardens ideal for cultivation."
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "verdant_arcanum:gust_flower_bloom",
+      "title": "Bloom",
+      "text": "The harvested Gust Flower Bloom feels weightless when held and continues to create small air currents. It is used to create Gust Spell Essence and serves as a component in wind-based magical items."
+    }
+  ]
+}

@@ -1,0 +1,29 @@
+{
+  "name": "Gust Spell Essence",
+  "icon": "verdant_arcanum:spell_essence_gust",
+  "category": "verdant_arcanum:essences",
+  "sortnum": 4,
+  "pages": [
+    {
+      "type": "patchouli:spotlight",
+      "item": "verdant_arcanum:spell_essence_gust",
+      "text": "Gust Spell Essence contains the concentrated magical properties of wind. Extracted from the Gust Flower Bloom, it embodies the free-flowing and forceful nature of air currents."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "Properties",
+      "text": "When cast directly, Gust Essence creates a powerful outward burst of wind that pushes entities away from the caster, useful for both defense and environmental manipulation.$(br2)Mana Cost: [value]$(br)Single-use when cast directly"
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "verdant_arcanum:spell_essence_gust",
+      "title": "Extraction",
+      "text": "The extraction process requires a Gust Flower Bloom and aerial catalysts to capture and preserve the wind properties during transformation."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "Applications",
+      "text": "- Direct casting for defensive pushing$(br)- Grafting onto a Living Staff$(br)- Creating wind-powered mechanisms$(br)- As a component in air-based magical items$(br)- Atmospheric manipulation in magical processes"
+    }
+  ]
+}

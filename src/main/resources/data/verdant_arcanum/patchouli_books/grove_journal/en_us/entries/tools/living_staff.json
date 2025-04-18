@@ -1,0 +1,33 @@
+{
+  "name": "Living Staff",
+  "icon": "verdant_arcanum:living_staff",
+  "category": "verdant_arcanum:tools",
+  "sortnum": 0,
+  "pages": [
+    {
+      "type": "patchouli:spotlight",
+      "item": "verdant_arcanum:living_staff",
+      "text": "The Living Staff is a conduit for botanical magic, crafted from living wood that maintains a connection to natural energies. It bonds with magical essences, allowing for repeated spellcasting."
+    },
+    {
+      "type": "patchouli:text",
+      "text": "Unlike direct essence casting, which consumes the essence, the Living Staff preserves the essence's power through a magical bond, enabling multiple uses of the same spell.$(br2)A staff can hold multiple essences, though only one can be active at a time."
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "verdant_arcanum:living_staff",
+      "title": "Crafting",
+      "text": "Creating a Living Staff requires special wood infused with magical properties and various arcane components to create the bonding matrix."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "Using the Staff",
+      "text": "To graft an essence to your staff, hold the essence and right-click while holding the staff.$(br2)To cast the active spell, simply right-click with the staff.$(br2)To switch between grafted spells, sneak and scroll with the mouse wheel."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "Advanced Staves",
+      "text": "As your botanical magic skills grow, you may discover ways to enhance your staff with more spell slots or specialized enchantments to boost specific types of magic.$(br2)Some rare materials can create staves with unique properties."
+    }
+  ]
+}

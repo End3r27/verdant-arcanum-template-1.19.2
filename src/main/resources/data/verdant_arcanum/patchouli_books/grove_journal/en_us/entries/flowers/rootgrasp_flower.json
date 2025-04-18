@@ -1,0 +1,29 @@
+{
+  "name": "Rootgrasp Flower",
+  "icon": "verdant_arcanum:rootgrasp_flower_bloom",
+  "category": "verdant_arcanum:flowers",
+  "sortnum": 2,
+  "pages": [
+    {
+      "type": "patchouli:spotlight",
+      "item": "verdant_arcanum:rootgrasp_flower_bloom",
+      "text": "The Rootgrasp Flower is a sturdy plant with vine-like petals that can bind entities to the earth. Its deep roots extend far into the soil, creating a network of energy that slows movement."
+    },
+    {
+      "type": "patchouli:text",
+      "text": "Cultivation Notes:$(br)- Must be planted on Grove Soil$(br)- Goes through 3 growth stages: Seed → Bud → Bloom$(br)- Growth is accelerated when near other plants$(br)- When fully bloomed, applies Slowness to entities that step on it"
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "verdant_arcanum:rootgrasp_flower_seeds",
+      "title": "Seeds",
+      "text": "Rootgrasp Flower Seeds must be planted on Grove Soil. Their growth is stimulated by the presence of other plant life, so a garden environment is ideal for cultivation."
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "verdant_arcanum:rootgrasp_flower_bloom",
+      "title": "Bloom",
+      "text": "The harvested Rootgrasp Flower Bloom maintains its binding properties and sometimes takes root in your inventory. It is used to create Rootgrasp Spell Essence and serves as a component in earth-binding magical items."
+    }
+  ]
+}

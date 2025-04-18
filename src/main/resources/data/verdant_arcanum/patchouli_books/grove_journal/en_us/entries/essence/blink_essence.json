@@ -1,0 +1,29 @@
+{
+  "name": "Blink Spell Essence",
+  "icon": "verdant_arcanum:spell_essence_blink",
+  "category": "verdant_arcanum:essences",
+  "sortnum": 2,
+  "pages": [
+    {
+      "type": "patchouli:spotlight",
+      "item": "verdant_arcanum:spell_essence_blink",
+      "text": "Blink Spell Essence contains the concentrated magical properties of teleportation. Extracted from the Blink Flower Bloom, it embodies the ephemeral nature of space and dimensional boundaries."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "Properties",
+      "text": "When cast directly, Blink Essence teleports you in the direction you're facing, allowing for quick traversal across short to medium distances.$(br2)Mana Cost: [value]$(br)Single-use when cast directly"
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "verdant_arcanum:spell_essence_blink",
+      "title": "Extraction",
+      "text": "The extraction process requires a Blink Flower Bloom and specific stabilizing agents to contain the volatile dimensional energy during transformation."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "Applications",
+      "text": "- Direct casting for mobility$(br)- Grafting onto a Living Staff$(br)- Creating teleportation devices$(br)- As a component in warp-related magical items$(br)- Dimensional stabilization in complex magical processes"
+    }
+  ]
+}

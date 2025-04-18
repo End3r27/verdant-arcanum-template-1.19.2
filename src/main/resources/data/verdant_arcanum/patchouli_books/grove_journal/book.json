@@ -2,10 +2,10 @@
   "name": "Grove Journal",
   "landing_text": "A compendium of botanical magic, documenting the arcane properties of magical plants and their applications.",
   "version": 1,
-  "model": "verdant_arcanum:grove_journal",
   "creative_tab": "verdant_arcanum.main",
+  "model": "patchouli:book_green",
   "book_texture": "patchouli:textures/gui/book_green.png",
-  "i18n": true,
+  "subtitle": "Harnessing Arcane Power",
   "show_progress": false,
-  "use_resource_pack": true
+  "i18n": true
 }
