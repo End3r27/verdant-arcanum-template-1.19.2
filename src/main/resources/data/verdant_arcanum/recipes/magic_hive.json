@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "HHH",
+    "HSH",
+    "HHH"
+  ],
+  "key": {
+    "H": {
+      "item": "minecraft:honeycomb"
+    },
+    "S": {
+      "item": "verdant_arcanum:grove_soil"
+    }
+  },
+  "result": {
+    "item": "verdant_arcanum:magic_hive",
+    "count": 1
+  }
+}

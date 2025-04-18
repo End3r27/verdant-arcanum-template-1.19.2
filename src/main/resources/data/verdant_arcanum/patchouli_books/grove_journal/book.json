@@ -1,0 +1,23 @@
+{
+  "name": "Grove Journal",
+  "landing_text": "A mystical journal that records your discoveries in the arcane botany of the world. New entries will appear as you progress in your magical gardening journey.",
+  "version": 1,
+  "model": "verdant_arcanum:grove_journal",
+  "creative_tab": "verdant_arcanum.main",
+  "show_progress": true,
+  "advancement_namespaces": ["verdant_arcanum"],
+  "book_texture": "verdant_arcanum:textures/gui/journal_background.png",
+  "filler_texture": "verdant_arcanum:textures/gui/journal_filler.png",
+  "crafting_texture": "verdant_arcanum:textures/gui/journal_crafting.png",
+  "text_color": "0x3F3F3F",
+  "header_color": "0x993333",
+  "link_color": "0x993333",
+  "link_hover_color": "0xBB6666",
+  "progress_bar_color": "0x993333",
+  "progress_bar_background": "0xDDDDDD",
+  "open_sound": "verdant_arcanum:journal_open",
+  "flip_sound": "verdant_arcanum:page_turn",
+  "i18n": true,
+  "custom_book_item": "verdant_arcanum:grove_journal",
+  "use_blocky_font": false
+}

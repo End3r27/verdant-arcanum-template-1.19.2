@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " EL",
+    " SE",
+    "S  "
+  ],
+  "key": {
+    "E": {
+      "item": "minecraft:emerald"
+    },
+    "L": {
+      "item": "minecraft:oak_leaves"
+    },
+    "S": {
+      "item": "minecraft:stick"
+    }
+  },
+  "result": {
+    "item": "verdant_arcanum:living_staff",
+    "count": 1
+  }
+}

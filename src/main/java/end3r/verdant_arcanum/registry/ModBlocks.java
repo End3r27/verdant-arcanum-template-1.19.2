@@ -106,6 +106,13 @@ public class ModBlocks {
                     .nonOpaque()
     );
 
+    public static final Block MAGIC_BEE_SPAWNER = new MagicBeeSpawnerBlock(
+            FabricBlockSettings.of(Material.WOOD)
+                    .strength(3.0f, 6.0f)
+                    .sounds(BlockSoundGroup.WOOD)
+                    .nonOpaque()
+    );
+
 
     // This method will be called from ModRegistry
     public static void register() {
@@ -115,6 +122,8 @@ public class ModBlocks {
         Registry.register(Registry.BLOCK, new Identifier(VerdantArcanum.MOD_ID, "rootgrasp_flower"), ROOTGRASP_FLOWER);
         Registry.register(Registry.BLOCK, new Identifier(VerdantArcanum.MOD_ID, "gust_flower"), GUST_FLOWER);
         Registry.register(Registry.BLOCK, new Identifier(VerdantArcanum.MOD_ID, "magic_hive"), MAGIC_HIVE);
+        Registry.register(Registry.BLOCK, new Identifier(VerdantArcanum.MOD_ID, "magic_bee_spawner"), MAGIC_BEE_SPAWNER);
+
 
         // Register new bloom blocks
         Registry.register(Registry.BLOCK, new Identifier(VerdantArcanum.MOD_ID, "flame_bloom"), FLAME_BLOOM);

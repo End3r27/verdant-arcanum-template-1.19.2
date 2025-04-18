@@ -114,7 +114,15 @@
   "item.verdant_arcanum.breezevine_bloom": "Breezevine Bloom",
   "item.verdant_arcanum.breezevine_bloom.tooltip": "Used in air magic to create gusts of wind",
   "block.verdant_arcanum.breezevine_flower": "Breezevine Flower",
-  "block.verdant_arcanum.breezevine_bloom": "Breezevine Bloom"
+  "block.verdant_arcanum.breezevine_bloom": "Breezevine Bloom",
+
+  "block.verdant_arcanum.magic_bee_spawner": "Magic Bee Spawner",
+  "entity.verdant_arcanum.magic_infused_bee": "Magic Infused Bee",
+
+  "tooltip.verdant_arcanum.magic_bee_spawner": "Spawns Magic Infused Bees in the area",
+  "tooltip.verdant_arcanum.magic_bee_spawner.detailed.1": "Will maintain up to 10 bees in the spawner radius",
+  "tooltip.verdant_arcanum.magic_bee_spawner.detailed.2": "Right-click to check how many bees are currently in range"
+
 
 
 }

@@ -42,7 +42,11 @@ public class ModRegistry {
                 stacks.add(new ItemStack(ModItems.LIVING_STAFF));
 
                 stacks.add(new ItemStack(ModItems.MAGIC_INFUSED_BEE_SPAWN_EGG));
+                stacks.add(new ItemStack(ModBlocks.MAGIC_BEE_SPAWNER));
                 stacks.add(new ItemStack(ModItems.MAGIC_HIVE));
+
+                stacks.add(new ItemStack(ModItems.GROVE_JOURNAL));
+
 
             })
             .build();

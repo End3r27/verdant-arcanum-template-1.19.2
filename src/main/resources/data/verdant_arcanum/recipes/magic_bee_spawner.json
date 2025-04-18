@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "GHG",
+    "HSH",
+    "GHG"
+  ],
+  "key": {
+    "G": {
+      "item": "minecraft:gold_ingot"
+    },
+    "H": {
+      "item": "minecraft:honeycomb"
+    },
+    "S": {
+      "item": "verdant_arcanum:grove_soil"
+    }
+  },
+  "result": {
+    "item": "verdant_arcanum:magic_bee_spawner",
+    "count": 1
+  }
+}

@@ -53,6 +53,10 @@ public class ModItems {
 
     public static final Item MAGIC_HIVE = new BlockItem(ModBlocks.MAGIC_HIVE, new FabricItemSettings().group(DEFAULT_GROUP));
 
+    public static final Item MAGIC_BEE_SPAWNER = new BlockItem(ModBlocks.MAGIC_BEE_SPAWNER, new FabricItemSettings().group(DEFAULT_GROUP));
+
+
+
 
     // Magic Infused Bee Spawn Egg (Purple and Yellow)
     public static final Item MAGIC_INFUSED_BEE_SPAWN_EGG = new SpawnEggItem(
@@ -89,6 +93,9 @@ public class ModItems {
         Registry.register(Registry.ITEM, new Identifier(VerdantArcanum.MOD_ID, "spell_essence_breezevine"), SPELL_ESSENCE_BREEZEVINE);
 
         Registry.register(Registry.ITEM, new Identifier(VerdantArcanum.MOD_ID, "magic_hive"), MAGIC_HIVE);
+
+        Registry.register(Registry.ITEM, new Identifier(VerdantArcanum.MOD_ID, "magic_bee_spawner"), MAGIC_BEE_SPAWNER);
+
 
 
 
