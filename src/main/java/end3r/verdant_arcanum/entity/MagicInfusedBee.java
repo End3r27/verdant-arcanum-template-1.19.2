@@ -195,12 +195,8 @@ public class MagicInfusedBee extends BeeEntity {
         // Add this to the tick method
         if (DEBUG_MODE && this.random.nextInt(200) == 0) {
             BlockPos hive = findNearestMagicHive();
-            if (hive != null) {
-                System.out.println("Magic bee can detect hive at " + hive +
-                        " (distance: " + Math.sqrt(this.getBlockPos().getSquaredDistance(hive)) + ")");
-            } else {
-                System.out.println("Magic bee cannot find any magic hive in range!");
-            }
+
+
         }
     }
 

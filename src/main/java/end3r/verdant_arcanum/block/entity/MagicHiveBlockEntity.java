@@ -28,7 +28,7 @@ public class MagicHiveBlockEntity extends BlockEntity implements NamedScreenHand
     private int essenceProductionTicks = 0;
 
     // Debug flag
-    private static final boolean DEBUG_MODE = true;
+    private static final boolean DEBUG_MODE = false;
 
     public MagicHiveBlockEntity(BlockPos pos, BlockState state) {
         super(ModBlockEntities.MAGIC_HIVE_ENTITY, pos, state);
