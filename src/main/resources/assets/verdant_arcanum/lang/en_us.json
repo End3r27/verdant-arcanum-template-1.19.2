@@ -7,7 +7,8 @@
   "item.verdant_arcanum.spell_essence_blink": "Spell Essence: Blink",
   "item.verdant_arcanum.spell_essence_rootgrasp": "Spell Essence: Rootgrasp",
   "item.verdant_arcanum.spell_essence_gust": "Spell Essence: Gust",
-  "item.verdant_arcanum.spell_essence_timestop": "Spell Essence: TimeStop",
+  "item.verdant_arcanum.spell_essence_breezevine": "Spell Essence: Breezevine",
+
   "itemGroup.verdant_arcanum.main": "Verdant Arcanum",
 
   "tooltip.verdant_arcanum.hold_shift": "Hold §eShift§r for more information",
@@ -40,6 +41,7 @@
   "tooltip.verdant_arcanum.spell_essence.blink.spell": "Teleports you in the direction you're looking",
   "tooltip.verdant_arcanum.spell_essence.rootgrasp.spell": "Slows down nearby entities with magical vines",
   "tooltip.verdant_arcanum.spell_essence.gust.spell": "Pushes entities away with a gust of wind",
+  "tooltip.verdant_arcanum.spell_essence.breezevine.spell": "Pushes you backwards with a gust of wind",
 
   "item.verdant_arcanum.living_staff": "Living Staff",
   "tooltip.verdant_arcanum.living_staff": "A staff that bonds with magical essences",
