@@ -11,7 +11,10 @@ base {
 }
 
 repositories {
-	maven { url 'https://maven.blamejared.com' }
+	maven {
+		name = "Vazkii/Blargeist Maven"
+		url = "https://maven.blamejared.com/"
+	}
 
 }
 
@@ -26,7 +29,9 @@ dependencies {
 	minecraft "com.mojang:minecraft:${project.minecraft_version}"
 	mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
 	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
-	modImplementation "vazkii.patchouli:Patchouli:1.19.2-77" // Use appropriate version
+	modImplementation "vazkii.patchouli:Patchouli:1.19.2-77-FABRIC"
+
+
 
 	// Fabric API. This is technically optional, but you probably want it anyway.
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"

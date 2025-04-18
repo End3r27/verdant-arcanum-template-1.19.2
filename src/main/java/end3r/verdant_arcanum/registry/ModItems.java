@@ -25,7 +25,7 @@ import java.util.List;
 
 public class ModItems {
     // First we'll use the default Minecraft item group temporarily
-    private static final ItemGroup DEFAULT_GROUP = ItemGroup.MISC;
+    private static final ItemGroup DEFAULT_GROUP = ModRegistry.VERDANT_GROUP;
 
     // Block items
     public static final Item GROVE_SOIL = new BlockItem(ModBlocks.GROVE_SOIL, new FabricItemSettings().group(DEFAULT_GROUP));
@@ -45,18 +45,18 @@ public class ModItems {
 
     // Spell essences
     public static final Item SPELL_ESSENCE_FLAME = new SpellEssenceItem("flame", new FabricItemSettings().group(DEFAULT_GROUP).fireproof().maxCount(16));
-    public static final Item SPELL_ESSENCE_BLINK = new SpellEssenceItem("blink", new Item.Settings().group(ItemGroup.MISC).maxCount(16));
-    public static final Item SPELL_ESSENCE_ROOTGRASP = new SpellEssenceItem("rootgrasp", new Item.Settings().group(ItemGroup.MISC).maxCount(16));
-    public static final Item SPELL_ESSENCE_GUST = new SpellEssenceItem("gust", new Item.Settings().group(ItemGroup.MISC).maxCount(16));
-    public static final Item SPELL_ESSENCE_BREEZEVINE = new SpellEssenceItem("breezevine", new Item.Settings().group(ItemGroup.MISC).maxCount(16));
+    public static final Item SPELL_ESSENCE_BLINK = new SpellEssenceItem("blink", new Item.Settings().group(DEFAULT_GROUP).maxCount(16));
+    public static final Item SPELL_ESSENCE_ROOTGRASP = new SpellEssenceItem("rootgrasp", new Item.Settings().group(DEFAULT_GROUP).maxCount(16));
+    public static final Item SPELL_ESSENCE_GUST = new SpellEssenceItem("gust", new Item.Settings().group(DEFAULT_GROUP).maxCount(16));
+    public static final Item SPELL_ESSENCE_BREEZEVINE = new SpellEssenceItem("breezevine", new Item.Settings().group(DEFAULT_GROUP).maxCount(16));
 
 
     public static final Item MAGIC_HIVE = new BlockItem(ModBlocks.MAGIC_HIVE, new FabricItemSettings().group(DEFAULT_GROUP));
 
     public static final Item MAGIC_BEE_SPAWNER = new BlockItem(ModBlocks.MAGIC_BEE_SPAWNER, new FabricItemSettings().group(DEFAULT_GROUP));
 
-
-
+    // Guidebook
+    public static final Item GROVE_JOURNAL = new Item(new FabricItemSettings().group(DEFAULT_GROUP).maxCount(1));
 
     // Magic Infused Bee Spawn Egg (Purple and Yellow)
     public static final Item MAGIC_INFUSED_BEE_SPAWN_EGG = new SpawnEggItem(
@@ -97,7 +97,8 @@ public class ModItems {
         Registry.register(Registry.ITEM, new Identifier(VerdantArcanum.MOD_ID, "magic_bee_spawner"), MAGIC_BEE_SPAWNER);
 
 
-
+// Register guidebook
+        Registry.register(Registry.ITEM, new Identifier(VerdantArcanum.MOD_ID, "grove_journal"), GROVE_JOURNAL);
 
         // Register the Magic Infused Bee Spawn Egg
         Registry.register(Registry.ITEM, new Identifier(VerdantArcanum.MOD_ID, "magic_infused_bee_spawn_egg"), MAGIC_INFUSED_BEE_SPAWN_EGG);
