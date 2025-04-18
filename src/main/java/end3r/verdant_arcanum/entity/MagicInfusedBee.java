@@ -50,7 +50,7 @@ public class MagicInfusedBee extends BeeEntity {
 
 
     // Debug flag to show more detailed output
-    public static final boolean DEBUG_MODE = true;
+    public static final boolean DEBUG_MODE = false;
 
     static {
         // Initialize the mapping between flower blooms and spell essences
@@ -58,6 +58,8 @@ public class MagicInfusedBee extends BeeEntity {
         BLOOM_TO_ESSENCE_MAP.put(ModItems.BLINK_FLOWER_BLOOM, ModItems.SPELL_ESSENCE_BLINK);
         BLOOM_TO_ESSENCE_MAP.put(ModItems.ROOTGRASP_FLOWER_BLOOM, ModItems.SPELL_ESSENCE_ROOTGRASP);
         BLOOM_TO_ESSENCE_MAP.put(ModItems.GUST_FLOWER_BLOOM, ModItems.SPELL_ESSENCE_GUST);
+        BLOOM_TO_ESSENCE_MAP.put(ModItems.BREEZEVINE_FLOWER_BLOOM, ModItems.SPELL_ESSENCE_BREEZEVINE);
+
     }
 
     public MagicInfusedBee(EntityType<? extends BeeEntity> entityType, World world) {
@@ -319,6 +321,9 @@ public class MagicInfusedBee extends BeeEntity {
             } else if (state.isIn(ModTags.Blocks.GUST_FLOWERS_IN_BLOOM)) {
                 this.currentPollenType = ModItems.GUST_FLOWER_BLOOM;
                 if (DEBUG_MODE) System.out.println("Magic bee collected GUST pollen");
+            } else if (state.isIn(ModTags.Blocks.BREEZEVINE_FLOWERS_IN_BLOOM)) {
+                this.currentPollenType = ModItems.BREEZEVINE_FLOWER_BLOOM;
+                if (DEBUG_MODE) System.out.println("Magic bee collected BREEZEVINE pollen");
             }
         }
     }
@@ -439,6 +444,9 @@ public class MagicInfusedBee extends BeeEntity {
             }
             else if (essenceType == ModItems.SPELL_ESSENCE_GUST) {
                 soundEvent = SoundEvents.ENTITY_PHANTOM_FLAP;
+            }
+            else if (essenceType == ModItems.SPELL_ESSENCE_BREEZEVINE) {
+                soundEvent = SoundEvents.BLOCK_VINE_STEP; // Using vine step sound for breezevine
             }
 
             // Play the sound at the hive location
