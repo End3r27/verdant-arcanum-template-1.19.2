@@ -12,14 +12,12 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(PlayerEntity.class)
 public class EquipmentChangeMixin {
 
-    @Inject(method = "equipStack", at = @At("TAIL"))
+    @Inject(method = "equipStack", at = @At("RETURN"))
     private void onEquipStack(EquipmentSlot slot, ItemStack stack, CallbackInfo ci) {
         PlayerEntity player = (PlayerEntity) (Object) this;
 
-        // Get the previous stack in this slot
-        ItemStack previousStack = player.getEquippedStack(slot);
-
-        // Handle the equipment change
-        EnchantmentEquipHandler.onEquipmentChange(player, slot, previousStack, stack);
+        // We don't need to pass the previous stack - we'll do a full recalculation
+        // The previously equipped stack is already gone by this point
+        EnchantmentEquipHandler.onEquipmentChange(player, slot, ItemStack.EMPTY, stack);
     }
 }
