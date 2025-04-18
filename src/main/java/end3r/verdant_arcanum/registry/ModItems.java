@@ -41,12 +41,14 @@ public class ModItems {
     public static final Item BLINK_FLOWER_BLOOM = new BlinkFlowerBloomItem(ModBlocks.BLINK_BLOOM, new FabricItemSettings().group(DEFAULT_GROUP));
     public static final Item ROOTGRASP_FLOWER_BLOOM = new RootgraspFlowerBloomItem(ModBlocks.ROOTGRASP_BLOOM, new FabricItemSettings().group(DEFAULT_GROUP));
     public static final Item GUST_FLOWER_BLOOM = new GustFlowerBloomItem(ModBlocks.GUST_BLOOM, new FabricItemSettings().group(DEFAULT_GROUP));
+    public static final Item BREEZEVINE_FLOWER_BLOOM = new GustFlowerBloomItem(ModBlocks.BREEZEVINE_BLOOM, new FabricItemSettings().group(DEFAULT_GROUP));
 
     // Spell essences
     public static final Item SPELL_ESSENCE_FLAME = new SpellEssenceItem("flame", new FabricItemSettings().group(DEFAULT_GROUP).fireproof().maxCount(16));
     public static final Item SPELL_ESSENCE_BLINK = new SpellEssenceItem("blink", new Item.Settings().group(ItemGroup.MISC).maxCount(16));
     public static final Item SPELL_ESSENCE_ROOTGRASP = new SpellEssenceItem("rootgrasp", new Item.Settings().group(ItemGroup.MISC).maxCount(16));
     public static final Item SPELL_ESSENCE_GUST = new SpellEssenceItem("gust", new Item.Settings().group(ItemGroup.MISC).maxCount(16));
+    public static final Item SPELL_ESSENCE_BREEZEVINE = new SpellEssenceItem("breezevine", new Item.Settings().group(ItemGroup.MISC).maxCount(16));
 
 
     public static final Item MAGIC_HIVE = new BlockItem(ModBlocks.MAGIC_HIVE, new FabricItemSettings().group(DEFAULT_GROUP));
@@ -77,12 +79,14 @@ public class ModItems {
         Registry.register(Registry.ITEM, new Identifier(VerdantArcanum.MOD_ID, "blink_flower_bloom"), BLINK_FLOWER_BLOOM);
         Registry.register(Registry.ITEM, new Identifier(VerdantArcanum.MOD_ID, "rootgrasp_flower_bloom"), ROOTGRASP_FLOWER_BLOOM);
         Registry.register(Registry.ITEM, new Identifier(VerdantArcanum.MOD_ID, "gust_flower_bloom"), GUST_FLOWER_BLOOM);
+        Registry.register(Registry.ITEM, new Identifier(VerdantArcanum.MOD_ID, "breezevine_flower_bloom"), BREEZEVINE_FLOWER_BLOOM);
 
         // Register spell essences
         Registry.register(Registry.ITEM, new Identifier(VerdantArcanum.MOD_ID, "spell_essence_blink"), SPELL_ESSENCE_BLINK);
         Registry.register(Registry.ITEM, new Identifier(VerdantArcanum.MOD_ID, "spell_essence_rootgrasp"), SPELL_ESSENCE_ROOTGRASP);
         Registry.register(Registry.ITEM, new Identifier(VerdantArcanum.MOD_ID, "spell_essence_gust"), SPELL_ESSENCE_GUST);
         Registry.register(Registry.ITEM, new Identifier(VerdantArcanum.MOD_ID, "spell_essence_flame"), SPELL_ESSENCE_FLAME);
+        Registry.register(Registry.ITEM, new Identifier(VerdantArcanum.MOD_ID, "spell_essence_breezevine"), SPELL_ESSENCE_BREEZEVINE);
 
         Registry.register(Registry.ITEM, new Identifier(VerdantArcanum.MOD_ID, "magic_hive"), MAGIC_HIVE);
 

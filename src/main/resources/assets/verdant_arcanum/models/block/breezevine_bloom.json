@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/cross",
+  "textures": {
+    "cross": "verdant_arcanum:block/breezevine_bloom"
+  }
+}

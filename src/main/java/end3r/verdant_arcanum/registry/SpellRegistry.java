@@ -18,7 +18,7 @@ public class SpellRegistry {
         register("blink", new BlinkSpell());
         register("rootgrasp", new RootgraspSpell());
         register("gust", new GustSpell());
-
+        register("breezevine", new BreezevineSpell());
     }
 
     private static void register(String type, Spell spell) {

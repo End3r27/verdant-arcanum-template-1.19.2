@@ -101,5 +101,18 @@
   "block.verdant_arcanum.flame_bloom": "Flame Flower Bloom",
   "block.verdant_arcanum.blink_bloom": "Blink Flower Bloom",
   "block.verdant_arcanum.rootgrasp_bloom": "Rootgrasp Flower Bloom",
-  "block.verdant_arcanum.gust_bloom": "Gust Flower Bloom"
+  "block.verdant_arcanum.gust_bloom": "Gust Flower Bloom",
+
+
+  "spell.verdant_arcanum.breezevine": "Breezevine",
+  "spell.verdant_arcanum.breezevine.description": "Propels you backwards with a gust of wind, granting brief fall protection",
+  "item.verdant_arcanum.breezevine_flower": "Breezevine Flower",
+  "item.verdant_arcanum.breezevine_flower.tooltip": "A magical flower that harnesses the power of wind",
+  "item.verdant_arcanum.breezevine_seeds": "Breezevine Seeds",
+  "item.verdant_arcanum.breezevine_bloom": "Breezevine Bloom",
+  "item.verdant_arcanum.breezevine_bloom.tooltip": "Used in air magic to create gusts of wind",
+  "block.verdant_arcanum.breezevine_flower": "Breezevine Flower",
+  "block.verdant_arcanum.breezevine_bloom": "Breezevine Bloom"
+
+
 }

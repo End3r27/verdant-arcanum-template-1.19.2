@@ -35,6 +35,9 @@ public class ModRegistry {
                 stacks.add(new ItemStack(end3r.verdant_arcanum.registry.ModItems.SPELL_ESSENCE_ROOTGRASP));
                 stacks.add(new ItemStack(end3r.verdant_arcanum.registry.ModItems.SPELL_ESSENCE_GUST));
 
+                stacks.add(new ItemStack(ModItems.BREEZEVINE_FLOWER_BLOOM));
+                stacks.add(new ItemStack(end3r.verdant_arcanum.registry.ModItems.SPELL_ESSENCE_BREEZEVINE));
+
                 // Add magical tools
                 stacks.add(new ItemStack(ModItems.LIVING_STAFF));
 

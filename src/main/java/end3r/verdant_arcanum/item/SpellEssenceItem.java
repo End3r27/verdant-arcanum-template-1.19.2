@@ -171,7 +171,8 @@ public class SpellEssenceItem extends Item {
             case "blink" -> Formatting.LIGHT_PURPLE;
             case "gust" -> Formatting.AQUA;
             case "rootgrasp" -> Formatting.GREEN;
-            case "timestop" -> Formatting.GOLD; // Adding formatting for TimeStop
+            case "timestop" -> Formatting.GOLD;
+            case "breezevine" -> Formatting.BLUE; // Adding formatting for Breezevine
             default -> Formatting.GRAY;
         };
     }
