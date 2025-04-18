@@ -46,8 +46,15 @@ public class ModRegistry {
                 stacks.add(new ItemStack(ModBlocks.MAGIC_BEE_SPAWNER));
                 stacks.add(new ItemStack(ModItems.MAGIC_HIVE));
 
+                // Add the Grove Journal
+                ItemStack groveJournal = ModBooks.getGroveJournalStack();
+                if (!groveJournal.isEmpty()) {
+                    stacks.add(groveJournal);
+                } else {
+                    stacks.add(new ItemStack(ModItems.GROVE_JOURNAL));
+                }
 
-                stacks.add(new ItemStack(ModItems.GROVE_JOURNAL));
+
 
             })
             .build();
@@ -71,10 +78,11 @@ public class ModRegistry {
         ModBlockEntities.register();
         ModScreenHandlers.register();
 
-        ModBooks.registerBooks();
-
 
         registerModTags();
+
+        ModBooks.registerBooks();
+
 
 
 

@@ -9,17 +9,16 @@ import end3r.verdant_arcanum.util.TooltipUtils;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.minecraft.block.Block;
 import net.minecraft.client.item.TooltipContext;
-import net.minecraft.item.AliasedBlockItem;
-import net.minecraft.item.BlockItem;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemGroup;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.SpawnEggItem;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.*;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
+import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.TypedActionResult;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.World;
+import vazkii.patchouli.api.PatchouliAPI;
 
 import java.util.List;
 
@@ -55,8 +54,17 @@ public class ModItems {
 
     public static final Item MAGIC_BEE_SPAWNER = new BlockItem(ModBlocks.MAGIC_BEE_SPAWNER, new FabricItemSettings().group(DEFAULT_GROUP));
 
-    // Guidebook
-    public static final Item GROVE_JOURNAL = new Item(new FabricItemSettings().group(DEFAULT_GROUP).maxCount(1));
+    // Grove Journal book
+    public static final Item GROVE_JOURNAL = new Item(new FabricItemSettings().group(DEFAULT_GROUP).maxCount(1)) {
+        @Override
+        public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
+            if (world.isClient) {
+                PatchouliAPI.get().openBookGUI(ModBooks.GROVE_JOURNAL);
+            }
+            return TypedActionResult.success(user.getStackInHand(hand));
+        }
+    };
+
 
     // Magic Infused Bee Spawn Egg (Purple and Yellow)
     public static final Item MAGIC_INFUSED_BEE_SPAWN_EGG = new SpawnEggItem(
@@ -96,9 +104,8 @@ public class ModItems {
 
         Registry.register(Registry.ITEM, new Identifier(VerdantArcanum.MOD_ID, "magic_bee_spawner"), MAGIC_BEE_SPAWNER);
 
-
-// Register guidebook
         Registry.register(Registry.ITEM, new Identifier(VerdantArcanum.MOD_ID, "grove_journal"), GROVE_JOURNAL);
+
 
         // Register the Magic Infused Bee Spawn Egg
         Registry.register(Registry.ITEM, new Identifier(VerdantArcanum.MOD_ID, "magic_infused_bee_spawn_egg"), MAGIC_INFUSED_BEE_SPAWN_EGG);

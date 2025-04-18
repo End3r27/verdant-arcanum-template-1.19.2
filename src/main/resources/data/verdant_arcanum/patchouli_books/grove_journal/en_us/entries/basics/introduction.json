@@ -1,0 +1,16 @@
+{
+  "name": "Introduction to Botanical Magic",
+  "icon": "minecraft:book",
+  "category": "basics",
+  "sortnum": 0,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "Welcome to the Grove Journal, your guide to the magical arts of botanical cultivation and arcane herbology.$(br2)Within these pages, you'll discover the secrets of nurturing magical plants and harnessing their powers to cast spells and create wondrous items."
+    },
+    {
+      "type": "patchouli:text",
+      "text": "The path of a botanical mage begins with understanding the fundamental connection between nature and magic. As you progress, you'll learn to grow magical flowers, extract their essences, and ultimately wield their powers through specialized tools.$(br2)Let this journal be your companion on this magical journey."
+    }
+  ]
+}

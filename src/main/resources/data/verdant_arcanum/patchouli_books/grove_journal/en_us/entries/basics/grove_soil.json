@@ -1,0 +1,22 @@
+{
+  "name": "Grove Soil",
+  "icon": "verdant_arcanum:grove_soil",
+  "category": "basics",
+  "sortnum": 1,
+  "pages": [
+    {
+      "type": "patchouli:spotlight",
+      "item": "verdant_arcanum:grove_soil",
+      "text": "Grove Soil is rich, fertile earth infused with arcane energy. It forms the foundation of all botanical magic, providing the necessary environment for magical plants to thrive."
+    },
+    {
+      "type": "patchouli:text",
+      "text": "All magical flora requires Grove Soil to properly grow and develop their arcane properties. The soil accelerates growth and nurtures the magical essence within the plants.$(br2)Without Grove Soil, magical seeds will fail to germinate, or worse, lose their magical properties entirely."
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "verdant_arcanum:grove_soil",
+      "text": "To create Grove Soil, you must infuse ordinary dirt with honeycomb. The resulting soil will emit a faint, ethereal glow when magical seeds are planted in it."
+    }
+  ]
+}

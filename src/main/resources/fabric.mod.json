@@ -33,7 +33,7 @@
 		"fabric-api": "*",
 		"minecraft": "~1.19.2",
 		"java": ">=17",
-		"patchouli": ">=1.19.2-77"
+		"patchouli": ">=1.19.2-77-FABRIC"
 
 	},
 	"suggests": {

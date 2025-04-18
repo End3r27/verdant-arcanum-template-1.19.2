@@ -2,14 +2,11 @@ package end3r.verdant_arcanum;
 
 import end3r.verdant_arcanum.client.gui.MagicHiveScreen;
 import end3r.verdant_arcanum.entity.client.MagicInfusedBeeRenderer;
-import end3r.verdant_arcanum.registry.ModBlocks;
-import end3r.verdant_arcanum.registry.ModEntities;
-import end3r.verdant_arcanum.registry.ModScreenHandlers;
+import end3r.verdant_arcanum.registry.*;
 import end3r.verdant_arcanum.screen.LivingStaffScreen;
 import end3r.verdant_arcanum.item.LivingStaffItem;
 import end3r.verdant_arcanum.magic.ManaSystem;
 import end3r.verdant_arcanum.magic.ManaParticleSystem;
-import end3r.verdant_arcanum.registry.SpellRegistry;
 import end3r.verdant_arcanum.screen.LivingStaffScreenHandler;
 import end3r.verdant_arcanum.spell.Spell;
 import net.fabricmc.api.ClientModInitializer;
@@ -87,6 +84,9 @@ public class VerdantArcanumClient implements ClientModInitializer {
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.ROOTGRASP_BLOOM, RenderLayer.getCutout());
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.GUST_BLOOM, RenderLayer.getCutout());
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.BREEZEVINE_BLOOM, RenderLayer.getCutout());
+
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.FLAME_FLOWER, RenderLayer.getCutout());
+
 
 
         HandledScreens.register(ModScreenHandlers.MAGIC_HIVE_SCREEN_HANDLER, MagicHiveScreen::new);

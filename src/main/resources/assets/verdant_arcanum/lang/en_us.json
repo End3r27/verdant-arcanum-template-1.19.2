@@ -121,8 +121,12 @@
 
   "tooltip.verdant_arcanum.magic_bee_spawner": "Spawns Magic Infused Bees in the area",
   "tooltip.verdant_arcanum.magic_bee_spawner.detailed.1": "Will maintain up to 10 bees in the spawner radius",
-  "tooltip.verdant_arcanum.magic_bee_spawner.detailed.2": "Right-click to check how many bees are currently in range"
+  "tooltip.verdant_arcanum.magic_bee_spawner.detailed.2": "Right-click to check how many bees are currently in range",
 
+
+  "item.verdant_arcanum.grove_journal": "Grove Journal",
+  "tooltip.verdant_arcanum.grove_journal": "A compendium of botanical magic",
+  "tooltip.verdant_arcanum.grove_journal.info": "Right-click to open the journal"
 
 
 }
