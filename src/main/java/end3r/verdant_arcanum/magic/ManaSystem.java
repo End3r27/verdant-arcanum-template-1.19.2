@@ -18,17 +18,21 @@ public class ManaSystem {
     private final Map<UUID, PlayerMana> playerManaMap = new HashMap<>();
 
     // Default max mana for new players
-    private static final int DEFAULT_MAX_MANA = 100;
+    public static final int DEFAULT_MAX_MANA = 100;
 
-    // Mana regeneration rate (per tick)
-    private static final float MANA_REGEN_RATE = 0.05f;
+
+    // Default mana regeneration rate (per tick)
+    public static final float DEFAULT_MANA_REGEN_RATE = 0.05f;
+
+    // Map for tracking custom regeneration multipliers per player
+    private final Map<UUID, Float> regenMultipliers = new HashMap<>();
 
     private ManaSystem() {
         // Private constructor for singleton
     }
 
     /**
-     * Get the singleton instance
+     * Get the singleton instance of ManaSystem.
      */
     public static ManaSystem getInstance() {
         if (INSTANCE == null) {
@@ -38,75 +42,88 @@ public class ManaSystem {
     }
 
     /**
-     * Get a player's mana data, creating it if it doesn't exist
+     * Get a player's mana data, creating it if it doesn't exist.
      */
     public PlayerMana getPlayerMana(PlayerEntity player) {
-        UUID playerUuid = player.getUuid();
-
-        if (!playerManaMap.containsKey(playerUuid)) {
-            playerManaMap.put(playerUuid, new PlayerMana(DEFAULT_MAX_MANA));
-        }
-
-        return playerManaMap.get(playerUuid);
+        return playerManaMap.computeIfAbsent(player.getUuid(), uuid -> new PlayerMana(DEFAULT_MAX_MANA));
     }
 
     /**
-     * Use mana for a spell if available
-     * @return true if the spell can be cast, false if not enough mana
+     * Check if a player has enough mana to cast a spell or perform an action.
+     *
+     * @param player the player entity
+     * @param manaCost the mana amount required
+     * @return true if the player has enough mana, false otherwise
+     */
+    public boolean hasEnoughMana(PlayerEntity player, int manaCost) {
+        PlayerMana playerMana = getPlayerMana(player);
+        return playerMana.getCurrentMana() >= manaCost;
+    }
+
+    /**
+     * Use mana for a spell or action if the player has enough.
+     *
+     * @param player the player entity
+     * @param amount the mana amount to consume
+     * @return true if mana was consumed, false if not enough mana
      */
     public boolean useMana(PlayerEntity player, int amount) {
-        PlayerMana mana = getPlayerMana(player);
-
-        if (mana.getCurrentMana() >= amount) {
-            mana.consumeMana(amount);
-
-            // Spawn mana consumption particles on the client side
-            if (player.getWorld().isClient()) {
-                ManaParticleSystem.getInstance().createManaConsumptionBurst(player, amount);
-            }
-
+        PlayerMana playerMana = getPlayerMana(player);
+        if (playerMana.getCurrentMana() >= amount) {
+            playerMana.consumeMana(amount);
             return true;
         }
-
         return false;
     }
 
-    /**
-     * Update mana regeneration for a player (call each tick)
-     */
-    public void updateManaRegen(PlayerEntity player) {
-        PlayerMana mana = getPlayerMana(player);
-        float prevMana = mana.getCurrentMana();
-        mana.regenerateMana(MANA_REGEN_RATE);
 
-        // Update particles on client side
-        if (player.getWorld().isClient()) {
-            ManaParticleSystem.getInstance().updateManaParticles(player);
+
+    public void updateManaRegen(PlayerEntity player) {
+        updateManaRegen(player, 1.0f); // Default multiplier of 1.0 (no buff)
+    }
+
+    /**
+     * Update mana regeneration for a player, allowing custom multipliers.
+     *
+     * @param player the player entity
+     * @param regenMultiplier a multiplier to apply to the default mana regen rate
+     */
+    public void updateManaRegen(PlayerEntity player, float regenMultiplier) {
+        PlayerMana playerMana = getPlayerMana(player);
+        regenMultipliers.put(player.getUuid(), regenMultiplier);
+
+        float currentMana = playerMana.getCurrentMana();
+        if (currentMana < playerMana.getMaxMana()) {
+            float regenRate = DEFAULT_MANA_REGEN_RATE * regenMultiplier;
+            playerMana.regenerateMana(regenRate);
         }
     }
 
     /**
-     * Save player mana to NBT data
+     * Save player mana to NBT data.
      */
     public void savePlayerMana(PlayerEntity player, NbtCompound nbt) {
-        PlayerMana mana = getPlayerMana(player);
-        nbt.putFloat("currentMana", mana.getCurrentMana());
-        nbt.putInt("maxMana", mana.getMaxMana());
+        PlayerMana playerMana = getPlayerMana(player);
+        NbtCompound manaData = new NbtCompound();
+        manaData.putInt("MaxMana", playerMana.getMaxMana());
+        manaData.putFloat("CurrentMana", playerMana.getCurrentMana());
+        nbt.put("PlayerMana", manaData);
     }
 
     /**
-     * Load player mana from NBT data
+     * Load player mana from NBT data.
      */
     public void loadPlayerMana(PlayerEntity player, NbtCompound nbt) {
-        if (nbt.contains("currentMana") && nbt.contains("maxMana")) {
-            float currentMana = nbt.getFloat("currentMana");
-            int maxMana = nbt.getInt("maxMana");
+        if (nbt.contains("PlayerMana")) {
+            NbtCompound manaData = nbt.getCompound("PlayerMana");
+            int maxMana = manaData.getInt("MaxMana");
+            float currentMana = manaData.getFloat("CurrentMana");
             playerManaMap.put(player.getUuid(), new PlayerMana(maxMana, currentMana));
         }
     }
 
     /**
-     * Inner class to store mana data for a player
+     * Inner class to represent a player's mana data.
      */
     public static class PlayerMana {
         private int maxMana;
@@ -114,48 +131,51 @@ public class ManaSystem {
 
         public PlayerMana(int maxMana) {
             this.maxMana = maxMana;
-            this.currentMana = maxMana;
+            this.currentMana = maxMana; // Start with full mana
         }
 
         public PlayerMana(int maxMana, float currentMana) {
             this.maxMana = maxMana;
-            this.currentMana = Math.min(currentMana, maxMana);
+            this.currentMana = currentMana;
         }
 
         public int getMaxMana() {
             return maxMana;
         }
 
+        public void setMaxMana(int maxMana) {
+            this.maxMana = maxMana;
+            if (currentMana > maxMana) {
+                currentMana = maxMana; // Ensure current mana doesn't exceed max mana
+            }
+        }
+
         public float getCurrentMana() {
             return currentMana;
         }
 
-        public void setMaxMana(int maxMana) {
-            this.maxMana = maxMana;
-            // Cap current mana to max
-            if (currentMana > maxMana) {
-                currentMana = maxMana;
+        public void consumeMana(float amount) {
+            currentMana -= amount;
+            if (currentMana < 0) {
+                currentMana = 0; // Mana can't go negative
             }
         }
 
-        public void consumeMana(float amount) {
-            currentMana = Math.max(0, currentMana - amount);
-        }
-
         public void regenerateMana(float amount) {
-            currentMana = Math.min(maxMana, currentMana + amount);
+            currentMana += amount;
+            if (currentMana > maxMana) {
+                currentMana = maxMana; // Mana can't exceed max mana
+            }
         }
 
         /**
-         * Get current mana as a percentage (0.0 to 1.0)
+         * Get current mana as a percentage of the maximum mana.
+         * This method returns a float (range 0.0 to 1.0).
+         *
+         * @return current mana percentage
          */
         public float getManaPercentage() {
             return currentMana / maxMana;
         }
-    }
-    // Add this method to ManaSystem.java
-    public boolean hasEnoughMana(PlayerEntity player, int manaCost) {
-        // Check if the player has enough mana without consuming it
-        return getPlayerMana(player).getCurrentMana() >= manaCost;
     }
 }

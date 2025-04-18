@@ -1,6 +1,7 @@
 package end3r.verdant_arcanum.registry;
 
 import end3r.verdant_arcanum.VerdantArcanum;
+import end3r.verdant_arcanum.magic.EnchantmentEquipHandler;
 import net.fabricmc.fabric.api.client.itemgroup.FabricItemGroupBuilder;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
@@ -83,6 +84,9 @@ public class ModRegistry {
 
         ModBooks.registerBooks();
 
+        ModEnchantments.registerEnchantments();
+
+        EnchantmentEquipHandler.registerEvents();
 
 
 

@@ -126,7 +126,12 @@
 
   "item.verdant_arcanum.grove_journal": "Grove Journal",
   "tooltip.verdant_arcanum.grove_journal": "A compendium of botanical magic",
-  "tooltip.verdant_arcanum.grove_journal.info": "Right-click to open the journal"
+  "tooltip.verdant_arcanum.grove_journal.info": "Right-click to open the journal",
 
+
+  "enchantment.verdant_arcanum.max_mana": "Max Mana",
+  "enchantment.verdant_arcanum.max_mana.desc": "Increases your maximum mana capacity.",
+  "enchantment.verdant_arcanum.mana_regen": "Mana Regen",
+  "enchantment.verdant_arcanum.mana_regen.desc": "Improves your mana regeneration rate."
 
 }
