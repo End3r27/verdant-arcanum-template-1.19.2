@@ -3,7 +3,6 @@ package end3r.verdant_arcanum.registry;
 import end3r.verdant_arcanum.VerdantArcanum;
 import end3r.verdant_arcanum.magic.ManaEventHandler;
 import end3r.verdant_arcanum.magic.ManaSyncPacket;
-import end3r.verdant_arcanum.magic.ManaSystem;
 import end3r.verdant_arcanum.network.NetworkHandler;
 import end3r.verdant_arcanum.spell.SolarBloomSpell;
 import net.fabricmc.fabric.api.client.itemgroup.FabricItemGroupBuilder;
@@ -45,6 +44,9 @@ public class ModRegistry {
 
                 stacks.add(new ItemStack(ModItems.BREEZEVINE_FLOWER_BLOOM));
                 stacks.add(new ItemStack(end3r.verdant_arcanum.registry.ModItems.SPELL_ESSENCE_BREEZEVINE));
+
+                stacks.add(new ItemStack(ModItems.SOLARBLOOM_FLOWER_BLOOM));
+                stacks.add(new ItemStack(ModItems.SPELL_ESSENCE_SOLARBLOOM));
 
                 // Add magical tools
                 stacks.add(new ItemStack(ModItems.LIVING_STAFF));

@@ -103,7 +103,7 @@ public class ModBlocks {
             FabricBlockSettings.of(Material.DECORATION)
                     .strength(0.2f)
                     .sounds(BlockSoundGroup.GRASS)
-                    .luminance(5)
+                    .luminance(6) // Adjust this value as needed
                     .ticksRandomly()
     );
 

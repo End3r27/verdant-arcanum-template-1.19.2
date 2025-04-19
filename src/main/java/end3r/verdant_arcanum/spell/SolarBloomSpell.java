@@ -29,7 +29,7 @@ public class SolarBloomSpell implements Spell {
     private static final int MANA_COST = 200;
     private static final int DURATION_TICKS = 150; // 5 seconds
     private static final double RANGE = 64.0;
-    private static final double WIDTH = 4.0;
+    private static final double WIDTH = 2.5;
     private static final float DAMAGE_PER_TICK = 6f;
     private static final Map<UUID, Long> clientActiveSpells = new HashMap<>();
     public static void addClientSpell(UUID playerId, int durationTicks) {

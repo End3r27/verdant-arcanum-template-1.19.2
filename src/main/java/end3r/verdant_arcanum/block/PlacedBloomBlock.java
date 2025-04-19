@@ -5,10 +5,12 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.ShapeContext;
+import net.minecraft.entity.Entity;
 import net.minecraft.tag.BlockTags;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.world.BlockView;
+import net.minecraft.world.World;
 import net.minecraft.world.WorldView;
 
 public class PlacedBloomBlock extends Block {
@@ -31,5 +33,9 @@ public class PlacedBloomBlock extends Block {
         return blockState.isOf(Blocks.GRASS_BLOCK) ||
                 blockState.isOf(ModBlocks.GROVE_SOIL) ||
                 blockState.isIn(BlockTags.DIRT);
+    }
+    @Override
+    public void onEntityCollision(BlockState state, World world, BlockPos pos, Entity entity) {
+        // Default implementation (can be empty)
     }
 }

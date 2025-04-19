@@ -320,6 +320,9 @@ public class MagicInfusedBee extends BeeEntity {
             } else if (state.isIn(ModTags.Blocks.BREEZEVINE_FLOWERS_IN_BLOOM)) {
                 this.currentPollenType = ModItems.BREEZEVINE_FLOWER_BLOOM;
                 if (DEBUG_MODE) System.out.println("Magic bee collected BREEZEVINE pollen");
+            } else if (state.isIn(ModTags.Blocks.SOLARBLOOM_FLOWERS_IN_BLOOM)) {
+                this.currentPollenType = ModItems.SOLARBLOOM_FLOWER_BLOOM;
+                if (DEBUG_MODE) System.out.println("Magic bee collected SOLARBLOOM pollen");
             }
         }
     }
@@ -442,7 +445,10 @@ public class MagicInfusedBee extends BeeEntity {
                 soundEvent = SoundEvents.ENTITY_PHANTOM_FLAP;
             }
             else if (essenceType == ModItems.SPELL_ESSENCE_BREEZEVINE) {
-                soundEvent = SoundEvents.BLOCK_VINE_STEP; // Using vine step sound for breezevine
+                soundEvent = SoundEvents.BLOCK_VINE_STEP;
+            }
+            else if (essenceType == ModItems.SPELL_ESSENCE_SOLARBLOOM) {
+                soundEvent = SoundEvents.ENTITY_BLAZE_SHOOT;
             }
 
             // Play the sound at the hive location

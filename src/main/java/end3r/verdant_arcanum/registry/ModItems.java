@@ -42,7 +42,8 @@ public class ModItems {
     public static final Item BLINK_FLOWER_BLOOM = new BlinkFlowerBloomItem(ModBlocks.BLINK_BLOOM, new FabricItemSettings().group(DEFAULT_GROUP));
     public static final Item ROOTGRASP_FLOWER_BLOOM = new RootgraspFlowerBloomItem(ModBlocks.ROOTGRASP_BLOOM, new FabricItemSettings().group(DEFAULT_GROUP));
     public static final Item GUST_FLOWER_BLOOM = new GustFlowerBloomItem(ModBlocks.GUST_BLOOM, new FabricItemSettings().group(DEFAULT_GROUP));
-    public static final Item BREEZEVINE_FLOWER_BLOOM = new GustFlowerBloomItem(ModBlocks.BREEZEVINE_BLOOM, new FabricItemSettings().group(DEFAULT_GROUP));
+    public static final Item BREEZEVINE_FLOWER_BLOOM = new BreezevineFlowerBloomItem(ModBlocks.BREEZEVINE_BLOOM, new FabricItemSettings().group(DEFAULT_GROUP));
+    public static final Item SOLARBLOOM_FLOWER_BLOOM = new SolarbloomFlowerBloomItem(ModBlocks.SOLARBLOOM_BLOOM, new FabricItemSettings().group(DEFAULT_GROUP));
 
     // Spell essences
     public static final Item SPELL_ESSENCE_FLAME = new SpellEssenceItem("flame", new FabricItemSettings().group(DEFAULT_GROUP).fireproof().maxCount(16));
@@ -99,6 +100,7 @@ public class ModItems {
         Registry.register(Registry.ITEM, new Identifier(VerdantArcanum.MOD_ID, "rootgrasp_flower_bloom"), ROOTGRASP_FLOWER_BLOOM);
         Registry.register(Registry.ITEM, new Identifier(VerdantArcanum.MOD_ID, "gust_flower_bloom"), GUST_FLOWER_BLOOM);
         Registry.register(Registry.ITEM, new Identifier(VerdantArcanum.MOD_ID, "breezevine_flower_bloom"), BREEZEVINE_FLOWER_BLOOM);
+        Registry.register(Registry.ITEM, new Identifier(VerdantArcanum.MOD_ID, "solarbloom_flower_bloom"), SOLARBLOOM_FLOWER_BLOOM);
 
         // Register spell essences
         Registry.register(Registry.ITEM, new Identifier(VerdantArcanum.MOD_ID, "spell_essence_blink"), SPELL_ESSENCE_BLINK);
@@ -304,6 +306,9 @@ public class ModItems {
             super(gustBloom, settings);
         }
 
+
+
+
         @Override
         public void appendTooltip(ItemStack stack, World world, List<Text> tooltip, TooltipContext context) {
             TooltipUtils.addTooltipWithShift(
@@ -316,6 +321,56 @@ public class ModItems {
                     () -> new Text[] {
                             TooltipUtils.createTooltip("tooltip.verdant_arcanum.gust_flower_bloom.detailed.1", Formatting.GRAY),
                             TooltipUtils.createTooltip("tooltip.verdant_arcanum.gust_flower_bloom.detailed.2", Formatting.WHITE, Formatting.ITALIC)
+                    }
+            );
+            super.appendTooltip(stack, world, tooltip, context);
+        }
+    }
+    public static class BreezevineFlowerBloomItem extends BlockItem {
+        public BreezevineFlowerBloomItem(Block gustBloom, Settings settings) {
+            super(gustBloom, settings);
+        }
+
+
+
+
+        @Override
+        public void appendTooltip(ItemStack stack, World world, List<Text> tooltip, TooltipContext context) {
+            TooltipUtils.addTooltipWithShift(
+                    stack, world, tooltip, context,
+                    // Basic info supplier
+                    () -> new Text[] {
+                            TooltipUtils.createTooltip("tooltip.verdant_arcanum.breezevine_flower_bloom", Formatting.WHITE)
+                    },
+                    // Detailed info supplier (shown when shift is pressed)
+                    () -> new Text[] {
+                            TooltipUtils.createTooltip("tooltip.verdant_arcanum.breezevine_flower_bloom.detailed.1", Formatting.GRAY),
+                            TooltipUtils.createTooltip("tooltip.verdant_arcanum.breezevine_flower_bloom.detailed.2", Formatting.WHITE, Formatting.ITALIC)
+                    }
+            );
+            super.appendTooltip(stack, world, tooltip, context);
+        }
+    }
+    public static class SolarbloomFlowerBloomItem extends BlockItem {
+        public SolarbloomFlowerBloomItem(Block gustBloom, Settings settings) {
+            super(gustBloom, settings);
+        }
+
+
+
+
+        @Override
+        public void appendTooltip(ItemStack stack, World world, List<Text> tooltip, TooltipContext context) {
+            TooltipUtils.addTooltipWithShift(
+                    stack, world, tooltip, context,
+                    // Basic info supplier
+                    () -> new Text[] {
+                            TooltipUtils.createTooltip("tooltip.verdant_arcanum.solarbloom_flower_bloom", Formatting.WHITE)
+                    },
+                    // Detailed info supplier (shown when shift is pressed)
+                    () -> new Text[] {
+                            TooltipUtils.createTooltip("tooltip.verdant_arcanum.solarbloom_flower_bloom.detailed.1", Formatting.GRAY),
+                            TooltipUtils.createTooltip("tooltip.verdant_arcanum.solarbloom_flower_bloom.detailed.2", Formatting.WHITE, Formatting.ITALIC)
                     }
             );
             super.appendTooltip(stack, world, tooltip, context);
