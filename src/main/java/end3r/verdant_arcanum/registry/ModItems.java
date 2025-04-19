@@ -3,6 +3,7 @@ package end3r.verdant_arcanum.registry;
 import end3r.verdant_arcanum.VerdantArcanum;
 
 import end3r.verdant_arcanum.item.LivingStaffItem;
+import end3r.verdant_arcanum.item.LivingStaffMk2Item;
 import end3r.verdant_arcanum.item.SpellEssenceItem;
 import end3r.verdant_arcanum.magic.ManaRegenEnchantment;
 import end3r.verdant_arcanum.magic.MaxManaEnchantment;
@@ -87,7 +88,10 @@ public class ModItems {
             new FabricItemSettings().group(DEFAULT_GROUP)
     );
 
-    public static final Item LIVING_STAFF = new LivingStaffItem(new FabricItemSettings().group(DEFAULT_GROUP).maxCount(1).maxDamage(256));
+    public static final Item LIVING_STAFF = new LivingStaffItem(new FabricItemSettings().group(DEFAULT_GROUP).maxCount(1));
+
+    public static final Item LIVING_STAFF_MK2 = new LivingStaffMk2Item(
+            new FabricItemSettings().group(DEFAULT_GROUP).maxCount(1).fireproof());
 
     // This method will be called from ModRegistry
     public static void register() {
@@ -136,6 +140,9 @@ public class ModItems {
         Registry.register(Registry.ITEM, new Identifier(VerdantArcanum.MOD_ID, "magic_infused_bee_spawn_egg"), MAGIC_INFUSED_BEE_SPAWN_EGG);
 
         Registry.register(Registry.ITEM, new Identifier(VerdantArcanum.MOD_ID, "living_staff"), LIVING_STAFF);
+
+        Registry.register(Registry.ITEM, new Identifier(VerdantArcanum.MOD_ID, "living_staff_mk2"), LIVING_STAFF_MK2);
+
     }
 
     // Custom item class for Flame Flower Seeds with tooltip

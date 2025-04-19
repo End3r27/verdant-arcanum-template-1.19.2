@@ -179,6 +179,15 @@
   "tooltip.verdant_arcanum.spell_essence.phantomstep.spell": "Allows temporary Invisibility",
 
   "block.verdant_arcanum.phantomstep_bloom": "PhantomStep Bloom",
+  "item.verdant_arcanum.spell_essence_phantomstep": "Spell Essence: PhantomStep",
 
-  "item.verdant_arcanum.spell_essence_phantomstep": "Spell Essence: PhantomStep"
+
+
+  "item.verdant_arcanum.living_staff_mk2": "Living Staff MK2",
+  "tooltip.verdant_arcanum.living_staff_mk2": "A more advanced magical staff that can hold up to 5 spell essences.",
+  "tooltip.verdant_arcanum.living_staff_mk2.mana_reduction": "Mana Cost Reduction: %d%%",
+  "tooltip.verdant_arcanum.living_staff_mk2.detailed.4": "Reduce spell mana costs by 10%.",
+  "tooltip.verdant_arcanum.living_staff_mk2.spell_slot": "%s[Slot %d: %s]%s"
+
+
 }

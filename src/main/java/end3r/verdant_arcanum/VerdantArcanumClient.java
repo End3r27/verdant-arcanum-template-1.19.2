@@ -4,8 +4,12 @@ import end3r.verdant_arcanum.client.ClientEvents;
 import end3r.verdant_arcanum.client.gui.MagicHiveScreen;
 import end3r.verdant_arcanum.client.ui.ManaHudRenderer;
 import end3r.verdant_arcanum.entity.client.MagicInfusedBeeRenderer;
+import end3r.verdant_arcanum.item.LivingStaffMk2Item;
 import end3r.verdant_arcanum.magic.ManaSyncPacket;
+import end3r.verdant_arcanum.network.StaffPacketHandlerMk2;
 import end3r.verdant_arcanum.registry.*;
+import end3r.verdant_arcanum.screen.LivingStaffMk2Screen;
+import end3r.verdant_arcanum.screen.LivingStaffMk2ScreenHandler;
 import end3r.verdant_arcanum.screen.LivingStaffScreen;
 import end3r.verdant_arcanum.item.LivingStaffItem;
 import end3r.verdant_arcanum.magic.ManaParticleSystem;
@@ -68,40 +72,81 @@ public class VerdantArcanumClient implements ClientModInitializer {
                 // Register the ManaHudRenderer
                 ManaHudRenderer.register();
 
-                ClientTickEvents.END_CLIENT_TICK.register(tickClient -> {
-                    if (tickClient.player != null && tickClient.player.isSneaking() && mouseScrolled) {
-                        ItemStack mainHandItem = tickClient.player.getMainHandStack();
-                        ItemStack offHandItem = tickClient.player.getOffHandStack();
+        // Use a SINGLE scroll handler
+        ClientTickEvents.END_CLIENT_TICK.register(client -> {
+            // Check if player exists and is connected to a server
+            if (client.player != null && client.getNetworkHandler() != null && client.player.isSneaking()) {
+                // Get scroll value from the custom mouseScrolled variable
+                if (mouseScrolled) {
+                    // Direction already determined in GLFW callback
+                    int direction = scrollDirection;
 
-                        // Only handle if player has a staff
-                        if (mainHandItem.getItem() instanceof LivingStaffItem ||
-                                offHandItem.getItem() instanceof LivingStaffItem) {
+                    // Send packet to server (only if we're connected to a server)
+                    StaffPacketHandlerMk2.sendScrollPacket(direction);
 
-                            // Send packet to server instead of handling locally
-                            end3r.verdant_arcanum.network.StaffPacketHandler.sendScrollPacket(scrollDirection);
-                        }
+                    // Reset the mouseScrolled flag
+                    mouseScrolled = false;
+                }
+            }
+        });
 
-                        // Reset after handling (important to prevent repeated scrolling)
-                        mouseScrolled = false;
+        // Register client started event for mouse scroll setup
+        ClientLifecycleEvents.CLIENT_STARTED.register(startedClient -> {
+            // Store the original callback
+            long window = startedClient.getWindow().getHandle();
+            originalScrollCallback = GLFW.glfwSetScrollCallback(window, null);
+
+            // Set our custom callback
+            GLFW.glfwSetScrollCallback(window, (windowHandle, xoffset, yoffset) -> {
+                // Check if player is sneaking and has a staff
+                boolean shouldHandleStaffScroll = false;
+
+                if (MinecraftClient.getInstance().player != null && MinecraftClient.getInstance().player.isSneaking()) {
+                    ItemStack mainHandItem = MinecraftClient.getInstance().player.getMainHandStack();
+                    ItemStack offHandItem = MinecraftClient.getInstance().player.getOffHandStack();
+
+                    if (mainHandItem.getItem() instanceof LivingStaffItem ||
+                            offHandItem.getItem() instanceof LivingStaffItem ||
+                            mainHandItem.getItem() instanceof LivingStaffMk2Item ||
+                            offHandItem.getItem() instanceof LivingStaffMk2Item) {
+                        shouldHandleStaffScroll = true;
                     }
-                });
+                }
 
-                // Register the screen handler type
+                // Only capture for staff if relevant
+                if (shouldHandleStaffScroll) {
+                    mouseScrolled = true;
+                    scrollDirection = yoffset > 0 ? 1 : -1;
+                } else if (originalScrollCallback != null) {
+                    // Call the original callback for default behavior
+                    originalScrollCallback.invoke(windowHandle, xoffset, yoffset);
+                }
+            });
+        });
+
+
+
+
+
+        // Register the screen handler type
                 LivingStaffScreenHandler.register();
 
-                // Register the screen handler with the correct screen factory
+                LivingStaffMk2ScreenHandler.register();
+
+
+        // Register the screen handler with the correct screen factory
                 ScreenRegistry.register(LivingStaffScreenHandler.HANDLER_TYPE, LivingStaffScreen::new);
 
-                // Ensure ManaParticleSystem is initialized
-                ManaParticleSystem.getInstance();
 
-                // Get a reference to the MinecraftClient instance
-                MinecraftClient client = MinecraftClient.getInstance();
+                ScreenRegistry.register(LivingStaffMk2ScreenHandler.HANDLER_TYPE, LivingStaffMk2Screen::new);
+
+        // Ensure ManaParticleSystem is initialized
+                ManaParticleSystem.getInstance();
 
                 // Register client started event for mouse scroll setup
                 ClientLifecycleEvents.CLIENT_STARTED.register(startedClient -> {
                     // Store the original callback
-                    long window = client.getWindow().getHandle();
+                    long window = MinecraftClient.getInstance().getWindow().getHandle();
                     originalScrollCallback = GLFW.glfwSetScrollCallback(window, null);
 
                     // Set our custom callback
@@ -109,9 +154,9 @@ public class VerdantArcanumClient implements ClientModInitializer {
                         // Check if player is sneaking and has a staff
                         boolean shouldHandleStaffScroll = false;
 
-                        if (client.player != null && client.player.isSneaking()) {
-                            ItemStack mainHandItem = client.player.getMainHandStack();
-                            ItemStack offHandItem = client.player.getOffHandStack();
+                        if (MinecraftClient.getInstance().player != null && MinecraftClient.getInstance().player.isSneaking()) {
+                            ItemStack mainHandItem = MinecraftClient.getInstance().player.getMainHandStack();
+                            ItemStack offHandItem = MinecraftClient.getInstance().player.getOffHandStack();
 
                             if (mainHandItem.getItem() instanceof LivingStaffItem ||
                                     offHandItem.getItem() instanceof LivingStaffItem) {
@@ -130,22 +175,7 @@ public class VerdantArcanumClient implements ClientModInitializer {
                     });
                 });
 
-                // Register spell scroll handling in client tick
-                ClientTickEvents.END_CLIENT_TICK.register(tickClient -> {
-                    if (tickClient.player != null && tickClient.player.isSneaking() && mouseScrolled) {
-                        ItemStack mainHandItem = tickClient.player.getMainHandStack();
-                        ItemStack offHandItem = tickClient.player.getOffHandStack();
 
-                        if (mainHandItem.getItem() instanceof LivingStaffItem) {
-                            LivingStaffItem.handleScrollWheel(tickClient.world, tickClient.player, mainHandItem, scrollDirection);
-                        } else if (offHandItem.getItem() instanceof LivingStaffItem) {
-                            LivingStaffItem.handleScrollWheel(tickClient.world, tickClient.player, offHandItem, scrollDirection);
-                        }
-
-                        // Reset after handling
-                        mouseScrolled = false;
-                    }
-                });
 
                 LOGGER.info("Verdant Arcanum Client initialization complete!");
     }

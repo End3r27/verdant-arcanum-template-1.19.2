@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " DE",
+    " SD",
+    "S  "
+  ],
+  "key": {
+    "S": {
+      "item": "minecraft:stick"
+    },
+    "D": {
+      "item": "minecraft:diamond"
+    },
+    "E": {
+      "item": "verdant_arcanum:living_staff"
+    }
+  },
+  "result": {
+    "item": "verdant_arcanum:living_staff_mk2",
+    "count": 1
+  }
+}
