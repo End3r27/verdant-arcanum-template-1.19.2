@@ -38,10 +38,14 @@ public class ClientEvents {
                         ManaSystem.getInstance().getPlayerMana(client.player).getMaxMana(),
                         1.0f  // Default regen multiplier
                 );
+
+                // Add these lines to update mana enchantments on world join
+                checkInventoryForManaChanges(client.player);
+                checkManaRegenEnchantment(client.player);
             }
         });
 
-        // Check for inventory changes that might affect max mana and regen rate
+        // Rest of the method remains unchanged
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             PlayerEntity player = client.player;
             if (player != null) {
@@ -53,6 +57,7 @@ public class ClientEvents {
             }
         });
     }
+
 
     private static void checkInventoryForManaChanges(PlayerEntity player) {
         // Calculate new max mana based on current inventory
