@@ -4,6 +4,8 @@ import end3r.verdant_arcanum.VerdantArcanum;
 
 import end3r.verdant_arcanum.item.LivingStaffItem;
 import end3r.verdant_arcanum.item.SpellEssenceItem;
+import end3r.verdant_arcanum.magic.ManaRegenEnchantment;
+import end3r.verdant_arcanum.magic.MaxManaEnchantment;
 import end3r.verdant_arcanum.util.TooltipUtils;
 
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
@@ -48,6 +50,9 @@ public class ModItems {
     public static final Item SPELL_ESSENCE_ROOTGRASP = new SpellEssenceItem("rootgrasp", new Item.Settings().group(DEFAULT_GROUP).maxCount(16));
     public static final Item SPELL_ESSENCE_GUST = new SpellEssenceItem("gust", new Item.Settings().group(DEFAULT_GROUP).maxCount(16));
     public static final Item SPELL_ESSENCE_BREEZEVINE = new SpellEssenceItem("breezevine", new Item.Settings().group(DEFAULT_GROUP).maxCount(16));
+
+    public static final MaxManaEnchantment MAX_MANA_ENCHANTMENT = new MaxManaEnchantment();
+    public static final ManaRegenEnchantment MANA_REGEN_ENCHANTMENT = new ManaRegenEnchantment();
 
 
     public static final Item MAGIC_HIVE = new BlockItem(ModBlocks.MAGIC_HIVE, new FabricItemSettings().group(DEFAULT_GROUP));
@@ -105,6 +110,10 @@ public class ModItems {
         Registry.register(Registry.ITEM, new Identifier(VerdantArcanum.MOD_ID, "magic_bee_spawner"), MAGIC_BEE_SPAWNER);
 
         Registry.register(Registry.ITEM, new Identifier(VerdantArcanum.MOD_ID, "grove_journal"), GROVE_JOURNAL);
+
+        Registry.register(Registry.ENCHANTMENT, new Identifier("verdant_arcanum", "max_mana"), MAX_MANA_ENCHANTMENT);
+        Registry.register(Registry.ENCHANTMENT, new Identifier("verdant_arcanum", "mana_regen"), MANA_REGEN_ENCHANTMENT);
+
 
 
         // Register the Magic Infused Bee Spawn Egg

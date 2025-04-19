@@ -2,6 +2,7 @@ package end3r.verdant_arcanum.magic;
 
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.server.network.ServerPlayerEntity;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -71,6 +72,16 @@ public class ManaSystem {
         PlayerMana playerMana = getPlayerMana(player);
         if (playerMana.getCurrentMana() >= amount) {
             playerMana.consumeMana(amount);
+
+            // Add visual effects for significant mana usage
+            if (!player.getWorld().isClient && amount >= 10) {
+                // Server-side: sync to client
+                syncManaToClient(player);
+            } else if (player.getWorld().isClient) {
+                // Client-side: show particles
+                ManaParticleSystem.getInstance().createManaConsumptionBurst(player, amount);
+            }
+
             return true;
         }
         return false;
@@ -96,6 +107,7 @@ public class ManaSystem {
         if (currentMana < playerMana.getMaxMana()) {
             float regenRate = DEFAULT_MANA_REGEN_RATE * regenMultiplier;
             playerMana.regenerateMana(regenRate);
+            syncManaToClient(player); // Add this line
         }
     }
 
@@ -176,6 +188,14 @@ public class ManaSystem {
          */
         public float getManaPercentage() {
             return currentMana / maxMana;
+        }
+    }
+    // In ManaSystem.java, add a method to sync mana data:
+    public void syncManaToClient(PlayerEntity player) {
+        if (player instanceof ServerPlayerEntity serverPlayer) {
+            PlayerMana playerMana = getPlayerMana(player);
+            ManaSyncPacket packet = new ManaSyncPacket(playerMana.getCurrentMana(), playerMana.getMaxMana());
+            ManaSyncPacket.send(serverPlayer, packet);
         }
     }
 }

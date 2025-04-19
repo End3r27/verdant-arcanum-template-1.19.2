@@ -1,12 +1,14 @@
 package end3r.verdant_arcanum.registry;
 
 import end3r.verdant_arcanum.VerdantArcanum;
-import end3r.verdant_arcanum.magic.EnchantmentEquipHandler;
+import end3r.verdant_arcanum.magic.ManaEventHandler;
 import net.fabricmc.fabric.api.client.itemgroup.FabricItemGroupBuilder;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
+
+import static end3r.verdant_arcanum.registry.ModItems.MANA_REGEN_ENCHANTMENT;
+import static end3r.verdant_arcanum.registry.ModItems.MAX_MANA_ENCHANTMENT;
 
 
 public class ModRegistry {
@@ -84,9 +86,10 @@ public class ModRegistry {
 
         ModBooks.registerBooks();
 
-        ModEnchantments.registerEnchantments();
+        ManaEventHandler.initialize(MAX_MANA_ENCHANTMENT, MANA_REGEN_ENCHANTMENT);
 
-        EnchantmentEquipHandler.registerEvents();
+
+
 
 
 

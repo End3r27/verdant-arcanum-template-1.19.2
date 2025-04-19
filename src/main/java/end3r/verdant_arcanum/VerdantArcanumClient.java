@@ -1,7 +1,9 @@
 package end3r.verdant_arcanum;
 
+import end3r.verdant_arcanum.client.ClientEvents;
 import end3r.verdant_arcanum.client.gui.MagicHiveScreen;
 import end3r.verdant_arcanum.entity.client.MagicInfusedBeeRenderer;
+import end3r.verdant_arcanum.magic.ManaSyncPacket;
 import end3r.verdant_arcanum.registry.*;
 import end3r.verdant_arcanum.screen.LivingStaffScreen;
 import end3r.verdant_arcanum.item.LivingStaffItem;
@@ -87,7 +89,9 @@ public class VerdantArcanumClient implements ClientModInitializer {
 
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.FLAME_FLOWER, RenderLayer.getCutout());
 
+        ManaSyncPacket.registerClient();
 
+        ClientEvents.registerClientEvents();
 
         HandledScreens.register(ModScreenHandlers.MAGIC_HIVE_SCREEN_HANDLER, MagicHiveScreen::new);
 
