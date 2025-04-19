@@ -6,40 +6,43 @@ import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.server.network.ServerPlayerEntity;
-
-import static end3r.verdant_arcanum.magic.ManaEventHandler.MANA_SYNC_ID;
+import net.minecraft.util.Identifier;
 
 public class ManaSyncPacket {
-    private final float currentMana;
-    private final int maxMana;
-    private final float regenMultiplier; // Add this field
+    private static final Identifier CHANNEL = new Identifier("verdant_arcanum", "mana_sync");
 
-    public ManaSyncPacket(float currentMana, int maxMana, float regenMultiplier) {
-        this.currentMana = currentMana;
-        this.maxMana = maxMana;
-        this.regenMultiplier = regenMultiplier; // Store the multiplier
+    // Register the server-side packet sender
+    public static void registerServer() {
+        // This method would set up how the server sends packets to clients
     }
 
-    public static void send(ServerPlayerEntity player, ManaSyncPacket packet) {
-        PacketByteBuf buf = PacketByteBufs.create();
-        buf.writeFloat(packet.currentMana);
-        buf.writeInt(packet.maxMana);
-        buf.writeFloat(packet.regenMultiplier);
-        ServerPlayNetworking.send(player, MANA_SYNC_ID, buf);
-    }
-
-    // Register this client-side in your client mod initializer
+    // Register the client-side packet receiver
     public static void registerClient() {
-        ClientPlayNetworking.registerGlobalReceiver(MANA_SYNC_ID, (client, handler, buf, responseSender) -> {
-            float currentMana = buf.readFloat();
-            int maxMana = buf.readInt();
-            float regenMultiplier = buf.readFloat();
-            // Update client-side mana display
-            client.execute(() -> {
-                if (client.player != null) {
-                    ClientManaData.setMana(currentMana, maxMana, regenMultiplier); // Pass the multiplier
-                }
-            });
+        ClientPlayNetworking.registerGlobalReceiver(CHANNEL, (client, handler, buf, responseSender) -> {
+            // Only read what the server actually sent
+            if (buf.readableBytes() >= 8) {
+                int maxMana = buf.readInt();
+                float currentMana = buf.readInt(); // You might want to convert to float here
+
+                client.execute(() -> {
+                    // Use the combined setter method instead of the individual ones
+                    ClientManaData.setMana(currentMana, maxMana, ClientManaData.getRegenMultiplier());
+                    // This uses the existing regen multiplier value since it's not being synced in this packet
+                });
+            }
         });
+    }
+
+
+    // Method used by the server to send mana data to a client
+    public static void sendToClient(ServerPlayerEntity player, ManaSystem.PlayerMana manaData) {
+        PacketByteBuf buf = PacketByteBufs.create();
+
+        // Write exactly what will be read on the client side
+        buf.writeInt(manaData.getMaxMana());
+        buf.writeInt((int)manaData.getCurrentMana()); // Cast float to int if needed
+
+        // Send only the data that's expected
+        ServerPlayNetworking.send(player, CHANNEL, buf);
     }
 }

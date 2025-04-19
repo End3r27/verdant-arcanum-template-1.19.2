@@ -8,6 +8,8 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.Vec3f;
 import net.minecraft.util.math.random.Random;
 
+import static end3r.verdant_arcanum.magic.ClientManaData.getManaPercentage;
+
 
 /**
  * Handles mana-related particle effects
@@ -47,7 +49,7 @@ public class ManaParticleSystem {
      */
     public void updateManaParticles(PlayerEntity player) {
         ManaSystem.PlayerMana playerMana = ManaSystem.getInstance().getPlayerMana(player);
-        float manaPercent = playerMana.getManaPercentage();
+        float manaPercent = getManaPercentage();
 
         // Only show particles for the client's player
         if (MinecraftClient.getInstance().player != player) {

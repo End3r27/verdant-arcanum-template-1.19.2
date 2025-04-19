@@ -3,8 +3,8 @@ package end3r.verdant_arcanum.magic;
 import end3r.verdant_arcanum.magic.ManaSystem;
 
 public class ClientManaData {
-    private static float currentMana = 0;
-    private static int maxMana = 100;
+    public static float currentMana = 0;
+    public static int maxMana = 100;
     private static float regenMultiplier = 1.0f; // Add this field
 
     public static void setMana(float current, int max, float multiplier) {
@@ -26,8 +26,12 @@ public class ClientManaData {
     }
 
     public static float getManaPercentage() {
-        return currentMana / maxMana;
+        // Add safeguard against division by zero
+        if (maxMana <= 0) return 0;
+        // Ensure proper floating-point division
+        return currentMana / (float)maxMana;
     }
+
 
     public static void resetOrMarkInactive() {
         // Don't reset current mana value when items are removed

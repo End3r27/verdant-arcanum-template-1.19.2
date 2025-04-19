@@ -2,6 +2,7 @@ package end3r.verdant_arcanum.registry;
 
 import end3r.verdant_arcanum.VerdantArcanum;
 import end3r.verdant_arcanum.magic.ManaEventHandler;
+import end3r.verdant_arcanum.magic.ManaSyncPacket;
 import end3r.verdant_arcanum.magic.ManaSystem;
 import end3r.verdant_arcanum.network.NetworkHandler;
 import end3r.verdant_arcanum.spell.SolarBloomSpell;
@@ -93,11 +94,9 @@ public class ModRegistry {
 
         SolarBloomSpell.registerSounds();
 
-        ManaSystem.registerCommands();
-
         NetworkHandler.init();
 
-
+        ManaSyncPacket.registerServer();
     }
 
 }

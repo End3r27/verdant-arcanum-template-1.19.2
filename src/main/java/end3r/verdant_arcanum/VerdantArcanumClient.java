@@ -65,8 +65,6 @@ public class VerdantArcanumClient implements ClientModInitializer {
 
         EntityRendererRegistry.register(ModEntities.MAGIC_INFUSED_BEE, MagicInfusedBeeRenderer::new);
 
-
-
                 // Register the ManaHudRenderer
                 ManaHudRenderer.register();
 

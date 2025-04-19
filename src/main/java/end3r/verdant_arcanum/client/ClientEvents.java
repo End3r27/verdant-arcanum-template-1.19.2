@@ -9,6 +9,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.item.ItemStack;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.Identifier;
 
@@ -65,7 +66,7 @@ public class ClientEvents {
             // Server-side: update the player's max mana
             if (!player.world.isClient) {
                 ManaSystem.getInstance().updatePlayerMaxMana(player, newMaxMana);
-                ManaSystem.getInstance().syncManaToClient(player);
+                ManaSystem.getInstance().syncManaToClient((ServerPlayerEntity) player);
             }
         }
     }

@@ -28,8 +28,8 @@ public class SolarBloomSpell implements Spell {
     private static final int MANA_COST = 100;
     private static final int DURATION_TICKS = 100; // 5 seconds
     private static final double RANGE = 32.0;
-    private static final double WIDTH = 1.0;
-    private static final float DAMAGE_PER_TICK = 1f;
+    private static final double WIDTH = 2.0;
+    private static final float DAMAGE_PER_TICK = 3f;
     private static final Map<UUID, Long> clientActiveSpells = new HashMap<>();
     public static void addClientSpell(UUID playerId, int durationTicks) {
         clientActiveSpells.put(playerId, System.currentTimeMillis() + (durationTicks * 50));
@@ -54,19 +54,29 @@ public class SolarBloomSpell implements Spell {
     public int getManaCost() {
         return MANA_COST;
     }
-
     @Override
     public void cast(World world, PlayerEntity player) {
         UUID playerId = player.getUuid();
 
-        float playerCurrentMana = ManaSystem.getInstance().getPlayerMana(player).getCurrentMana();
-        LOGGER.info("Player {} has {} mana and is trying to cast spell with cost {}",
-                playerId, playerCurrentMana, MANA_COST);
+        ManaSystem.PlayerMana playerMana = ManaSystem.getInstance().getPlayerMana(player);
+        float playerCurrentMana = playerMana.getCurrentMana();
+        int playerMaxMana = playerMana.getMaxMana();
 
+        LOGGER.info("Player {} has {} mana out of {} max and is trying to cast spell with cost {}",
+                playerId, playerCurrentMana, playerMaxMana, MANA_COST);
 
+        // Debug and force mana if needed
+        if (playerCurrentMana <= 0 && !world.isClient) {
+            LOGGER.info("Player has zero mana. Initializing to default max.");
+            playerMana.setCurrentMana(playerMaxMana); // Set to max mana for debugging
+            playerCurrentMana = playerMana.getCurrentMana(); // Update local variable
 
-        // Debug log
+            // Force sync to client
+            ManaSystem.getInstance().syncManaToClient(player);
+        }
+
         LOGGER.info("Player {} attempting to cast Solar Bloom", playerId);
+
 
         // Check if player already has an active spell
         if (activeSpells.containsKey(playerId)) {
