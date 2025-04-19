@@ -20,6 +20,8 @@ public class SpellRegistry {
         register("gust", new GustSpell());
         register("breezevine", new BreezevineSpell());
         register("solarbloom", new SolarBloomSpell());
+        register("flamespiral", new FlameSpiralSpell());
+
 
     }
 

@@ -59,6 +59,7 @@ public class MagicInfusedBee extends BeeEntity {
         BLOOM_TO_ESSENCE_MAP.put(ModItems.ROOTGRASP_FLOWER_BLOOM, ModItems.SPELL_ESSENCE_ROOTGRASP);
         BLOOM_TO_ESSENCE_MAP.put(ModItems.GUST_FLOWER_BLOOM, ModItems.SPELL_ESSENCE_GUST);
         BLOOM_TO_ESSENCE_MAP.put(ModItems.BREEZEVINE_FLOWER_BLOOM, ModItems.SPELL_ESSENCE_BREEZEVINE);
+        BLOOM_TO_ESSENCE_MAP.put(ModItems.FLAMESPIRAL_FLOWER_BLOOM, ModItems.SPELL_ESSENCE_FLAMESPIRAL);
 
     }
 
@@ -323,6 +324,9 @@ public class MagicInfusedBee extends BeeEntity {
             } else if (state.isIn(ModTags.Blocks.SOLARBLOOM_FLOWERS_IN_BLOOM)) {
                 this.currentPollenType = ModItems.SOLARBLOOM_FLOWER_BLOOM;
                 if (DEBUG_MODE) System.out.println("Magic bee collected SOLARBLOOM pollen");
+            } else if (state.isIn(ModTags.Blocks.FLAMESPIRAL_FLOWERS_IN_BLOOM)) {
+                this.currentPollenType = ModItems.FLAMESPIRAL_FLOWER_BLOOM;
+                if (DEBUG_MODE) System.out.println("Magic bee collected FIRESPIRAL pollen");
             }
         }
     }
@@ -449,6 +453,9 @@ public class MagicInfusedBee extends BeeEntity {
             }
             else if (essenceType == ModItems.SPELL_ESSENCE_SOLARBLOOM) {
                 soundEvent = SoundEvents.ENTITY_BLAZE_SHOOT;
+            }
+            else if (essenceType == ModItems.SPELL_ESSENCE_FLAMESPIRAL) {
+                soundEvent = SoundEvents.ENTITY_BLAZE_HURT;
             }
 
             // Play the sound at the hive location

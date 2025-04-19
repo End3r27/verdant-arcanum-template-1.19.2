@@ -48,6 +48,10 @@ public class ModRegistry {
                 stacks.add(new ItemStack(ModItems.SOLARBLOOM_FLOWER_BLOOM));
                 stacks.add(new ItemStack(ModItems.SPELL_ESSENCE_SOLARBLOOM));
 
+                stacks.add(new ItemStack(ModItems.FLAMESPIRAL_FLOWER_BLOOM));
+                stacks.add(new ItemStack(ModItems.SPELL_ESSENCE_FLAMESPIRAL));
+
+
                 // Add magical tools
                 stacks.add(new ItemStack(ModItems.LIVING_STAFF));
 

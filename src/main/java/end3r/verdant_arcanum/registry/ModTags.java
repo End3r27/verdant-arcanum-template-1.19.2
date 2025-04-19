@@ -51,5 +51,9 @@ public class ModTags {
                 Registry.BLOCK_KEY,
                 new Identifier(VerdantArcanum.MOD_ID, "solarbloom_flowers_in_bloom")
         );
+        public static final TagKey<Block> FLAMESPIRAL_FLOWERS_IN_BLOOM = TagKey.of(
+                Registry.BLOCK_KEY,
+                new Identifier(VerdantArcanum.MOD_ID, "flamespiral_flowers_in_bloom")
+        );
     }
 }
