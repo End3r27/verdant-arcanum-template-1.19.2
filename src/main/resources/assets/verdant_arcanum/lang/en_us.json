@@ -176,6 +176,9 @@
   "tooltip.verdant_arcanum.phantomstep_flower_bloom.detailed.1": "Emanates an ethereal aura that allows passage through solid matter",
   "tooltip.verdant_arcanum.phantomstep_flower_bloom.detailed.2": "Feels weightless and slightly transparent to the touch",
 
-  "tooltip.verdant_arcanum.spell_essence.phantomstep.spell": "Allows temporary Invisibility"
+  "tooltip.verdant_arcanum.spell_essence.phantomstep.spell": "Allows temporary Invisibility",
 
+  "block.verdant_arcanum.phantomstep_bloom": "PhantomStepBloom",
+
+  "item.verdant_arcanum.spell_essence_phantomstep": "Spell Essence: PhantomStep"
 }

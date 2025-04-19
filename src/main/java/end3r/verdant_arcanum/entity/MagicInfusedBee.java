@@ -60,6 +60,7 @@ public class MagicInfusedBee extends BeeEntity {
         BLOOM_TO_ESSENCE_MAP.put(ModItems.GUST_FLOWER_BLOOM, ModItems.SPELL_ESSENCE_GUST);
         BLOOM_TO_ESSENCE_MAP.put(ModItems.BREEZEVINE_FLOWER_BLOOM, ModItems.SPELL_ESSENCE_BREEZEVINE);
         BLOOM_TO_ESSENCE_MAP.put(ModItems.FLAMESPIRAL_FLOWER_BLOOM, ModItems.SPELL_ESSENCE_FLAMESPIRAL);
+        BLOOM_TO_ESSENCE_MAP.put(ModItems.PHANTOMSTEP_FLOWER_BLOOM, ModItems.SPELL_ESSENCE_PHANTOMSTEP);
 
     }
 
@@ -327,6 +328,9 @@ public class MagicInfusedBee extends BeeEntity {
             } else if (state.isIn(ModTags.Blocks.FLAMESPIRAL_FLOWERS_IN_BLOOM)) {
                 this.currentPollenType = ModItems.FLAMESPIRAL_FLOWER_BLOOM;
                 if (DEBUG_MODE) System.out.println("Magic bee collected FIRESPIRAL pollen");
+            } else if (state.isIn(ModTags.Blocks.PHANTOMSTEP_FLOWERS_IN_BLOOM)) {
+                this.currentPollenType = ModItems.PHANTOMSTEP_FLOWER_BLOOM;
+                if (DEBUG_MODE) System.out.println("Magic bee collected PHANTOMSTEP pollen");
             }
         }
     }
@@ -457,6 +461,9 @@ public class MagicInfusedBee extends BeeEntity {
             else if (essenceType == ModItems.SPELL_ESSENCE_FLAMESPIRAL) {
                 soundEvent = SoundEvents.ENTITY_BLAZE_HURT;
             }
+            else if (essenceType == ModItems.SPELL_ESSENCE_PHANTOMSTEP) {
+                soundEvent = SoundEvents.ENTITY_PHANTOM_BITE;
+            }
 
             // Play the sound at the hive location
             this.world.playSound(null, hivePos, soundEvent, this.getSoundCategory(), volume, pitch);
@@ -465,7 +472,7 @@ public class MagicInfusedBee extends BeeEntity {
         return null;
     }
 
-    // Add this new method to check for magic hives in a very close proximity
+
     private BlockPos findNearbyMagicHive() {
         BlockPos beePos = this.getBlockPos();
         int searchRadius = 2; // Very small radius - just checking immediate vicinity
