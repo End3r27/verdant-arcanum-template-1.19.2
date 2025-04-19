@@ -26,10 +26,9 @@ public class ClientManaData {
     }
 
     public static float getManaPercentage() {
-        // Add safeguard against division by zero
-        if (maxMana <= 0) return 0;
-        // Ensure proper floating-point division
-        return currentMana / (float)maxMana;
+        if (maxMana <= 0) return 0; // Avoid division by zero
+        // Calculate percentage and clamp between 0 and 1
+        return Math.max(0, Math.min(1, currentMana / (float)maxMana));
     }
 
 

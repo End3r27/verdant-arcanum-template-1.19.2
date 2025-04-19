@@ -17,6 +17,7 @@ import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.registry.Registry;
 import net.minecraft.world.World;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,11 +26,11 @@ import java.util.*;
 
 public class SolarBloomSpell implements Spell {
     private static final Logger LOGGER = LoggerFactory.getLogger("SolarBloomSpell");
-    private static final int MANA_COST = 100;
-    private static final int DURATION_TICKS = 100; // 5 seconds
-    private static final double RANGE = 32.0;
-    private static final double WIDTH = 2.0;
-    private static final float DAMAGE_PER_TICK = 3f;
+    private static final int MANA_COST = 200;
+    private static final int DURATION_TICKS = 150; // 5 seconds
+    private static final double RANGE = 64.0;
+    private static final double WIDTH = 4.0;
+    private static final float DAMAGE_PER_TICK = 6f;
     private static final Map<UUID, Long> clientActiveSpells = new HashMap<>();
     public static void addClientSpell(UUID playerId, int durationTicks) {
         clientActiveSpells.put(playerId, System.currentTimeMillis() + (durationTicks * 50));
@@ -43,7 +44,7 @@ public class SolarBloomSpell implements Spell {
 
     // Sound definition
     public static final Identifier SOLAR_BLOOM_SOUND_ID = new Identifier(VerdantArcanum.MOD_ID, "solar_bloom_cast");
-    public static final SoundEvent SOLAR_BLOOM_SOUND = SoundEvents.ENTITY_BLAZE_SHOOT; // Fallback to vanilla sound
+    public static SoundEvent SOLAR_BLOOM_SOUND = new SoundEvent(SOLAR_BLOOM_SOUND_ID);
 
     @Override
     public String getType() {
@@ -99,7 +100,7 @@ public class SolarBloomSpell implements Spell {
                     player.getZ(),
                     SOLAR_BLOOM_SOUND,
                     SoundCategory.PLAYERS,
-                    1.0f,
+                    100.0f,
                     1.0f
             );
 
@@ -233,10 +234,6 @@ public class SolarBloomSpell implements Spell {
         return null;
     }
 
-    public static void registerSounds() {
-        // Register custom sound if needed
-        // Registry.register(Registry.SOUND_EVENT, SOLAR_BLOOM_SOUND_ID, SOLAR_BLOOM_SOUND);
-    }
 
 
 
@@ -342,59 +339,63 @@ public class SolarBloomSpell implements Spell {
             );
         }
 
-        public static void createBeamParticles(World world, Vec3d startPos, Vec3d direction) {
-            // This should only run on the client side
-            if (!world.isClient) return;
+    public static void createBeamParticles(World world, Vec3d startPos, Vec3d direction) {
+        // This should only run on the client side
+        if (!world.isClient) return;
 
-            // Dense beam of particles
-            for (int i = 1; i <= 30; i++) {
-                double distance = i * (RANGE / 30.0);
-                Vec3d pos = startPos.add(direction.multiply(distance));
+        // Dense beam of particles
+        for (int i = 1; i <= 30; i++) {
+            double distance = i * (RANGE / 30.0);
+            Vec3d pos = startPos.add(direction.multiply(distance));
 
-                // Main beam particles
-                world.addParticle(
-                        ParticleTypes.END_ROD,
+            // Main beam particles - larger size
+            ((ClientWorld)world).addParticle(
+                    ParticleTypes.END_ROD,
+                    true, // Force parameter - show particles regardless of distance/settings
+                    pos.x, pos.y, pos.z,
+                    0, 0, 0
+            );
+
+            // Add some flame particles for effect - larger size
+            if (i % 3 == 0) {
+                ((ClientWorld)world).addParticle(
+                        ParticleTypes.FLAME,
+                        true,
                         pos.x, pos.y, pos.z,
-                        0, 0, 0
+                        0, 0.02, 0
                 );
-
-                // Add some flame particles for effect
-                if (i % 3 == 0) {
-                    world.addParticle(
-                            ParticleTypes.FLAME,
-                            pos.x, pos.y, pos.z,
-                            0, 0.02, 0
-                    );
-                }
-
-                // Add some randomness to create beam width
-                if (i % 2 == 0) {
-                    double offsetX = world.random.nextGaussian() * 0.1;
-                    double offsetY = world.random.nextGaussian() * 0.1;
-                    double offsetZ = world.random.nextGaussian() * 0.1;
-
-                    world.addParticle(
-                            ParticleTypes.END_ROD,
-                            pos.x + offsetX, pos.y + offsetY, pos.z + offsetZ,
-                            0, 0, 0
-                    );
-                }
             }
 
-            // Add a bloom effect at the end
-            Vec3d endPos = startPos.add(direction.multiply(RANGE));
-            for (int i = 0; i < 10; i++) {
-                double offsetX = world.random.nextGaussian() * 0.3;
-                double offsetY = world.random.nextGaussian() * 0.3;
-                double offsetZ = world.random.nextGaussian() * 0.3;
+            // Add some randomness to create beam width - larger size
+            if (i % 2 == 0) {
+                double offsetX = world.random.nextGaussian() * 0.1;
+                double offsetY = world.random.nextGaussian() * 0.1;
+                double offsetZ = world.random.nextGaussian() * 0.1;
 
-                world.addParticle(
-                        ParticleTypes.FLAME,
-                        endPos.x + offsetX, endPos.y + offsetY, endPos.z + offsetZ,
-                        offsetX * 0.05, offsetY * 0.05, offsetZ * 0.05
+                ((ClientWorld)world).addParticle(
+                        ParticleTypes.END_ROD,
+                        true,
+                        pos.x + offsetX, pos.y + offsetY, pos.z + offsetZ,
+                        0, 0, 0
                 );
             }
         }
+
+        // Add a bloom effect at the end - larger size
+        Vec3d endPos = startPos.add(direction.multiply(RANGE));
+        for (int i = 0; i < 10; i++) {
+            double offsetX = world.random.nextGaussian() * 0.4; // Increased spread
+            double offsetY = world.random.nextGaussian() * 0.4;
+            double offsetZ = world.random.nextGaussian() * 0.4;
+
+            ((ClientWorld)world).addParticle(
+                    ParticleTypes.FLAME,
+                    true,
+                    endPos.x + offsetX, endPos.y + offsetY, endPos.z + offsetZ,
+                    offsetX * 0.05, offsetY * 0.05, offsetZ * 0.05
+            );
+        }
+    }
 
 
         public void tickActiveSpellsClient(ClientWorld world, ClientPlayerEntity player) {
@@ -417,6 +418,14 @@ public class SolarBloomSpell implements Spell {
                 return false;
             });
 
+    }
+    public static void registerSounds() {
+        // Register the Solar Bloom cast sound and assign it to our static variable
+        SOLAR_BLOOM_SOUND = Registry.register(
+                Registry.SOUND_EVENT,
+                SOLAR_BLOOM_SOUND_ID,
+                new SoundEvent(SOLAR_BLOOM_SOUND_ID)
+        );
     }
 
 

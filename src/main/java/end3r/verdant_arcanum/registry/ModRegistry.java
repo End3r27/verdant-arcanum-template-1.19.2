@@ -92,11 +92,11 @@ public class ModRegistry {
 
         ManaEventHandler.initialize(MAX_MANA_ENCHANTMENT, MANA_REGEN_ENCHANTMENT);
 
-        SolarBloomSpell.registerSounds();
-
         NetworkHandler.init();
 
         ManaSyncPacket.registerServer();
+
+        SolarBloomSpell.registerSounds();
     }
 
 }
