@@ -103,12 +103,18 @@ public class ManaSystem {
         PlayerMana playerMana = getPlayerMana(player);
         regenMultipliers.put(player.getUuid(), regenMultiplier);
 
+        // Add debug logging here
+        System.out.println("ManaSystem.updateManaRegen called for " + player.getName().getString() +
+                " with multiplier: " + regenMultiplier);
+
         float currentMana = playerMana.getCurrentMana();
         if (currentMana < playerMana.getMaxMana()) {
             float regenRate = DEFAULT_MANA_REGEN_RATE * regenMultiplier;
+            float oldMana = playerMana.getCurrentMana();
             playerMana.regenerateMana(regenRate);
-            syncManaToClient(player); // Add this line
+
         }
+
     }
 
     /**
@@ -200,7 +206,8 @@ public class ManaSystem {
     public void syncManaToClient(PlayerEntity player) {
         if (player instanceof ServerPlayerEntity serverPlayer) {
             PlayerMana playerMana = getPlayerMana(player);
-            ManaSyncPacket packet = new ManaSyncPacket(playerMana.getCurrentMana(), playerMana.getMaxMana());
+            float multiplier = regenMultipliers.getOrDefault(player.getUuid(), 1.0f); // Get the stored multiplier
+            ManaSyncPacket packet = new ManaSyncPacket(playerMana.getCurrentMana(), playerMana.getMaxMana(), multiplier);
             ManaSyncPacket.send(serverPlayer, packet);
         }
     }

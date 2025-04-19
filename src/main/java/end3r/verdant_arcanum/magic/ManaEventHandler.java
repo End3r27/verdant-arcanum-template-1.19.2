@@ -15,6 +15,7 @@ import java.util.Map;
 import java.util.UUID;
 
 
+
 public class ManaEventHandler {
     private static Enchantment maxManaEnchantment;
     private static Enchantment manaRegenEnchantment;
@@ -41,10 +42,23 @@ public class ManaEventHandler {
 
 
     private static void onServerTick(MinecraftServer server) {
+        ManaSystem manaSystem = ManaSystem.getInstance();
+
         for (ServerPlayerEntity player : server.getPlayerManager().getPlayerList()) {
             checkEquipmentChange(player);
 
-            updatePlayerManaRegen(player);
+            // Check if it's time to update mana regen (once per second)
+            if (player.age % 20 == 0) {
+                float regenMultiplier = calculateManaRegenMultiplier(player);
+
+                // Add debug logging
+                if (regenMultiplier > 1.0f) {
+                    System.out.println("Applying mana regen for " + player.getName().getString() +
+                            " with multiplier: " + regenMultiplier);
+                }
+
+                manaSystem.updateManaRegen(player, regenMultiplier);
+            }
         }
     }
 
@@ -65,6 +79,11 @@ public class ManaEventHandler {
 
         ItemStack currentHeadItem = player.getEquippedStack(EquipmentSlot.HEAD);
         if (!ItemStack.areEqual(currentHeadItem, lastState.headItem)) {
+            // Immediately update mana regen when head item changes
+            float regenMultiplier = calculateManaRegenMultiplier(player);
+            System.out.println("Head equipment changed for " + player.getName().getString() +
+                    ", new regen multiplier: " + regenMultiplier);
+            ManaSystem.getInstance().updateManaRegen(player, regenMultiplier);
             lastState.headItem = currentHeadItem.copy();
         }
     }
@@ -80,7 +99,7 @@ public class ManaEventHandler {
 
 
     private static void updatePlayerMaxMana(ServerPlayerEntity player) {
-        ManaSystem manaSystem = ManaSystem.getInstance();
+        ManaSystem manaSystem = ManaSystem.getInstance(); // Get instance first
         ManaSystem.PlayerMana playerMana = manaSystem.getPlayerMana(player);
 
         int maxManaBonus = calculateMaxManaBonus(player);
@@ -90,15 +109,13 @@ public class ManaEventHandler {
             System.out.println("Updating max mana for " + player.getName().getString() +
                     " from " + playerMana.getMaxMana() + " to " + newMaxMana);
             playerMana.setMaxMana(newMaxMana);
+
+            // Need to sync after changing max mana
+            manaSystem.syncManaToClient(player); // Use the instance
         }
     }
 
-    private static void updatePlayerManaRegen(ServerPlayerEntity player) {
-        if (player.age % 20 != 0) return;
 
-        float regenMultiplier = calculateManaRegenMultiplier(player);
-        ManaSystem.getInstance().updateManaRegen(player, regenMultiplier);
-    }
 
 
     private static int calculateMaxManaBonus(ServerPlayerEntity player) {
@@ -114,6 +131,13 @@ public class ManaEventHandler {
         int regenLevel = EnchantmentHelper.getLevel(
                 manaRegenEnchantment,
                 player.getEquippedStack(EquipmentSlot.HEAD));
+
+        // Add debug logging
+        if (regenLevel > 0) {
+            System.out.println("Player " + player.getName().getString() +
+                    " has Mana Regen enchantment level: " + regenLevel +
+                    " on head item: " + player.getEquippedStack(EquipmentSlot.HEAD).getName().getString());
+        }
 
         return 1.0f + (regenLevel * 0.25f);
     }

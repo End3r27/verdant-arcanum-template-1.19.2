@@ -7,9 +7,16 @@ import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.EquipmentSlot;
+import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.registry.Registry;
+import net.minecraft.util.Identifier;
 
 public class ClientEvents {
+    // Define the identifier for mana regen enchantment (should match your server-side registration)
+    private static final Identifier MANA_REGEN_ENCHANTMENT_ID = new Identifier("verdant_arcanum", "mana_regen");
+
     public static void registerClientEvents() {
         // Register a tick handler to update mana particles
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
@@ -25,20 +32,24 @@ public class ClientEvents {
         ClientPlayConnectionEvents.JOIN.register((handler, sender, client) -> {
             // Initial sync when player joins
             if (client.player != null) {
-                // Replace the undefined syncPlayerMana call with:
+                // Using correct parameters for mana sync
                 ClientManaData.setMana(
                         ManaSystem.getInstance().getPlayerMana(client.player).getCurrentMana(),
-                        ManaSystem.getInstance().getPlayerMana(client.player).getMaxMana()
+                        ManaSystem.getInstance().getPlayerMana(client.player).getMaxMana(),
+                        1.0f  // Default regen multiplier
                 );
             }
         });
 
-        // Check for inventory changes that might affect max mana
+        // Check for inventory changes that might affect max mana and regen rate
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             PlayerEntity player = client.player;
             if (player != null) {
                 // This should be called periodically to check for inventory changes
                 checkInventoryForManaChanges(player);
+
+                // Add check for mana regen enchantment changes
+                checkManaRegenEnchantment(player);
             }
         });
     }
@@ -60,6 +71,53 @@ public class ClientEvents {
         }
     }
 
+    // New method to check for mana regen enchantment changes
+    private static void checkManaRegenEnchantment(PlayerEntity player) {
+        // Calculate the regen multiplier based on current head equipment
+        float newRegenMultiplier = calculateManaRegenMultiplier(player);
+
+        // Get current regen multiplier from ClientManaData
+        float currentRegenMultiplier = ClientManaData.getRegenMultiplier();
+
+        // If there's a change in the multiplier, update the client-side data
+        // Note: The actual server-side update is handled by ManaEventHandler
+        if (Math.abs(newRegenMultiplier - currentRegenMultiplier) > 0.01f) {
+            // This is just for visual feedback on the client side
+            // (The server handles the actual regen calculation)
+            if (player.world.isClient) {
+                System.out.println("Client detected change in mana regen multiplier: "
+                        + currentRegenMultiplier + " -> " + newRegenMultiplier);
+
+                // Update client-side data with the new multiplier (keeps current and max mana the same)
+                ClientManaData.setMana(
+                        ClientManaData.getCurrentMana(),
+                        ClientManaData.getMaxMana(),
+                        newRegenMultiplier
+                );
+            }
+        }
+    }
+
+    // Calculate mana regen multiplier based on enchantment level
+    private static float calculateManaRegenMultiplier(PlayerEntity player) {
+        ItemStack headItem = player.getEquippedStack(EquipmentSlot.HEAD);
+        if (headItem.isEmpty()) {
+            return 1.0f; // Default multiplier with no head item
+        }
+
+        // Get the enchantment registry instance
+        var enchantment = Registry.ENCHANTMENT.get(MANA_REGEN_ENCHANTMENT_ID);
+        if (enchantment == null) {
+            return 1.0f; // Enchantment doesn't exist or isn't registered yet
+        }
+
+        // Get the level of the mana regen enchantment
+        int regenLevel = EnchantmentHelper.getLevel(enchantment, headItem);
+
+        // Calculate and return the multiplier (same formula as server-side)
+        return 1.0f + (regenLevel * 0.25f);
+    }
+
     // Method to calculate max mana based on player's inventory and enchantments
     private static int calculatePlayerMaxMana(PlayerEntity player) {
         int baseMana = ManaSystem.DEFAULT_MAX_MANA;
@@ -73,7 +131,6 @@ public class ClientEvents {
             // Look for your custom mana enchantment
             // Example: bonusMana += getManaEnchantmentBonus(stack);
         }
-
 
         bonusMana += getManaEnchantmentBonus(player.getMainHandStack());
         bonusMana += getManaEnchantmentBonus(player.getOffHandStack());
