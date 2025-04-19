@@ -94,8 +94,6 @@
   "tooltip.verdant_arcanum.gust_flower_bloom.detailed.2": "Feels weightless when held",
 
 
-  "entity.verdant_arcanum.magic_infused_bee": "Magic Infused Bee",
-
   "container.verdant_arcanum.living_staff": "Living Staff",
 
   "block.verdant_arcanum.magic_hive": "Magic Hive",
@@ -132,6 +130,32 @@
   "enchantment.verdant_arcanum.max_mana": "Max Mana",
   "enchantment.verdant_arcanum.max_mana.desc": "Increases your maximum mana capacity.",
   "enchantment.verdant_arcanum.mana_regen": "Mana Regen",
-  "enchantment.verdant_arcanum.mana_regen.desc": "Improves your mana regeneration rate."
+  "enchantment.verdant_arcanum.mana_regen.desc": "Improves your mana regeneration rate.",
+
+  "item.verdant_arcanum.spell_essence_solarbloom": "Spell Essence: Solarbloom",
+  "tooltip.verdant_arcanum.spell_essence.solarbloom": "Contains the essence of solar energy",
+  "tooltip.verdant_arcanum.spell_essence.solarbloom.spell": "Projects a beam of concentrated sunlight",
+
+  "spell.verdant_arcanum.solarbloom": "Solarbloom",
+  "spell.verdant_arcanum.solarbloom.description": "Projects a beam of concentrated sunlight that damages entities and melts ice",
+
+  "item.verdant_arcanum.solarbloom_flower": "Solarbloom Flower",
+  "item.verdant_arcanum.solarbloom_flower.tooltip": "A magical flower that harnesses the power of the sun",
+  "item.verdant_arcanum.solarbloom_seeds": "Solarbloom Seeds",
+  "item.verdant_arcanum.solarbloom_bloom": "Solarbloom Bloom",
+  "item.verdant_arcanum.solarbloom_bloom.tooltip": "Used in solar magic to create concentrated light",
+
+  "block.verdant_arcanum.solarbloom_flower": "Solarbloom Flower",
+  "block.verdant_arcanum.solarbloom_bloom": "Solarbloom Bloom",
+
+  "tooltip.verdant_arcanum.solarbloom_flower_seeds": "Mystical seeds that grow into sun-powered plants",
+  "tooltip.verdant_arcanum.solarbloom_flower_seeds.detailed.1": "Must be planted on Grove Soil to grow",
+  "tooltip.verdant_arcanum.solarbloom_flower_seeds.detailed.2": "Goes through 3 growth stages: Seed → Bud → Bloom",
+  "tooltip.verdant_arcanum.solarbloom_flower_seeds.detailed.3": "Grows faster in direct sunlight",
+
+  "tooltip.verdant_arcanum.solarbloom_flower_bloom": "A radiant flower with sun-like petals",
+  "tooltip.verdant_arcanum.solarbloom_flower_bloom.detailed.1": "Emits light and heat when stepped on",
+  "tooltip.verdant_arcanum.solarbloom_flower_bloom.detailed.2": "Feels warm to the touch, like concentrated sunlight"
+
 
 }

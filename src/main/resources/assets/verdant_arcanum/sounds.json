@@ -1,0 +1,9 @@
+{
+  "solar_bloom_cast": {
+    "category": "player",
+    "sounds": [
+      "verdant_arcanum:spell/solar_bloom_cast"
+    ],
+    "subtitle": "Solar Bloom spell cast"
+  }
+}

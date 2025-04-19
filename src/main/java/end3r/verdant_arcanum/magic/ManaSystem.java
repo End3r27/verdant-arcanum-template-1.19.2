@@ -1,8 +1,12 @@
 package end3r.verdant_arcanum.magic;
 
+import com.mojang.brigadier.arguments.IntegerArgumentType;
+import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.text.Text;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -103,9 +107,6 @@ public class ManaSystem {
         PlayerMana playerMana = getPlayerMana(player);
         regenMultipliers.put(player.getUuid(), regenMultiplier);
 
-        // Add debug logging here
-        System.out.println("ManaSystem.updateManaRegen called for " + player.getName().getString() +
-                " with multiplier: " + regenMultiplier);
 
         float currentMana = playerMana.getCurrentMana();
         if (currentMana < playerMana.getMaxMana()) {
@@ -216,5 +217,30 @@ public class ManaSystem {
     public void updatePlayerMaxMana(PlayerEntity player, int newMaxMana) {
         PlayerMana playerMana = getPlayerMana(player);
         playerMana.setMaxMana(newMaxMana);
+    }
+    // In a commands registration class
+    public static void registerCommands() {
+        CommandRegistrationCallback.EVENT.register((dispatcher, dedicated, registryAccess) -> {
+            dispatcher.register(
+                    CommandManager.literal("setmana")
+                            .requires(source -> source.hasPermissionLevel(2)) // Op level 2+
+                            .then(CommandManager.argument("amount", IntegerArgumentType.integer(0))
+                                    .executes(context -> {
+                                        ServerPlayerEntity player = context.getSource().getPlayer();
+                                        int amount = IntegerArgumentType.getInteger(context, "amount");
+
+                                        ManaSystem manaSystem = ManaSystem.getInstance();
+                                        ManaSystem.PlayerMana playerMana = manaSystem.getPlayerMana(player);
+                                        playerMana.setMaxMana(amount);
+
+                                        // Sync to client if needed
+                                        manaSystem.syncManaToClient(player);
+
+                                        context.getSource().sendFeedback(Text.of("Set mana to " + amount), false);
+                                        return 1;
+                                    })
+                            )
+            );
+        });
     }
 }

@@ -25,7 +25,6 @@ public class ManaSyncPacket {
         buf.writeFloat(packet.currentMana);
         buf.writeInt(packet.maxMana);
         buf.writeFloat(packet.regenMultiplier);
-        System.out.println("Sending mana sync packet with multiplier: " + packet.regenMultiplier);
         ServerPlayNetworking.send(player, MANA_SYNC_ID, buf);
     }
 
@@ -35,8 +34,6 @@ public class ManaSyncPacket {
             float currentMana = buf.readFloat();
             int maxMana = buf.readInt();
             float regenMultiplier = buf.readFloat();
-            System.out.println("Received mana sync packet with multiplier: " + regenMultiplier);
-
             // Update client-side mana display
             client.execute(() -> {
                 if (client.player != null) {

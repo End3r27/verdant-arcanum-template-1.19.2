@@ -51,10 +51,7 @@ public class ManaEventHandler {
             if (player.age % 20 == 0) {
                 float regenMultiplier = calculateManaRegenMultiplier(player);
 
-                // Debug logging
                 if (regenMultiplier > 1.0f) {
-                    System.out.println("Applying mana regen for " + player.getName().getString() +
-                            " with multiplier: " + regenMultiplier);
                 }
 
                 // This line is critical - add it to apply regeneration for ALL players
@@ -82,8 +79,6 @@ public class ManaEventHandler {
         if (!ItemStack.areEqual(currentHeadItem, lastState.headItem)) {
             // Immediately update mana regen when head item changes
             float regenMultiplier = calculateManaRegenMultiplier(player);
-            System.out.println("Head equipment changed for " + player.getName().getString() +
-                    ", new regen multiplier: " + regenMultiplier);
             ManaSystem.getInstance().updateManaRegen(player, regenMultiplier);
             lastState.headItem = currentHeadItem.copy();
         }
@@ -107,8 +102,6 @@ public class ManaEventHandler {
         int newMaxMana = ManaSystem.DEFAULT_MAX_MANA + maxManaBonus;
 
         if (playerMana.getMaxMana() != newMaxMana) {
-            System.out.println("Updating max mana for " + player.getName().getString() +
-                    " from " + playerMana.getMaxMana() + " to " + newMaxMana);
             playerMana.setMaxMana(newMaxMana);
 
             // Need to sync after changing max mana
@@ -132,13 +125,6 @@ public class ManaEventHandler {
         int regenLevel = EnchantmentHelper.getLevel(
                 manaRegenEnchantment,
                 player.getEquippedStack(EquipmentSlot.HEAD));
-
-        // Add debug logging
-        if (regenLevel > 0) {
-            System.out.println("Player " + player.getName().getString() +
-                    " has Mana Regen enchantment level: " + regenLevel +
-                    " on head item: " + player.getEquippedStack(EquipmentSlot.HEAD).getName().getString());
-        }
 
         return 1.0f + (regenLevel * 0.25f);
     }

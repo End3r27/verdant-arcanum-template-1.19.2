@@ -5,7 +5,6 @@ import end3r.verdant_arcanum.magic.ManaParticleSystem;
 import end3r.verdant_arcanum.magic.ManaSystem;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.enchantment.EnchantmentHelper;
@@ -85,8 +84,6 @@ public class ClientEvents {
             // This is just for visual feedback on the client side
             // (The server handles the actual regen calculation)
             if (player.world.isClient) {
-                System.out.println("Client detected change in mana regen multiplier: "
-                        + currentRegenMultiplier + " -> " + newRegenMultiplier);
 
                 // Update client-side data with the new multiplier (keeps current and max mana the same)
                 ClientManaData.setMana(

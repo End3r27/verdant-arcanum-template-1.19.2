@@ -1,9 +1,13 @@
 // VerdantArcanum.java
 package end3r.verdant_arcanum;
 
-import end3r.verdant_arcanum.network.StaffPacketHandler;
 import end3r.verdant_arcanum.registry.ModRegistry;
+import end3r.verdant_arcanum.spell.SolarBloomSpell;
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
+import net.minecraft.client.network.ClientPlayerEntity;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.world.ServerWorld;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,10 +24,18 @@ public class VerdantArcanum implements ModInitializer {
 
 		// Register all mod components
 		ModRegistry.registerAll();
-		StaffPacketHandler.registerServerReceivers();
+
+		ServerTickEvents.END_SERVER_TICK.register(this::onServerTick);
 
 
 
 		LOGGER.info("Verdant Arcanum initialization complete!");
 	}
+
+	private void onServerTick(MinecraftServer server) {
+		for (ServerWorld world : server.getWorlds()) {
+			SolarBloomSpell.tickActiveSpells(world, null);
+		}
+	}
+
 }

@@ -50,6 +50,8 @@ public class ModItems {
     public static final Item SPELL_ESSENCE_ROOTGRASP = new SpellEssenceItem("rootgrasp", new Item.Settings().group(DEFAULT_GROUP).maxCount(16));
     public static final Item SPELL_ESSENCE_GUST = new SpellEssenceItem("gust", new Item.Settings().group(DEFAULT_GROUP).maxCount(16));
     public static final Item SPELL_ESSENCE_BREEZEVINE = new SpellEssenceItem("breezevine", new Item.Settings().group(DEFAULT_GROUP).maxCount(16));
+    public static final Item SPELL_ESSENCE_SOLARBLOOM = new SpellEssenceItem("solarbloom", new Item.Settings().group(DEFAULT_GROUP).maxCount(4));
+
 
     public static final MaxManaEnchantment MAX_MANA_ENCHANTMENT = new MaxManaEnchantment();
     public static final ManaRegenEnchantment MANA_REGEN_ENCHANTMENT = new ManaRegenEnchantment();
@@ -104,6 +106,8 @@ public class ModItems {
         Registry.register(Registry.ITEM, new Identifier(VerdantArcanum.MOD_ID, "spell_essence_gust"), SPELL_ESSENCE_GUST);
         Registry.register(Registry.ITEM, new Identifier(VerdantArcanum.MOD_ID, "spell_essence_flame"), SPELL_ESSENCE_FLAME);
         Registry.register(Registry.ITEM, new Identifier(VerdantArcanum.MOD_ID, "spell_essence_breezevine"), SPELL_ESSENCE_BREEZEVINE);
+        Registry.register(Registry.ITEM, new Identifier(VerdantArcanum.MOD_ID, "spell_essence_solarbloom"), SPELL_ESSENCE_SOLARBLOOM);
+
 
         Registry.register(Registry.ITEM, new Identifier(VerdantArcanum.MOD_ID, "magic_hive"), MAGIC_HIVE);
 

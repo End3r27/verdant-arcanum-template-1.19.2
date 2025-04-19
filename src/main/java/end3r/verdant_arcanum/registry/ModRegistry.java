@@ -2,6 +2,9 @@ package end3r.verdant_arcanum.registry;
 
 import end3r.verdant_arcanum.VerdantArcanum;
 import end3r.verdant_arcanum.magic.ManaEventHandler;
+import end3r.verdant_arcanum.magic.ManaSystem;
+import end3r.verdant_arcanum.network.NetworkHandler;
+import end3r.verdant_arcanum.spell.SolarBloomSpell;
 import net.fabricmc.fabric.api.client.itemgroup.FabricItemGroupBuilder;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
@@ -88,9 +91,11 @@ public class ModRegistry {
 
         ManaEventHandler.initialize(MAX_MANA_ENCHANTMENT, MANA_REGEN_ENCHANTMENT);
 
+        SolarBloomSpell.registerSounds();
 
+        ManaSystem.registerCommands();
 
-
+        NetworkHandler.init();
 
 
     }

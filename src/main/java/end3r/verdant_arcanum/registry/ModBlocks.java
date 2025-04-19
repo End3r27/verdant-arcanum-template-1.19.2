@@ -4,6 +4,7 @@ import end3r.verdant_arcanum.VerdantArcanum;
 import end3r.verdant_arcanum.block.*;
 
 import end3r.verdant_arcanum.block.RootgraspBloomBlock;
+import end3r.verdant_arcanum.block.SolarBloomBloomBlock;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.minecraft.block.Block;
 import net.minecraft.block.Material;
@@ -98,6 +99,14 @@ public class ModBlocks {
                     .ticksRandomly()
     );
 
+    public static final Block SOLARBLOOM_BLOOM = new SolarBloomBloomBlock(
+            FabricBlockSettings.of(Material.DECORATION)
+                    .strength(0.2f)
+                    .sounds(BlockSoundGroup.GRASS)
+                    .luminance(5)
+                    .ticksRandomly()
+    );
+
 
     public static final Block MAGIC_HIVE = new MagicHiveBlock(
             FabricBlockSettings.of(Material.WOOD)
@@ -131,6 +140,7 @@ public class ModBlocks {
         Registry.register(Registry.BLOCK, new Identifier(VerdantArcanum.MOD_ID, "rootgrasp_bloom"), ROOTGRASP_BLOOM);
         Registry.register(Registry.BLOCK, new Identifier(VerdantArcanum.MOD_ID, "gust_bloom"), GUST_BLOOM);
         Registry.register(Registry.BLOCK, new Identifier(VerdantArcanum.MOD_ID, "breezevine_bloom"), BREEZEVINE_BLOOM);
+        Registry.register(Registry.BLOCK, new Identifier(VerdantArcanum.MOD_ID, "solarbloom_bloom"), SOLARBLOOM_BLOOM);
 
     }
 }
