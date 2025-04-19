@@ -107,6 +107,14 @@ public class ModBlocks {
                     .ticksRandomly()
     );
 
+    public static final Block FLAMESPIRAL_BLOOM = new FlamespiralBloomBlock(
+            FabricBlockSettings.of(Material.DECORATION)
+                    .strength(0.2f)
+                    .sounds(BlockSoundGroup.GRASS)
+                    .luminance(6) // Adjust this value as needed
+                    .ticksRandomly()
+    );
+
 
     public static final Block MAGIC_HIVE = new MagicHiveBlock(
             FabricBlockSettings.of(Material.WOOD)
@@ -141,6 +149,7 @@ public class ModBlocks {
         Registry.register(Registry.BLOCK, new Identifier(VerdantArcanum.MOD_ID, "gust_bloom"), GUST_BLOOM);
         Registry.register(Registry.BLOCK, new Identifier(VerdantArcanum.MOD_ID, "breezevine_bloom"), BREEZEVINE_BLOOM);
         Registry.register(Registry.BLOCK, new Identifier(VerdantArcanum.MOD_ID, "solarbloom_bloom"), SOLARBLOOM_BLOOM);
+        Registry.register(Registry.BLOCK, new Identifier(VerdantArcanum.MOD_ID, "flamespiral_bloom"), FLAMESPIRAL_BLOOM);
 
     }
 }

@@ -133,8 +133,6 @@
   "enchantment.verdant_arcanum.mana_regen.desc": "Improves your mana regeneration rate.",
 
   "item.verdant_arcanum.spell_essence_solarbloom": "Spell Essence: Solarbloom",
-  "tooltip.verdant_arcanum.spell_essence.solarbloom": "Contains the essence of solar energy",
-  "tooltip.verdant_arcanum.spell_essence.solarbloom.spell": "Projects a beam of concentrated sunlight",
 
   "spell.verdant_arcanum.solarbloom": "Solarbloom",
   "spell.verdant_arcanum.solarbloom.description": "Projects a beam of concentrated sunlight that damages entities and melts ice",
@@ -145,17 +143,32 @@
   "item.verdant_arcanum.solarbloom_bloom": "Solarbloom Bloom",
   "item.verdant_arcanum.solarbloom_bloom.tooltip": "Used in solar magic to create concentrated light",
 
-  "block.verdant_arcanum.solarbloom_flower": "Solarbloom Flower",
-  "block.verdant_arcanum.solarbloom_bloom": "Solarbloom Bloom",
-
-  "tooltip.verdant_arcanum.solarbloom_flower_seeds": "Mystical seeds that grow into sun-powered plants",
-  "tooltip.verdant_arcanum.solarbloom_flower_seeds.detailed.1": "Must be planted on Grove Soil to grow",
-  "tooltip.verdant_arcanum.solarbloom_flower_seeds.detailed.2": "Goes through 3 growth stages: Seed → Bud → Bloom",
-  "tooltip.verdant_arcanum.solarbloom_flower_seeds.detailed.3": "Grows faster in direct sunlight",
-
-  "tooltip.verdant_arcanum.solarbloom_flower_bloom": "A radiant flower with sun-like petals",
-  "tooltip.verdant_arcanum.solarbloom_flower_bloom.detailed.1": "Emits light and heat when stepped on",
-  "tooltip.verdant_arcanum.solarbloom_flower_bloom.detailed.2": "Feels warm to the touch, like concentrated sunlight"
+  "block.verdant_arcanum.solarbloom_flower": "SolarBloom Flower",
+  "block.verdant_arcanum.solarbloom_bloom": "SolarBloom Bloom",
 
 
+  "tooltip.verdant_arcanum.solarbloom_flower_bloom.detailed.2": "Feels warm to the touch, like concentrated sunlight",
+
+  "tooltip.verdant_arcanum.solarbloom_flower_bloom": "A radiant flower that captures sunlight",
+  "tooltip.verdant_arcanum.solarbloom_flower_bloom.detailed.1": "Stores and emanates solar energy",
+
+  "tooltip.verdant_arcanum.flamespiral_flower_bloom": "A twisting flower with flame-like patterns",
+  "tooltip.verdant_arcanum.flamespiral_flower_bloom.detailed.1": "Creates spiraling flames when activated",
+
+  "tooltip.verdant_arcanum.spell_essence.solarbloom": "Contains the essence of solar energy",
+  "tooltip.verdant_arcanum.spell_essence.flamespiral": "Contains the essence of spiraling flames",
+
+  "tooltip.verdant_arcanum.spell_essence.breezevine": "Contains the essence of wind and vines",
+
+
+  "tooltip.verdant_arcanum.spell_essence.solarbloom.spell": "Emits a burst of solar energy",
+  "tooltip.verdant_arcanum.spell_essence.flamespiral.spell": "Creates a spiral of flames around you",
+  "block.verdant_arcanum.flamespiral_bloom": "FlameSpiral Bloom",
+
+  "tooltip.verdant_arcanum.flamespiral_flower_bloom.detailed.2": "Feels warm to the touch, but also kind of cold?",
+
+  "tooltip.verdant_arcanum.breezevine_flower_bloom": "A swaying flower that emanates gentle breezes",
+  "tooltip.verdant_arcanum.breezevine_flower_bloom.detailed.1": "Creates air currents that push and protect",
+  "tooltip.verdant_arcanum.breezevine_flower_bloom.detailed.2": "Feels cool to the touch and rustles even without wind",
+  "item.verdant_arcanum.flamespiral_bloom": "FlameSpiral Bloom"
 }

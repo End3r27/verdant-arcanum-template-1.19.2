@@ -44,7 +44,7 @@ public class ModItems {
     public static final Item GUST_FLOWER_BLOOM = new GustFlowerBloomItem(ModBlocks.GUST_BLOOM, new FabricItemSettings().group(DEFAULT_GROUP));
     public static final Item BREEZEVINE_FLOWER_BLOOM = new BreezevineFlowerBloomItem(ModBlocks.BREEZEVINE_BLOOM, new FabricItemSettings().group(DEFAULT_GROUP));
     public static final Item SOLARBLOOM_FLOWER_BLOOM = new SolarbloomFlowerBloomItem(ModBlocks.SOLARBLOOM_BLOOM, new FabricItemSettings().group(DEFAULT_GROUP));
-    public static final Item FLAMESPIRAL_FLOWER_BLOOM = new FlamespiralFlowerBloomItem(ModBlocks.SOLARBLOOM_BLOOM, new FabricItemSettings().group(DEFAULT_GROUP));
+    public static final Item FLAMESPIRAL_FLOWER_BLOOM = new FlamespiralFlowerBloomItem(ModBlocks.FLAMESPIRAL_BLOOM, new FabricItemSettings().group(DEFAULT_GROUP));
 
 
     // Spell essences
@@ -395,12 +395,12 @@ public class ModItems {
                     stack, world, tooltip, context,
                     // Basic info supplier
                     () -> new Text[] {
-                            TooltipUtils.createTooltip("tooltip.verdant_arcanum.firespiral_flower_bloom", Formatting.WHITE)
+                            TooltipUtils.createTooltip("tooltip.verdant_arcanum.flamespiral_flower_bloom", Formatting.WHITE)
                     },
                     // Detailed info supplier (shown when shift is pressed)
                     () -> new Text[] {
-                            TooltipUtils.createTooltip("tooltip.verdant_arcanum.firespiral_flower_bloom.detailed.1", Formatting.GRAY),
-                            TooltipUtils.createTooltip("tooltip.verdant_arcanum.firespiral_flower_bloom.detailed.2", Formatting.WHITE, Formatting.ITALIC)
+                            TooltipUtils.createTooltip("tooltip.verdant_arcanum.flamespiral_flower_bloom.detailed.1", Formatting.GRAY),
+                            TooltipUtils.createTooltip("tooltip.verdant_arcanum.flamespiral_flower_bloom.detailed.2", Formatting.WHITE, Formatting.ITALIC)
                     }
             );
             super.appendTooltip(stack, world, tooltip, context);

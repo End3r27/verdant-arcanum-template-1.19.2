@@ -20,8 +20,8 @@ import net.minecraft.util.math.random.Random;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldView;
 
-public class FlamespiralBloomBloomBlock extends PlacedBloomBlock {
-    public FlamespiralBloomBloomBlock(Settings settings) {
+public class FlamespiralBloomBlock extends PlacedBloomBlock {
+    public FlamespiralBloomBlock(Settings settings) {
         super(settings);
     }
 
