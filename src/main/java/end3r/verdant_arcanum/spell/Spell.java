@@ -1,6 +1,7 @@
 package end3r.verdant_arcanum.spell;
 
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 
 /**
@@ -18,6 +19,12 @@ public interface Spell {
      * @return The mana cost as an integer
      */
     int getManaCost();
+
+    // New method that considers the staff being used
+    default int getManaCost(ItemStack staffStack) {
+        return getManaCost(); // By default, return the standard mana cost
+    }
+
 
     /**
      * Cast the spell (server-side effect).

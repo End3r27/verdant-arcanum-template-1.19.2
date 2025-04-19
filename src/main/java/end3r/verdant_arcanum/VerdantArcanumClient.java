@@ -20,12 +20,19 @@ import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.client.screenhandler.v1.ScreenRegistry;
+import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.ingame.HandledScreens;
 import net.minecraft.client.render.RenderLayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
+import net.minecraft.network.PacketByteBuf;
+import net.minecraft.text.Text;
+import net.minecraft.util.Hand;
+import net.minecraft.util.Identifier;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWScrollCallbackI;
 import org.slf4j.Logger;
@@ -35,12 +42,58 @@ import org.slf4j.LoggerFactory;
 public class VerdantArcanumClient implements ClientModInitializer {
     private static final Logger LOGGER = LoggerFactory.getLogger(VerdantArcanum.MOD_ID);
 
+    private static final Identifier STAFF_SPELL_CHANGE_CHANNEL =
+            new Identifier(VerdantArcanum.MOD_ID, "staff_spell_change");
+
+
     // Mouse scroll tracking
     private static boolean mouseScrolled = false;
     private static int scrollDirection = 0;
 
     // Store the original scroll callback
     private static GLFWScrollCallbackI originalScrollCallback;
+
+    private static void processStaffScroll() {
+        if (mouseScrolled) {
+            // Get the current player
+            MinecraftClient client = MinecraftClient.getInstance();
+            PlayerEntity player = client.player;
+
+            if (player != null) {
+                // Determine which hand has the staff
+                ItemStack mainHandItem = player.getMainHandStack();
+                ItemStack offHandItem = player.getOffHandStack();
+
+                boolean hasStaff = false;
+                boolean isMainHand = false;
+
+                if (mainHandItem.getItem() instanceof LivingStaffItem) {
+                    hasStaff = true;
+                    isMainHand = true;
+                } else if (offHandItem.getItem() instanceof LivingStaffItem) {
+                    hasStaff = true;
+                    isMainHand = false;
+                }
+
+                if (hasStaff) {
+                    // Create packet with the hand and direction
+                    PacketByteBuf buf = PacketByteBufs.create();
+                    buf.writeBoolean(isMainHand); // true for main hand, false for off hand
+                    buf.writeInt(scrollDirection);
+
+                    // Send to server
+                    ClientPlayNetworking.send(STAFF_SPELL_CHANGE_CHANNEL, buf);
+                }
+            }
+
+            // Reset scroll state after processing
+            mouseScrolled = false;
+            scrollDirection = 0;
+        }
+    }
+
+
+
 
     @Override
     public void onInitializeClient() {
@@ -69,61 +122,34 @@ public class VerdantArcanumClient implements ClientModInitializer {
 
         EntityRendererRegistry.register(ModEntities.MAGIC_INFUSED_BEE, MagicInfusedBeeRenderer::new);
 
-                // Register the ManaHudRenderer
+        ClientTickEvents.END_CLIENT_TICK.register(client -> {
+            processStaffScroll();
+        });
+
+
+        // Register the ManaHudRenderer
                 ManaHudRenderer.register();
 
-        // Use a SINGLE scroll handler
+// Register the packet receiver on the client side
+        ClientPlayNetworking.registerGlobalReceiver(STAFF_SPELL_CHANGE_CHANNEL,
+                (client, handler, buf, responseSender) -> {
+                    // Read the response data
+                    int newActiveSlot = buf.readInt();
+                    String spellName = buf.readString();
+
+                    // Handle on main client thread
+                    client.execute(() -> {
+                        if (client.player != null) {
+                            // Display a status message
+                            client.player.sendMessage(Text.translatable("item.verdant_arcanum.living_staff.spell_changed", spellName), true);
+                        }
+                    });
+                });
+
+
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
-            // Check if player exists and is connected to a server
-            if (client.player != null && client.getNetworkHandler() != null && client.player.isSneaking()) {
-                // Get scroll value from the custom mouseScrolled variable
-                if (mouseScrolled) {
-                    // Direction already determined in GLFW callback
-                    int direction = scrollDirection;
-
-                    // Send packet to server (only if we're connected to a server)
-                    StaffPacketHandlerMk2.sendScrollPacket(direction);
-
-                    // Reset the mouseScrolled flag
-                    mouseScrolled = false;
-                }
-            }
+            processStaffScroll();
         });
-
-        // Register client started event for mouse scroll setup
-        ClientLifecycleEvents.CLIENT_STARTED.register(startedClient -> {
-            // Store the original callback
-            long window = startedClient.getWindow().getHandle();
-            originalScrollCallback = GLFW.glfwSetScrollCallback(window, null);
-
-            // Set our custom callback
-            GLFW.glfwSetScrollCallback(window, (windowHandle, xoffset, yoffset) -> {
-                // Check if player is sneaking and has a staff
-                boolean shouldHandleStaffScroll = false;
-
-                if (MinecraftClient.getInstance().player != null && MinecraftClient.getInstance().player.isSneaking()) {
-                    ItemStack mainHandItem = MinecraftClient.getInstance().player.getMainHandStack();
-                    ItemStack offHandItem = MinecraftClient.getInstance().player.getOffHandStack();
-
-                    if (mainHandItem.getItem() instanceof LivingStaffItem ||
-                            offHandItem.getItem() instanceof LivingStaffItem ||
-                            mainHandItem.getItem() instanceof LivingStaffMk2Item ||
-                            offHandItem.getItem() instanceof LivingStaffMk2Item) {
-                        shouldHandleStaffScroll = true;
-                    }
-                }
-
-                // Only capture for staff if relevant
-                if (shouldHandleStaffScroll) {
-                    mouseScrolled = true;
-                    scrollDirection = yoffset > 0 ? 1 : -1;
-                } else if (originalScrollCallback != null) {
-                    // Call the original callback for default behavior
-                    originalScrollCallback.invoke(windowHandle, xoffset, yoffset);
-                }
-            });
-        });
-
 
 
 

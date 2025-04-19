@@ -12,7 +12,6 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
-import net.minecraft.util.ActionResult;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
@@ -20,10 +19,15 @@ import net.minecraft.world.World;
 
 import java.util.List;
 
+import static end3r.verdant_arcanum.magic.ClientManaData.currentMana;
+import static end3r.verdant_arcanum.magic.ClientManaData.maxMana;
+
 public class LivingStaffMk2Item extends LivingStaffItem {
     // Constants
     public static final int MAX_SLOTS = 5; // Increased from 3 to 5
     public static final float MANA_COST_REDUCTION = 0.9f; // 10% reduction (multiply cost by 0.9)
+
+
 
     public LivingStaffMk2Item(Settings settings) {
         super(settings);
@@ -73,13 +77,14 @@ public class LivingStaffMk2Item extends LivingStaffItem {
         if (spell == null) return TypedActionResult.pass(staffStack);
 
         // Get the reduced mana cost (10% reduction)
-        int originalManaCost = spell.getManaCost();
+        int originalManaCost = spell.getManaCost(staffStack);
         int reducedManaCost = Math.max(1, (int)(originalManaCost * MANA_COST_REDUCTION));
 
         // Check if player is on cooldown
         if (player.getItemCooldownManager().isCoolingDown(this)) {
             return TypedActionResult.pass(staffStack);
         }
+
 
         // Check if player has enough mana
         ManaSystem manaSystem = ManaSystem.getInstance();
