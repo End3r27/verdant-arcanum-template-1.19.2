@@ -23,4 +23,13 @@ public class ClientManaData {
     public static float getManaPercentage() {
         return currentMana / maxMana;
     }
+    public static void resetOrMarkInactive() {
+        // Don't reset current mana value when items are removed
+        // Just make sure max mana returns to the default value
+        maxMana = ManaSystem.DEFAULT_MAX_MANA;
+        // Cap current mana at the new max if needed
+        if (currentMana > maxMana) {
+            currentMana = maxMana;
+        }
+    }
 }

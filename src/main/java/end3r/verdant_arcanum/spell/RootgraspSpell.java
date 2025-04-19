@@ -1,6 +1,6 @@
 package end3r.verdant_arcanum.spell;
 
-import net.minecraft.entity.Entity;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
@@ -10,7 +10,6 @@ import net.minecraft.particle.ParticleTypes;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.math.Box;
-import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
 import java.util.List;
@@ -33,12 +32,24 @@ public class RootgraspSpell implements Spell {
     private static final double MIDDLE_CIRCLE_RADIUS = EFFECT_RADIUS * 0.65;
     private static final double OUTER_CIRCLE_RADIUS = EFFECT_RADIUS;
 
+    // Delay between circle animations in ticks (5 ticks = 0.25 seconds at 20 TPS)
+    private static final int CIRCLE_DELAY_TICKS = 5;
+
     // Particle size factors (vanilla particles don't support direct size control,
     // but we can control velocity which affects perceived size)
     private static final double PARTICLE_SIZE_FACTOR = 0.02;
 
     // Particle life (controlled by vertical velocity)
     private static final double PARTICLE_RISING_SPEED = 0.08;
+
+    // For tracking circle animation state - static to persist between method calls
+    private static int animationTick = 0;
+    private static boolean animationActive = false;
+    private static PlayerEntity animationPlayer = null;
+    private static World animationWorld = null;
+
+    // Flag to ensure we only register the tick handler once
+    private static boolean tickHandlerRegistered = false;
 
     @Override
     public String getType() {
@@ -131,28 +142,107 @@ public class RootgraspSpell implements Spell {
         }
     }
 
+    /**
+     * This method should be called on client side to initiate visual effects
+     */
     @Override
     public void playClientEffects(World world, PlayerEntity player) {
-        // Schedule the three circles to appear in sequence
-        spawnCircleEffect(world, player, INNER_CIRCLE_RADIUS, 0);
+        // Ensure the tick handler is registered
+        registerClientTickHandler();
 
-        // We'd typically use a scheduler here, but for simplicity
-        // we'll just spawn all three at once with different parameters
-
-        // First circle - inner (smallest, closest to player)
-        spawnCircleEffect(world, player, INNER_CIRCLE_RADIUS, 30,
-                ParticleTypes.HAPPY_VILLAGER, PARTICLE_RISING_SPEED * 1.2);
-
-        // Second circle - middle
-        spawnCircleEffect(world, player, MIDDLE_CIRCLE_RADIUS, 45,
-                ParticleTypes.HAPPY_VILLAGER, PARTICLE_RISING_SPEED);
-
-        // Third circle - outer (largest, farthest from player)
-        spawnCircleEffect(world, player, OUTER_CIRCLE_RADIUS, 60,
-                ParticleTypes.HAPPY_VILLAGER, PARTICLE_RISING_SPEED * 0.8);
+        // Start the animation sequence
+        startCircleAnimation(world, player);
 
         // Add rising particles throughout the effect area for additional visual impact
         spawnRisingAreaEffects(world, player);
+    }
+
+    /**
+     * Initializes the circle animation sequence
+     */
+    private void startCircleAnimation(World world, PlayerEntity player) {
+        // Store animation state for tick handler to use
+        animationWorld = world;
+        animationPlayer = player;
+        animationTick = 0;
+        animationActive = true;
+
+        // Spawn inner circle immediately with sound
+        spawnCircleEffect(world, player, INNER_CIRCLE_RADIUS, 30,
+                ParticleTypes.HAPPY_VILLAGER, PARTICLE_RISING_SPEED * 1.2);
+
+        // Play sound for inner circle - higher pitch for smaller circle
+        world.playSound(null, player.getX(), player.getY(), player.getZ(),
+                SoundEvents.BLOCK_GRASS_PLACE, SoundCategory.PLAYERS,
+                0.6F, 1.1F);
+    }
+
+    /**
+     * Register for client tick events to handle animation timing
+     * Uses Fabric's ClientTickEvents system
+     */
+    private void registerClientTickHandler() {
+        // Only register once to avoid multiple registrations
+        if (!tickHandlerRegistered) {
+            // Register with Fabric's client tick event system
+            ClientTickEvents.END_CLIENT_TICK.register(client -> {
+                // This will be called every client tick
+                if (animationActive) {
+                    tickClientAnimation();
+                }
+            });
+
+            tickHandlerRegistered = true;
+        }
+    }
+
+    /**
+     * Handles the client-side animation ticks
+     * Called every client tick when animation is active
+     */
+    private void tickClientAnimation() {
+        if (!animationActive || animationWorld == null || animationPlayer == null) {
+            return;
+        }
+
+        animationTick++;
+
+        // Middle circle after 5 ticks (0.25 seconds)
+        if (animationTick == CIRCLE_DELAY_TICKS) {
+            spawnCircleEffect(animationWorld, animationPlayer, MIDDLE_CIRCLE_RADIUS, 45,
+                    ParticleTypes.HAPPY_VILLAGER, PARTICLE_RISING_SPEED);
+
+            // Play sound for middle circle - medium pitch
+            animationWorld.playSound(null, animationPlayer.getX(), animationPlayer.getY(), animationPlayer.getZ(),
+                    SoundEvents.BLOCK_GRASS_PLACE, SoundCategory.PLAYERS,
+                    0.8F, 0.9F);
+
+            // Add roots sound for more depth to middle circle
+            animationWorld.playSound(null, animationPlayer.getX(), animationPlayer.getY(), animationPlayer.getZ(),
+                    SoundEvents.BLOCK_ROOTS_PLACE, SoundCategory.PLAYERS,
+                    0.4F, 0.8F);
+        }
+
+        // Outer circle after 10 ticks (0.5 seconds)
+        if (animationTick == CIRCLE_DELAY_TICKS * 2) {
+            spawnCircleEffect(animationWorld, animationPlayer, OUTER_CIRCLE_RADIUS, 60,
+                    ParticleTypes.HAPPY_VILLAGER, PARTICLE_RISING_SPEED * 0.8);
+
+            // Play sounds for outer circle - lowest pitch for largest circle
+            animationWorld.playSound(null, animationPlayer.getX(), animationPlayer.getY(), animationPlayer.getZ(),
+                    SoundEvents.BLOCK_GRASS_PLACE, SoundCategory.PLAYERS,
+                    1.0F, 0.7F);
+
+            // Add stronger roots sound for final circle to emphasize completion
+            animationWorld.playSound(null, animationPlayer.getX(), animationPlayer.getY(), animationPlayer.getZ(),
+                    SoundEvents.BLOCK_ROOTS_PLACE, SoundCategory.PLAYERS,
+                    0.8F, 0.6F);
+
+            // Animation complete, clean up
+            animationActive = false;
+            animationWorld = null;
+            animationPlayer = null;
+        }
     }
 
     /**

@@ -14,7 +14,7 @@ import net.minecraft.world.World;
  */
 public class BreezevineSpell implements Spell {
     // Mana cost for casting this spell
-    private static final int MANA_COST = 15;
+    private static final int MANA_COST = 20;
     // Strength of the backward push
     private static final double PUSH_STRENGTH = 1.5;
     // Duration of slow falling effect in ticks (5 seconds)

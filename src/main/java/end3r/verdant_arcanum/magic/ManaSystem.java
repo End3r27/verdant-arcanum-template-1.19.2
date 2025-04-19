@@ -151,15 +151,21 @@ public class ManaSystem {
             this.currentMana = currentMana;
         }
 
+
+
         public int getMaxMana() {
             return maxMana;
         }
 
-        public void setMaxMana(int maxMana) {
-            this.maxMana = maxMana;
-            if (currentMana > maxMana) {
-                currentMana = maxMana; // Ensure current mana doesn't exceed max mana
-            }
+        public void setMaxMana(int newMaxMana) {
+            // Save the percentage of mana the player had
+            float manaPercentage = currentMana / (float)maxMana;
+
+            // Update max mana
+            this.maxMana = newMaxMana;
+
+            // Set current mana to keep the same percentage (with bounds checking)
+            this.currentMana = Math.min(newMaxMana, Math.max(0, manaPercentage * newMaxMana));
         }
 
         public float getCurrentMana() {
@@ -197,5 +203,10 @@ public class ManaSystem {
             ManaSyncPacket packet = new ManaSyncPacket(playerMana.getCurrentMana(), playerMana.getMaxMana());
             ManaSyncPacket.send(serverPlayer, packet);
         }
+    }
+
+    public void updatePlayerMaxMana(PlayerEntity player, int newMaxMana) {
+        PlayerMana playerMana = getPlayerMana(player);
+        playerMana.setMaxMana(newMaxMana);
     }
 }

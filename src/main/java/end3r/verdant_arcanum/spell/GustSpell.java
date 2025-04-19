@@ -17,7 +17,7 @@ import java.util.List;
  */
 public class GustSpell implements Spell {
     // Mana cost for casting this spell
-    private static final int MANA_COST = 20;
+    private static final int MANA_COST = 15;
     // Effect radius in blocks
     private static final double EFFECT_RADIUS = 4.0;
     // Push strength
