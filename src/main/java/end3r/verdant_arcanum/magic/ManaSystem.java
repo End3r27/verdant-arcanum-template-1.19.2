@@ -22,8 +22,8 @@ public class ManaSystem {
     public static final int DEFAULT_MAX_MANA = 100;
 
 
-    // Default mana regeneration rate (per tick)
-    public static final float DEFAULT_MANA_REGEN_RATE = 0.05f;
+    // Default mana regeneration rate
+    public static final float DEFAULT_MANA_REGEN_RATE = 2f;
 
     // Map for tracking custom regeneration multipliers per player
     private final Map<UUID, Float> regenMultipliers = new HashMap<>();
@@ -113,8 +113,9 @@ public class ManaSystem {
             float oldMana = playerMana.getCurrentMana();
             playerMana.regenerateMana(regenRate);
 
+            // Add this line to make sure changes sync to client
+            syncManaToClient(player);
         }
-
     }
 
     /**

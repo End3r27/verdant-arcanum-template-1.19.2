@@ -51,13 +51,14 @@ public class ManaEventHandler {
             if (player.age % 20 == 0) {
                 float regenMultiplier = calculateManaRegenMultiplier(player);
 
-                // Add debug logging
+                // Debug logging
                 if (regenMultiplier > 1.0f) {
                     System.out.println("Applying mana regen for " + player.getName().getString() +
                             " with multiplier: " + regenMultiplier);
                 }
 
-                manaSystem.updateManaRegen(player, regenMultiplier);
+                // This line is critical - add it to apply regeneration for ALL players
+                ManaSystem.getInstance().updateManaRegen(player, regenMultiplier);
             }
         }
     }

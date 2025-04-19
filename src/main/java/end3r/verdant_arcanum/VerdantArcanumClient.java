@@ -8,10 +8,8 @@ import end3r.verdant_arcanum.magic.ManaSyncPacket;
 import end3r.verdant_arcanum.registry.*;
 import end3r.verdant_arcanum.screen.LivingStaffScreen;
 import end3r.verdant_arcanum.item.LivingStaffItem;
-import end3r.verdant_arcanum.magic.ManaSystem;
 import end3r.verdant_arcanum.magic.ManaParticleSystem;
 import end3r.verdant_arcanum.screen.LivingStaffScreenHandler;
-import end3r.verdant_arcanum.spell.RootgraspSpell;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -145,13 +143,6 @@ public class VerdantArcanumClient implements ClientModInitializer {
             }
         });
 
-        // Register client tick event for particle updates
-        ClientTickEvents.END_CLIENT_TICK.register(particleClient -> {
-            if (particleClient.player != null && particleClient.world != null) {
-                // Particles will be handled in ManaSystem's update method
-                ManaSystem.getInstance().updateManaRegen(particleClient.player);
-            }
-        });
 
         LOGGER.info("Verdant Arcanum Client initialization complete!");
     }
