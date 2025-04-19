@@ -1,7 +1,7 @@
-package end3r.verdant_arcanum.spell;
+package end3r.verdant_arcanum.spell.tier1;
 
+import end3r.verdant_arcanum.spell.Spell;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.sound.SoundCategory;

@@ -1,5 +1,6 @@
-package end3r.verdant_arcanum.spell;
+package end3r.verdant_arcanum.spell.tier1;
 
+import end3r.verdant_arcanum.spell.Spell;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.effect.StatusEffectInstance;

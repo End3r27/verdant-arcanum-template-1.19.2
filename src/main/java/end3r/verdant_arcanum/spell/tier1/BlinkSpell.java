@@ -1,5 +1,7 @@
-package end3r.verdant_arcanum.spell;
+package end3r.verdant_arcanum.spell.tier1;
 
+import end3r.verdant_arcanum.spell.Spell;
+import end3r.verdant_arcanum.spell.SpellCastException;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.sound.SoundCategory;
@@ -36,7 +38,7 @@ public class BlinkSpell implements Spell {
         Vec3d startPos = player.getEyePos();
 
         // Perform raycast to find a valid teleport location
-        BlockPos targetPos = findTeleportDestination(world, startPos, lookVec, MAX_DISTANCE);
+        BlockPos targetPos = findTeleportDestination(world, startPos, lookVec);
 
         // If a valid position was found, teleport the player
         if (targetPos != null) {
@@ -70,12 +72,12 @@ public class BlinkSpell implements Spell {
         throw new SpellCastException("No valid teleport location found");
     }
 
-    private BlockPos findTeleportDestination(World world, Vec3d startPos, Vec3d direction, int maxDistance) {
+    private BlockPos findTeleportDestination(World world, Vec3d startPos, Vec3d direction) {
         // Normalize the direction vector
         direction = direction.normalize();
 
         // Check each block along the ray
-        for (int i = 1; i <= maxDistance; i++) {
+        for (int i = 1; i <= BlinkSpell.MAX_DISTANCE; i++) {
             Vec3d checkPos = startPos.add(direction.multiply(i));
             BlockPos blockPos = new BlockPos((int) Math.floor(checkPos.x), (int) Math.floor(checkPos.y), (int) Math.floor(checkPos.z));
 
@@ -88,7 +90,7 @@ public class BlinkSpell implements Spell {
         }
 
         // If we couldn't find a valid position, try teleporting as far as possible in a safe way
-        for (int i = maxDistance; i > 0; i--) {
+        for (int i = BlinkSpell.MAX_DISTANCE; i > 0; i--) {
             Vec3d checkPos = startPos.add(direction.multiply(i));
             BlockPos blockPos = new BlockPos((int) Math.floor(checkPos.x), (int) Math.floor(checkPos.y), (int) Math.floor(checkPos.z));
 
@@ -131,9 +133,9 @@ public class BlinkSpell implements Spell {
         for (int i = 0; i < 10; i++) {
             world.addParticle(
                     ParticleTypes.SMOKE,
-                    player.getX() + (world.random.nextDouble() - 0.5) * 1.0,
+                    player.getX() + (world.random.nextDouble() - 0.5),
                     player.getY() + player.getStandingEyeHeight() - 0.1,
-                    player.getZ() + (world.random.nextDouble() - 0.5) * 1.0,
+                    player.getZ() + (world.random.nextDouble() - 0.5),
                     world.random.nextGaussian() * 0.02,
                     world.random.nextGaussian() * 0.02,
                     world.random.nextGaussian() * 0.02

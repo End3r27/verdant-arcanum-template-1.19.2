@@ -1,11 +1,14 @@
-package end3r.verdant_arcanum.block;
+package end3r.verdant_arcanum.block.tier2;
 
+import end3r.verdant_arcanum.block.PlacedBloomBlock;
 import end3r.verdant_arcanum.entity.MagicInfusedBee;
 import end3r.verdant_arcanum.registry.ModBlocks;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.effect.StatusEffectInstance;
+import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
@@ -18,8 +21,8 @@ import net.minecraft.util.math.random.Random;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldView;
 
-public class GustBloomBlock extends PlacedBloomBlock {
-    public GustBloomBlock(Settings settings) {
+public class FlamespiralBloomBlock extends PlacedBloomBlock {
+    public FlamespiralBloomBlock(Settings settings) {
         super(settings);
     }
 
@@ -31,44 +34,44 @@ public class GustBloomBlock extends PlacedBloomBlock {
             return;
         }
 
-        if (!world.isClient && entity instanceof LivingEntity && world.getRandom().nextInt(5) == 0) {
-            // Push the entity upward and away
-            Vec3d entityPos = entity.getPos();
-            Vec3d flowerPos = new Vec3d(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5);
-            Vec3d pushDirection = entityPos.subtract(flowerPos).normalize();
+        if (!world.isClient && entity instanceof LivingEntity) {
+            LivingEntity livingEntity = (LivingEntity) entity;
+            // Set the entity on fire for 6 seconds
+            entity.setOnFireFor(6);
+            livingEntity.setVelocity(Vec3d.ZERO);
+            livingEntity.addStatusEffect(new StatusEffectInstance(StatusEffects.SLOWNESS, 60, 1));
+            livingEntity.addStatusEffect(new StatusEffectInstance(StatusEffects.MINING_FATIGUE, 40, 0));
 
-            entity.setVelocity(
-                    entity.getVelocity().x + pushDirection.x * 0.5,
-                    entity.getVelocity().y + 0.2,
-                    entity.getVelocity().z + pushDirection.z * 0.5
-            );
-            entity.velocityModified = true;
 
-            // Visual and sound effect
-            ((ServerWorld)world).spawnParticles(ParticleTypes.CLOUD,
-                    entity.getX(), entity.getY(), entity.getZ(),
-                    10, 0.2, 0.1, 0.2, 0.05);
-            world.playSound(null, pos, SoundEvents.ENTITY_PHANTOM_FLAP, SoundCategory.BLOCKS, 0.5F, 1.5F);
+
+            // Optional: Add flame particles for visual effect
+            if (world instanceof ServerWorld) {
+                ((ServerWorld)world).spawnParticles(ParticleTypes.FLAME,
+                        entity.getX(), entity.getY(), entity.getZ(),
+                        10, 0.2, 0.1, 0.2, 0.05);
+                world.playSound(null, pos, SoundEvents.BLOCK_FIRE_AMBIENT, SoundCategory.BLOCKS, 0.5F, 1.0F);
+            }
         }
+
         super.onEntityCollision(state, world, pos, entity);
     }
 
     @Override
     public void randomTick(BlockState state, ServerWorld world, BlockPos pos, Random random) {
-        // Occasionally create gust effects
+        // Occasionally create breeze effects
         if (random.nextInt(15) == 0) {
-            createGustEffect(world, pos, random);
+            createBreezeEffect(world, pos, random);
         }
     }
 
-    private void createGustEffect(ServerWorld world, BlockPos pos, Random random) {
+    private void createBreezeEffect(ServerWorld world, BlockPos pos, Random random) {
         // Create visual effect - particles
         world.spawnParticles(ParticleTypes.CLOUD,
                 pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5,
                 20, 1.0, 0.5, 1.0, 0.1);
 
         // Play sound
-        world.playSound(null, pos, SoundEvents.ENTITY_PHANTOM_FLAP, SoundCategory.BLOCKS, 1.0F, 1.5F);
+        world.playSound(null, pos, SoundEvents.ENTITY_PHANTOM_FLAP, SoundCategory.BLOCKS, 1.0F, 1.8F);
 
         // Push entities away
         Box area = new Box(pos).expand(4.0);
@@ -99,6 +102,7 @@ public class GustBloomBlock extends PlacedBloomBlock {
             }
         }
     }
+
     @Override
     public boolean canPlaceAt(BlockState state, WorldView world, BlockPos pos) {
         BlockState blockState = world.getBlockState(pos.down());

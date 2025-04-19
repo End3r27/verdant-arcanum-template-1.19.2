@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/cross",
+  "textures": {
+    "cross": "verdant_arcanum:block/phantomstep",
+    "particle": "verdant_arcanum:block/phantomstep"
+  }
+}

@@ -2,10 +2,9 @@
 package end3r.verdant_arcanum;
 
 import end3r.verdant_arcanum.registry.ModRegistry;
-import end3r.verdant_arcanum.spell.SolarBloomSpell;
+import end3r.verdant_arcanum.spell.tier2.SolarBloomSpell;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
-import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.world.ServerWorld;
 import org.slf4j.Logger;

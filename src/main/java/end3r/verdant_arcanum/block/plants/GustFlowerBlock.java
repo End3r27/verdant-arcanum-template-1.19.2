@@ -1,5 +1,6 @@
-package end3r.verdant_arcanum.block;
+package end3r.verdant_arcanum.block.plants;
 
+import end3r.verdant_arcanum.block.GroveSoilBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.CropBlock;
@@ -22,29 +23,30 @@ import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.particle.ParticleTypes;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 
 import end3r.verdant_arcanum.registry.ModItems;
 
-public class BlinkFlowerBlock extends CropBlock {
+public class GustFlowerBlock extends CropBlock {
     public static final int MAX_AGE = 2;
     public static final IntProperty AGE = IntProperty.of("age", 0, MAX_AGE);
 
     private static final VoxelShape[] AGE_TO_SHAPE = new VoxelShape[]{
             Block.createCuboidShape(5.0, 0.0, 5.0, 11.0, 6.0, 11.0),  // Age 0
-            Block.createCuboidShape(3.0, 0.0, 3.0, 13.0, 8.0, 13.0),  // Age 1
-            Block.createCuboidShape(2.0, 0.0, 2.0, 14.0, 12.0, 14.0)  // Age 2 (fully grown)
+            Block.createCuboidShape(4.0, 0.0, 4.0, 12.0, 9.0, 12.0),  // Age 1
+            Block.createCuboidShape(2.0, 0.0, 2.0, 14.0, 14.0, 14.0)  // Age 2 (fully grown)
     };
 
-    public BlinkFlowerBlock(Settings settings) {
+    public GustFlowerBlock(Settings settings) {
         super(settings);
         this.setDefaultState(this.stateManager.getDefaultState().with(AGE, 0));
     }
 
     @Override
     protected ItemConvertible getSeedsItem() {
-        return ModItems.BLINK_FLOWER_SEEDS;
+        return ModItems.GUST_FLOWER_SEEDS;
     }
 
     @Override
@@ -77,43 +79,76 @@ public class BlinkFlowerBlock extends CropBlock {
             }
         }
 
-        // Special behavior: occasionally teleport nearby entities when mature
-        if (state.get(AGE) == MAX_AGE && random.nextInt(20) == 0) {
-            Box area = new Box(pos).expand(3.0);
-            for (Entity entity : world.getOtherEntities(null, area)) {
-                if (entity instanceof LivingEntity && random.nextInt(4) == 0) {
-                    teleportRandomly(world, (LivingEntity)entity, random, 10.0);
-                }
-            }
+        // Special behavior: mature plants produce occasional gusts of wind
+        if (state.get(AGE) == MAX_AGE && random.nextInt(15) == 0) {
+            createGustEffect(world, pos, random);
         }
     }
 
-    private void teleportRandomly(ServerWorld world, LivingEntity entity, Random random, double range) {
-        // Calculate random position within range
-        double x = entity.getX() + (random.nextDouble() - 0.5) * range * 2;
-        double y = entity.getY();
-        double z = entity.getZ() + (random.nextDouble() - 0.5) * range * 2;
+    private void createGustEffect(ServerWorld world, BlockPos pos, Random random) {
+        // Create visual effect - particles
+        world.spawnParticles(ParticleTypes.CLOUD,
+                pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5,
+                20, 1.0, 0.5, 1.0, 0.1);
 
-        // Find valid position on ground
-        BlockPos targetPos = new BlockPos(x, y, z);
-        while (world.isAir(targetPos) && targetPos.getY() > 0) {
-            targetPos = targetPos.down();
-        }
+        // Play sound
+        world.playSound(null, pos, SoundEvents.ENTITY_PHANTOM_FLAP, SoundCategory.BLOCKS, 1.0F, 1.5F);
 
-        if (world.getBlockState(targetPos).getMaterial().blocksMovement()) {
-            // Teleport to valid position above ground
-            entity.teleport(x, targetPos.getY() + 1.0, z);
-            world.playSound(null, entity.getX(), entity.getY(), entity.getZ(),
-                    SoundEvents.ENTITY_ENDERMAN_TELEPORT, SoundCategory.BLOCKS, 1.0F, 1.0F);
+        // Push entities away
+        Box area = new Box(pos).expand(4.0);
+        for (Entity entity : world.getOtherEntities(null, area)) {
+            if (entity instanceof LivingEntity) {
+                // Calculate push direction - away from the flower
+                Vec3d entityPos = entity.getPos();
+                Vec3d flowerPos = new Vec3d(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5);
+                Vec3d pushDirection = entityPos.subtract(flowerPos).normalize();
+
+                // Push harder if entity is closer to flower
+                double distance = entityPos.distanceTo(flowerPos);
+                double pushStrength = Math.max(0.5, 2.0 - (distance / 4.0));
+
+                // Apply push velocity
+                Vec3d currentVelocity = entity.getVelocity();
+                entity.setVelocity(
+                        currentVelocity.x + pushDirection.x * pushStrength,
+                        currentVelocity.y + 0.3 * pushStrength, // Push upward for more dramatic effect
+                        currentVelocity.z + pushDirection.z * pushStrength
+                );
+                entity.velocityModified = true;
+            }
         }
     }
 
     @Override
     public void onEntityCollision(BlockState state, World world, BlockPos pos, Entity entity) {
-        if (!world.isClient && state.get(AGE) > 0 && entity instanceof LivingEntity && world.random.nextInt(10) == 0) {
-            // Chance to teleport entity when touched
-            LivingEntity livingEntity = (LivingEntity) entity;
-            teleportRandomly((ServerWorld)world, livingEntity, world.random, 5.0);
+        if (!world.isClient && state.get(AGE) > 0 && entity instanceof LivingEntity) {
+            int age = state.get(AGE);
+
+            // More mature plants have stronger push effect
+            if (age > 0 && world.random.nextInt(5) == 0) {
+                // Push the entity upward and away
+                Vec3d entityPos = entity.getPos();
+                Vec3d flowerPos = new Vec3d(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5);
+                Vec3d pushDirection = entityPos.subtract(flowerPos).normalize();
+
+                // Push strength increases with age
+                double pushStrength = 0.5 * age;
+
+                entity.setVelocity(
+                        entity.getVelocity().x + pushDirection.x * pushStrength,
+                        entity.getVelocity().y + 0.2 * age,
+                        entity.getVelocity().z + pushDirection.z * pushStrength
+                );
+                entity.velocityModified = true;
+
+                // Visual and sound effect
+                if (age == MAX_AGE) {
+                    ((ServerWorld)world).spawnParticles(ParticleTypes.CLOUD,
+                            entity.getX(), entity.getY(), entity.getZ(),
+                            10, 0.2, 0.1, 0.2, 0.05);
+                    world.playSound(null, pos, SoundEvents.ENTITY_PHANTOM_FLAP, SoundCategory.BLOCKS, 0.5F, 1.5F);
+                }
+            }
         }
         super.onEntityCollision(state, world, pos, entity);
     }
@@ -133,7 +168,7 @@ public class BlinkFlowerBlock extends CropBlock {
             // Drop bloom on right-click
             if (!world.isClient) {
                 // Drop only the bloom item
-                ItemStack bloomStack = new ItemStack(ModItems.BLINK_FLOWER_BLOOM);
+                ItemStack bloomStack = new ItemStack(ModItems.GUST_FLOWER_BLOOM);
                 Block.dropStack(world, pos, bloomStack);
 
                 // Reset to initial growth stage
@@ -147,5 +182,4 @@ public class BlinkFlowerBlock extends CropBlock {
 
         return ActionResult.PASS;
     }
-
 }

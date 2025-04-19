@@ -45,6 +45,7 @@ public class ModItems {
     public static final Item BREEZEVINE_FLOWER_BLOOM = new BreezevineFlowerBloomItem(ModBlocks.BREEZEVINE_BLOOM, new FabricItemSettings().group(DEFAULT_GROUP));
     public static final Item SOLARBLOOM_FLOWER_BLOOM = new SolarbloomFlowerBloomItem(ModBlocks.SOLARBLOOM_BLOOM, new FabricItemSettings().group(DEFAULT_GROUP));
     public static final Item FLAMESPIRAL_FLOWER_BLOOM = new FlamespiralFlowerBloomItem(ModBlocks.FLAMESPIRAL_BLOOM, new FabricItemSettings().group(DEFAULT_GROUP));
+    public static final Item PHANTOMSTEP_FLOWER_BLOOM = new PhantomstepFlowerBloomItem(ModBlocks.PHANTOMSTEP_BLOOM, new FabricItemSettings().group(DEFAULT_GROUP));
 
 
     // Spell essences
@@ -53,8 +54,9 @@ public class ModItems {
     public static final Item SPELL_ESSENCE_ROOTGRASP = new SpellEssenceItem("rootgrasp", new Item.Settings().group(DEFAULT_GROUP).maxCount(16));
     public static final Item SPELL_ESSENCE_GUST = new SpellEssenceItem("gust", new Item.Settings().group(DEFAULT_GROUP).maxCount(16));
     public static final Item SPELL_ESSENCE_BREEZEVINE = new SpellEssenceItem("breezevine", new Item.Settings().group(DEFAULT_GROUP).maxCount(16));
-    public static final Item SPELL_ESSENCE_SOLARBLOOM = new SpellEssenceItem("solarbloom", new Item.Settings().group(DEFAULT_GROUP).maxCount(4));
+    public static final Item SPELL_ESSENCE_SOLARBLOOM = new SpellEssenceItem("solarbloom", new Item.Settings().group(DEFAULT_GROUP).fireproof().maxCount(4));
     public static final Item SPELL_ESSENCE_FLAMESPIRAL = new SpellEssenceItem("flamespiral", new FabricItemSettings().group(DEFAULT_GROUP).fireproof().maxCount(4));
+    public static final Item SPELL_ESSENCE_PHANTOMSTEP = new SpellEssenceItem("phantomstep", new FabricItemSettings().group(DEFAULT_GROUP).maxCount(4));
 
 
     public static final MaxManaEnchantment MAX_MANA_ENCHANTMENT = new MaxManaEnchantment();
@@ -105,6 +107,7 @@ public class ModItems {
         Registry.register(Registry.ITEM, new Identifier(VerdantArcanum.MOD_ID, "breezevine_flower_bloom"), BREEZEVINE_FLOWER_BLOOM);
         Registry.register(Registry.ITEM, new Identifier(VerdantArcanum.MOD_ID, "solarbloom_flower_bloom"), SOLARBLOOM_FLOWER_BLOOM);
         Registry.register(Registry.ITEM, new Identifier(VerdantArcanum.MOD_ID, "flamespiral_flower_bloom"), FLAMESPIRAL_FLOWER_BLOOM);
+        Registry.register(Registry.ITEM, new Identifier(VerdantArcanum.MOD_ID, "phantomstep_flower_bloom"), PHANTOMSTEP_FLOWER_BLOOM);
 
 
         // Register spell essences
@@ -115,6 +118,8 @@ public class ModItems {
         Registry.register(Registry.ITEM, new Identifier(VerdantArcanum.MOD_ID, "spell_essence_breezevine"), SPELL_ESSENCE_BREEZEVINE);
         Registry.register(Registry.ITEM, new Identifier(VerdantArcanum.MOD_ID, "spell_essence_solarbloom"), SPELL_ESSENCE_SOLARBLOOM);
         Registry.register(Registry.ITEM, new Identifier(VerdantArcanum.MOD_ID, "spell_essence_flamespiral"), SPELL_ESSENCE_FLAMESPIRAL);
+        Registry.register(Registry.ITEM, new Identifier(VerdantArcanum.MOD_ID, "spell_essence_phantomstep"), SPELL_ESSENCE_PHANTOMSTEP);
+
 
         Registry.register(Registry.ITEM, new Identifier(VerdantArcanum.MOD_ID, "magic_hive"), MAGIC_HIVE);
 
@@ -401,6 +406,31 @@ public class ModItems {
                     () -> new Text[] {
                             TooltipUtils.createTooltip("tooltip.verdant_arcanum.flamespiral_flower_bloom.detailed.1", Formatting.GRAY),
                             TooltipUtils.createTooltip("tooltip.verdant_arcanum.flamespiral_flower_bloom.detailed.2", Formatting.WHITE, Formatting.ITALIC)
+                    }
+            );
+            super.appendTooltip(stack, world, tooltip, context);
+        }
+    }
+    public static class PhantomstepFlowerBloomItem extends BlockItem {
+        public PhantomstepFlowerBloomItem(Block gustBloom, Settings settings) {
+            super(gustBloom, settings);
+        }
+
+
+
+
+        @Override
+        public void appendTooltip(ItemStack stack, World world, List<Text> tooltip, TooltipContext context) {
+            TooltipUtils.addTooltipWithShift(
+                    stack, world, tooltip, context,
+                    // Basic info supplier
+                    () -> new Text[] {
+                            TooltipUtils.createTooltip("tooltip.verdant_arcanum.phantomstep_flower_bloom", Formatting.WHITE)
+                    },
+                    // Detailed info supplier (shown when shift is pressed)
+                    () -> new Text[] {
+                            TooltipUtils.createTooltip("tooltip.verdant_arcanum.phantomstep_flower_bloom.detailed.1", Formatting.GRAY),
+                            TooltipUtils.createTooltip("tooltip.verdant_arcanum.phantomstep_flower_bloom.detailed.2", Formatting.WHITE, Formatting.ITALIC)
                     }
             );
             super.appendTooltip(stack, world, tooltip, context);

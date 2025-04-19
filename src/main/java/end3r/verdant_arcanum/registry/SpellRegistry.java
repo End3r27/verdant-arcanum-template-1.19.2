@@ -1,8 +1,15 @@
 package end3r.verdant_arcanum.registry;
 
 import end3r.verdant_arcanum.spell.*;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
+import end3r.verdant_arcanum.spell.tier1.BlinkSpell;
+import end3r.verdant_arcanum.spell.tier1.FlameSpell;
+import end3r.verdant_arcanum.spell.tier1.GustSpell;
+import end3r.verdant_arcanum.spell.tier1.RootgraspSpell;
+import end3r.verdant_arcanum.spell.tier2.BreezevineSpell;
+import end3r.verdant_arcanum.spell.tier2.FlameSpiralSpell;
+import end3r.verdant_arcanum.spell.tier2.PhantomStepSpell;
+import end3r.verdant_arcanum.spell.tier2.SolarBloomSpell;
+
 
 import java.util.HashMap;
 import java.util.Map;
@@ -20,6 +27,7 @@ public class SpellRegistry {
         register("gust", new GustSpell());
         register("breezevine", new BreezevineSpell());
         register("solarbloom", new SolarBloomSpell());
+        register("phantomstep", new PhantomStepSpell());
         register("flamespiral", new FlameSpiralSpell());
 
 

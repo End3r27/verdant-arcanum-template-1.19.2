@@ -1,9 +1,10 @@
-package end3r.verdant_arcanum.spell;
+package end3r.verdant_arcanum.spell.tier2;
 
 import end3r.verdant_arcanum.VerdantArcanum;
 import end3r.verdant_arcanum.magic.ManaSystem;
 import end3r.verdant_arcanum.network.BeamParticlePacket;
 import end3r.verdant_arcanum.network.NetworkHandler;
+import end3r.verdant_arcanum.spell.Spell;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.LivingEntity;

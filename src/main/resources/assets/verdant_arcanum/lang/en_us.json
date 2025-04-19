@@ -170,5 +170,12 @@
   "tooltip.verdant_arcanum.breezevine_flower_bloom": "A swaying flower that emanates gentle breezes",
   "tooltip.verdant_arcanum.breezevine_flower_bloom.detailed.1": "Creates air currents that push and protect",
   "tooltip.verdant_arcanum.breezevine_flower_bloom.detailed.2": "Feels cool to the touch and rustles even without wind",
-  "item.verdant_arcanum.spell_essence_flamespiral": "Spell Essence: FlameSpiral"
+  "item.verdant_arcanum.spell_essence_flamespiral": "Spell Essence: FlameSpiral",
+
+  "tooltip.verdant_arcanum.phantomstep_flower_bloom": "A ghostly flower that shifts between dimensions",
+  "tooltip.verdant_arcanum.phantomstep_flower_bloom.detailed.1": "Emanates an ethereal aura that allows passage through solid matter",
+  "tooltip.verdant_arcanum.phantomstep_flower_bloom.detailed.2": "Feels weightless and slightly transparent to the touch",
+
+  "tooltip.verdant_arcanum.spell_essence.phantomstep.spell": "Allows temporary Invisibility"
+
 }

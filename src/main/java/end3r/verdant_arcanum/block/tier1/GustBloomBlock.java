@@ -1,5 +1,6 @@
-package end3r.verdant_arcanum.block;
+package end3r.verdant_arcanum.block.tier1;
 
+import end3r.verdant_arcanum.block.PlacedBloomBlock;
 import end3r.verdant_arcanum.entity.MagicInfusedBee;
 import end3r.verdant_arcanum.registry.ModBlocks;
 import net.minecraft.block.BlockState;
@@ -18,8 +19,8 @@ import net.minecraft.util.math.random.Random;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldView;
 
-public class BreezevineBloomBlock extends PlacedBloomBlock {
-    public BreezevineBloomBlock(Settings settings) {
+public class GustBloomBlock extends PlacedBloomBlock {
+    public GustBloomBlock(Settings settings) {
         super(settings);
     }
 
@@ -48,27 +49,27 @@ public class BreezevineBloomBlock extends PlacedBloomBlock {
             ((ServerWorld)world).spawnParticles(ParticleTypes.CLOUD,
                     entity.getX(), entity.getY(), entity.getZ(),
                     10, 0.2, 0.1, 0.2, 0.05);
-            world.playSound(null, pos, SoundEvents.ENTITY_PHANTOM_FLAP, SoundCategory.BLOCKS, 0.5F, 1.8F);
+            world.playSound(null, pos, SoundEvents.ENTITY_PHANTOM_FLAP, SoundCategory.BLOCKS, 0.5F, 1.5F);
         }
         super.onEntityCollision(state, world, pos, entity);
     }
 
     @Override
     public void randomTick(BlockState state, ServerWorld world, BlockPos pos, Random random) {
-        // Occasionally create breeze effects
+        // Occasionally create gust effects
         if (random.nextInt(15) == 0) {
-            createBreezeEffect(world, pos, random);
+            createGustEffect(world, pos, random);
         }
     }
 
-    private void createBreezeEffect(ServerWorld world, BlockPos pos, Random random) {
+    private void createGustEffect(ServerWorld world, BlockPos pos, Random random) {
         // Create visual effect - particles
         world.spawnParticles(ParticleTypes.CLOUD,
                 pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5,
                 20, 1.0, 0.5, 1.0, 0.1);
 
         // Play sound
-        world.playSound(null, pos, SoundEvents.ENTITY_PHANTOM_FLAP, SoundCategory.BLOCKS, 1.0F, 1.8F);
+        world.playSound(null, pos, SoundEvents.ENTITY_PHANTOM_FLAP, SoundCategory.BLOCKS, 1.0F, 1.5F);
 
         // Push entities away
         Box area = new Box(pos).expand(4.0);
@@ -99,7 +100,6 @@ public class BreezevineBloomBlock extends PlacedBloomBlock {
             }
         }
     }
-
     @Override
     public boolean canPlaceAt(BlockState state, WorldView world, BlockPos pos) {
         BlockState blockState = world.getBlockState(pos.down());

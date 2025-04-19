@@ -3,8 +3,18 @@ package end3r.verdant_arcanum.registry;
 import end3r.verdant_arcanum.VerdantArcanum;
 import end3r.verdant_arcanum.block.*;
 
-import end3r.verdant_arcanum.block.RootgraspBloomBlock;
-import end3r.verdant_arcanum.block.SolarBloomBloomBlock;
+import end3r.verdant_arcanum.block.plants.BlinkFlowerBlock;
+import end3r.verdant_arcanum.block.plants.FlameFlowerBlock;
+import end3r.verdant_arcanum.block.plants.GustFlowerBlock;
+import end3r.verdant_arcanum.block.plants.RootgraspFlowerBlock;
+import end3r.verdant_arcanum.block.tier1.BlinkBloomBlock;
+import end3r.verdant_arcanum.block.tier1.FlameBloomBlock;
+import end3r.verdant_arcanum.block.tier1.GustBloomBlock;
+import end3r.verdant_arcanum.block.tier1.RootgraspBloomBlock;
+import end3r.verdant_arcanum.block.tier2.PhantomstepBloomBlock;
+import end3r.verdant_arcanum.block.tier2.SolarBloomBloomBlock;
+import end3r.verdant_arcanum.block.tier2.BreezevineBloomBlock;
+import end3r.verdant_arcanum.block.tier2.FlamespiralBloomBlock;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.minecraft.block.Block;
 import net.minecraft.block.Material;
@@ -115,6 +125,14 @@ public class ModBlocks {
                     .ticksRandomly()
     );
 
+    public static final Block PHANTOMSTEP_BLOOM = new PhantomstepBloomBlock(
+            FabricBlockSettings.of(Material.DECORATION)
+                    .strength(0.2f)
+                    .sounds(BlockSoundGroup.GRASS)
+                    .luminance(2) // Adjust this value as needed
+                    .ticksRandomly()
+    );
+
 
     public static final Block MAGIC_HIVE = new MagicHiveBlock(
             FabricBlockSettings.of(Material.WOOD)
@@ -150,6 +168,7 @@ public class ModBlocks {
         Registry.register(Registry.BLOCK, new Identifier(VerdantArcanum.MOD_ID, "breezevine_bloom"), BREEZEVINE_BLOOM);
         Registry.register(Registry.BLOCK, new Identifier(VerdantArcanum.MOD_ID, "solarbloom_bloom"), SOLARBLOOM_BLOOM);
         Registry.register(Registry.BLOCK, new Identifier(VerdantArcanum.MOD_ID, "flamespiral_bloom"), FLAMESPIRAL_BLOOM);
+        Registry.register(Registry.BLOCK, new Identifier(VerdantArcanum.MOD_ID, "phantomstep_bloom"), PHANTOMSTEP_BLOOM);
 
     }
 }

@@ -1,7 +1,7 @@
 package end3r.verdant_arcanum.network;
 
 import end3r.verdant_arcanum.VerdantArcanum;
-import end3r.verdant_arcanum.spell.SolarBloomSpell;
+import end3r.verdant_arcanum.spell.tier2.SolarBloomSpell;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;

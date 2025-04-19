@@ -1,4 +1,4 @@
-package end3r.verdant_arcanum.block;
+package end3r.verdant_arcanum.block.plants;
 
 import end3r.verdant_arcanum.registry.ModItems;
 import net.minecraft.block.*;

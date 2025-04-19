@@ -1,5 +1,6 @@
-package end3r.verdant_arcanum.spell;
+package end3r.verdant_arcanum.spell.tier2;
 
+import end3r.verdant_arcanum.spell.Spell;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.player.PlayerEntity;
@@ -7,7 +8,6 @@ import net.minecraft.particle.ParticleTypes;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.math.Box;
-import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
 import java.util.List;

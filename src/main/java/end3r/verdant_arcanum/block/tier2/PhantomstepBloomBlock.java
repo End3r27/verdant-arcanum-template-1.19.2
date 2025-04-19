@@ -1,11 +1,14 @@
-package end3r.verdant_arcanum.block;
+package end3r.verdant_arcanum.block.tier2;
 
+import end3r.verdant_arcanum.block.PlacedBloomBlock;
 import end3r.verdant_arcanum.entity.MagicInfusedBee;
 import end3r.verdant_arcanum.registry.ModBlocks;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.effect.StatusEffectInstance;
+import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
@@ -18,8 +21,8 @@ import net.minecraft.util.math.random.Random;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldView;
 
-public class SolarBloomBloomBlock extends PlacedBloomBlock {
-    public SolarBloomBloomBlock(Settings settings) {
+public class PhantomstepBloomBlock extends PlacedBloomBlock {
+    public PhantomstepBloomBlock(Settings settings) {
         super(settings);
     }
 
@@ -33,8 +36,7 @@ public class SolarBloomBloomBlock extends PlacedBloomBlock {
 
         if (!world.isClient && entity instanceof LivingEntity) {
             // Set the entity on fire for 6 seconds
-            entity.setOnFireFor(6);
-
+            ((LivingEntity)entity).addStatusEffect(new StatusEffectInstance(StatusEffects.GLOWING, 60, 1));
             // Optional: Add flame particles for visual effect
             if (world instanceof ServerWorld) {
                 ((ServerWorld)world).spawnParticles(ParticleTypes.FLAME,

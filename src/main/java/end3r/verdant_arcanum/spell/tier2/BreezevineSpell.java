@@ -1,5 +1,6 @@
-package end3r.verdant_arcanum.spell;
+package end3r.verdant_arcanum.spell.tier2;
 
+import end3r.verdant_arcanum.spell.Spell;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.player.PlayerEntity;
