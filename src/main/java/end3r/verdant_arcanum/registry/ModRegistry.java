@@ -106,6 +106,9 @@ public class ModRegistry {
         ManaSyncPacket.registerServer();
 
         SolarBloomSpell.registerSounds();
+
+        SolarBloomSpell.registerEntities();
+
     }
 
 }

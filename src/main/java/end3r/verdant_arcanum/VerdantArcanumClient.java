@@ -2,6 +2,7 @@ package end3r.verdant_arcanum;
 
 import end3r.verdant_arcanum.client.ClientEvents;
 import end3r.verdant_arcanum.client.gui.MagicHiveScreen;
+import end3r.verdant_arcanum.client.renderer.SolarBeamEntityRenderer;
 import end3r.verdant_arcanum.client.ui.ManaHudRenderer;
 import end3r.verdant_arcanum.entity.client.MagicInfusedBeeRenderer;
 import end3r.verdant_arcanum.item.LivingStaffMk2Item;
@@ -14,6 +15,7 @@ import end3r.verdant_arcanum.screen.LivingStaffScreen;
 import end3r.verdant_arcanum.item.LivingStaffItem;
 import end3r.verdant_arcanum.magic.ManaParticleSystem;
 import end3r.verdant_arcanum.screen.LivingStaffScreenHandler;
+import end3r.verdant_arcanum.spell.tier2.SolarBloomSpell;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -108,6 +110,10 @@ public class VerdantArcanumClient implements ClientModInitializer {
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.SOLARBLOOM_BLOOM, RenderLayer.getCutout());
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.FLAMESPIRAL_BLOOM, RenderLayer.getCutout());
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.PHANTOMSTEP_BLOOM, RenderLayer.getCutout());
+
+// Add this to your client initialization
+        EntityRendererRegistry.register(SolarBloomSpell.SOLAR_BEAM_ENTITY, SolarBeamEntityRenderer::new);
+
 
 
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.FLAME_FLOWER, RenderLayer.getCutout());
