@@ -3,6 +3,7 @@ package end3r.verdant_arcanum;
 
 import end3r.verdant_arcanum.item.LivingStaffItem;
 import end3r.verdant_arcanum.item.LivingStaffMk2Item;
+import end3r.verdant_arcanum.registry.ModEntities;
 import end3r.verdant_arcanum.registry.ModRegistry;
 import end3r.verdant_arcanum.registry.SpellRegistry;
 import end3r.verdant_arcanum.spell.Spell;
@@ -11,6 +12,7 @@ import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
+import net.minecraft.entity.EntityType;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.PacketByteBuf;
@@ -25,8 +27,11 @@ public class VerdantArcanum implements ModInitializer {
 	// Define mod ID constant
 	public static final String MOD_ID = "verdant_arcanum";
 
+	public static final Identifier ENTITY_SPAWN_PACKET_ID = new Identifier("verdant_arcanum", "entity_spawn");
+
 	private static final Identifier STAFF_SPELL_CHANGE_CHANNEL =
 			new Identifier(MOD_ID, "staff_spell_change");
+	public static EntityType<?> SOLAR_BEAM_ENTITY_TYPE;
 
 	// Add this helper method to your VerdantArcanum class
 	private static String formatSpellName(String spellId) {
@@ -61,6 +66,9 @@ public class VerdantArcanum implements ModInitializer {
 	@Override
 	public void onInitialize() {
 		LOGGER.info("Initializing Verdant Arcanum...");
+
+		ModEntities.registerModEntities();
+
 
 		// Register all mod components
 		ModRegistry.registerAll();

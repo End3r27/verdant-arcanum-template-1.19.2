@@ -1,8 +1,10 @@
 {
-  "solar_bloom_cast": {
+  "solar_beam": {
     "sounds": [
-      "verdant_arcanum:solar_bloom_cast"
-    ],
-    "subtitle": "Solar Bloom Cast"
+      {
+        "name": "verdant_arcanum:solar_beam",
+        "stream": false
+      }
+    ]
   }
 }

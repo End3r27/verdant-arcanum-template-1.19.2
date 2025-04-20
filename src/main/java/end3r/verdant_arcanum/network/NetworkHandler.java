@@ -26,12 +26,7 @@ public class NetworkHandler {
 
             // Execute on main client thread
             client.execute(() -> {
-                // Call the static method to spawn particles
-                SolarBloomSpell.createBeamParticles(
-                        client.world,
-                        packet.getStartPos(),
-                        packet.getDirection()
-                );
+
             });
         });
     }

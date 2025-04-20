@@ -1,7 +1,7 @@
-package end3r.verdant_arcanum.client.renderer;
+package end3r.verdant_arcanum.entity.client;
 
+import end3r.verdant_arcanum.entity.SolarBeamEntity;
 import end3r.verdant_arcanum.VerdantArcanum;
-import end3r.verdant_arcanum.spell.tier2.SolarBloomSpell.SolarBeamEntity;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.VertexConsumerProvider;
@@ -14,6 +14,8 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.Vec3f;
 
 public class SolarBeamEntityRenderer extends EntityRenderer<SolarBeamEntity> {
+
+// Removed duplicate implementation as it was already defined in the class.
     private static final Identifier BEAM_TEXTURE =
             new Identifier(VerdantArcanum.MOD_ID, "textures/entity/solar_beam.png");
 
@@ -24,6 +26,10 @@ public class SolarBeamEntityRenderer extends EntityRenderer<SolarBeamEntity> {
     @Override
     public void render(SolarBeamEntity entity, float yaw, float tickDelta, MatrixStack matrices,
                        VertexConsumerProvider vertexConsumers, int light) {
+        // Log rendering logic
+        VerdantArcanum.LOGGER.info("Rendering SolarBeamEntity at start: {}, end: {}",
+                entity.getStartPos(), entity.getEndPos());
+
         // Get start and end positions of the beam
         Vec3d startPos = entity.getStartPos();
         Vec3d endPos = entity.getEndPos();
@@ -50,7 +56,7 @@ public class SolarBeamEntityRenderer extends EntityRenderer<SolarBeamEntity> {
         Vec3d beamDir = beamVec.normalize();
 
         // Set up the render
-        float beamWidth = entity.getBeamWidth() / 2.0f;
+        float beamWidth = (float) (entity.getBeamWidth() / 2.0f);
         VertexConsumer vertexConsumer = vertexConsumers.getBuffer(
                 RenderLayer.getEntityTranslucentEmissive(getTexture(entity))
         );

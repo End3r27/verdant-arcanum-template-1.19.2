@@ -1,13 +1,13 @@
 package end3r.verdant_arcanum;
 
 import end3r.verdant_arcanum.client.ClientEvents;
+import end3r.verdant_arcanum.client.EntitySpawnPacketHandler;
 import end3r.verdant_arcanum.client.gui.MagicHiveScreen;
-import end3r.verdant_arcanum.client.renderer.SolarBeamEntityRenderer;
+import end3r.verdant_arcanum.entity.SolarBeamEntity;
+import end3r.verdant_arcanum.entity.client.SolarBeamEntityRenderer;
 import end3r.verdant_arcanum.client.ui.ManaHudRenderer;
 import end3r.verdant_arcanum.entity.client.MagicInfusedBeeRenderer;
-import end3r.verdant_arcanum.item.LivingStaffMk2Item;
 import end3r.verdant_arcanum.magic.ManaSyncPacket;
-import end3r.verdant_arcanum.network.StaffPacketHandlerMk2;
 import end3r.verdant_arcanum.registry.*;
 import end3r.verdant_arcanum.screen.LivingStaffMk2Screen;
 import end3r.verdant_arcanum.screen.LivingStaffMk2ScreenHandler;
@@ -33,12 +33,13 @@ import net.minecraft.item.ItemStack;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.text.Text;
-import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWScrollCallbackI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.UUID;
 
 @Environment(EnvType.CLIENT)
 public class VerdantArcanumClient implements ClientModInitializer {
@@ -111,10 +112,6 @@ public class VerdantArcanumClient implements ClientModInitializer {
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.FLAMESPIRAL_BLOOM, RenderLayer.getCutout());
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.PHANTOMSTEP_BLOOM, RenderLayer.getCutout());
 
-// Add this to your client initialization
-        EntityRendererRegistry.register(SolarBloomSpell.SOLAR_BEAM_ENTITY, SolarBeamEntityRenderer::new);
-
-
 
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.FLAME_FLOWER, RenderLayer.getCutout());
 
@@ -126,7 +123,31 @@ public class VerdantArcanumClient implements ClientModInitializer {
 
         HandledScreens.register(ModScreenHandlers.MAGIC_HIVE_SCREEN_HANDLER, MagicHiveScreen::new);
 
-        EntityRendererRegistry.register(ModEntities.MAGIC_INFUSED_BEE, MagicInfusedBeeRenderer::new);
+        ModEntities.registerRenderers();
+
+        EntitySpawnPacketHandler.register();
+
+
+        ClientPlayNetworking.registerGlobalReceiver(VerdantArcanum.ENTITY_SPAWN_PACKET_ID, (client, handler, buf, responseSender) -> {
+            int id = buf.readVarInt();
+            UUID uuid = buf.readUuid();
+            double x = buf.readDouble();
+            double y = buf.readDouble();
+            double z = buf.readDouble();
+            float pitch = buf.readFloat();
+            float yaw = buf.readFloat();
+
+            // Get the world and spawn the entity
+            client.execute(() -> {
+                SolarBeamEntity entity = new SolarBeamEntity(ModEntities.SOLAR_BEAM_ENTITY, client.world);
+                entity.setId(id);
+                entity.setUuid(uuid);
+                entity.refreshPositionAndAngles(x, y, z, yaw, pitch);
+                client.world.addEntity(id, entity);
+            });
+        });
+
+
 
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             processStaffScroll();
