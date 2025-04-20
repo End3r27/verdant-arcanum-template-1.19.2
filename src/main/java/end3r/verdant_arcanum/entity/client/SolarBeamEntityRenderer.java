@@ -31,37 +31,44 @@ public class SolarBeamEntityRenderer extends EntityRenderer<SolarBeamEntity> {
     public void render(SolarBeamEntity entity, float yaw, float tickDelta, MatrixStack matrices,
                        VertexConsumerProvider vertexConsumers, int light) {
         // Log rendering attempt at debug level
-        LOGGER.debug("Attempting to render beam at {} to {}", entity.getStartPos(), entity.getEndPos());
+        LOGGER.debug("Starting render attempt: entity ID {}, positions: {} to {}", 
+                    entity.getId(), entity.getStartPos(), entity.getEndPos());
 
         // Skip if no valid positions
         if (entity.getStartPos() == null || entity.getEndPos() == null) {
-            LOGGER.warn("Skipping render - null positions");
+            LOGGER.warn("Skipping render - null positions for entity ID {}", entity.getId());
             super.render(entity, yaw, tickDelta, matrices, vertexConsumers, light);
             return;
         }
 
         matrices.push();
+        LOGGER.debug("Matrix pushed for entity ID {}", entity.getId());
 
         // Get camera position for relative rendering
         if (this.dispatcher == null || this.dispatcher.camera == null) {
-            LOGGER.warn("Camera or dispatcher is null, cannot render beam");
+            LOGGER.warn("Camera or dispatcher is null, cannot render beam for entity ID {}", entity.getId());
             matrices.pop();
             super.render(entity, yaw, tickDelta, matrices, vertexConsumers, light);
             return;
         }
 
         Vec3d cameraPos = this.dispatcher.camera.getPos();
+        LOGGER.debug("Camera position: {} for entity ID {}", cameraPos, entity.getId());
 
         // Calculate beam positions relative to camera
         Vec3d startPos = entity.getStartPos().subtract(cameraPos);
         Vec3d endPos = entity.getEndPos().subtract(cameraPos);
+        LOGGER.debug("Relative positions - start: {}, end: {} for entity ID {}", 
+                    startPos, endPos, entity.getId());
 
         // Calculate beam direction and length
         Vec3d beamVec = endPos.subtract(startPos);
         double beamLength = beamVec.length();
+        LOGGER.debug("Beam vector: {}, length: {} for entity ID {}", 
+                    beamVec, beamLength, entity.getId());
 
         if (beamLength < 0.1) {
-            LOGGER.debug("Beam too short to render: {}", beamLength);
+            LOGGER.debug("Beam too short to render: {} for entity ID {}", beamLength, entity.getId());
             matrices.pop();
             super.render(entity, yaw, tickDelta, matrices, vertexConsumers, light);
             return;
@@ -71,19 +78,25 @@ public class SolarBeamEntityRenderer extends EntityRenderer<SolarBeamEntity> {
         float yawAngle = (float) Math.toDegrees(Math.atan2(beamVec.z, beamVec.x)) - 90;
         float pitchAngle = (float) -Math.toDegrees(Math.atan2(beamVec.y,
                 Math.sqrt(beamVec.x * beamVec.x + beamVec.z * beamVec.z)));
+        LOGGER.debug("Beam rotation angles - yaw: {}, pitch: {} for entity ID {}", 
+                    yawAngle, pitchAngle, entity.getId());
 
         // Move to start position
         matrices.translate(startPos.x, startPos.y, startPos.z);
+        LOGGER.debug("Matrix translated to start position for entity ID {}", entity.getId());
 
         // Rotate to align with beam direction - using Vec3f.POSITIVE_Y/X instead of RotationAxis
         matrices.multiply(Vec3f.POSITIVE_Y.getDegreesQuaternion(yawAngle));
         matrices.multiply(Vec3f.POSITIVE_X.getDegreesQuaternion(pitchAngle));
+        LOGGER.debug("Matrix rotated to align with beam direction for entity ID {}", entity.getId());
 
         // Set up the beam dimensions
         float width = (float) entity.getBeamWidth();
+        LOGGER.debug("Beam width: {} for entity ID {}", width, entity.getId());
 
         // Get vertex consumer for the beam layer
         VertexConsumer vertexConsumer = vertexConsumers.getBuffer(BEAM_LAYER);
+        LOGGER.debug("Vertex consumer obtained for entity ID {}", entity.getId());
 
         // Draw the beam as a quad
         // Front face
@@ -148,9 +161,11 @@ public class SolarBeamEntityRenderer extends EntityRenderer<SolarBeamEntity> {
                 .normal(matrices.peek().getNormalMatrix(), 0, 1, 0)
                 .next();
 
-        LOGGER.debug("Beam rendered successfully from {} to {}", startPos, endPos);
+        LOGGER.debug("Beam rendered successfully from {} to {} for entity ID {}", 
+                    startPos, endPos, entity.getId());
 
         matrices.pop();
+        LOGGER.debug("Matrix popped, rendering complete for entity ID {}", entity.getId());
         super.render(entity, yaw, tickDelta, matrices, vertexConsumers, light);
     }
 

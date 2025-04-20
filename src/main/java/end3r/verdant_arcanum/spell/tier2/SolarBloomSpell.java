@@ -110,13 +110,18 @@ public class SolarBloomSpell implements Spell {
             this.casterUUID = caster.getUuid();
             this.remainingTicks = duration;
 
-            // Set exact eye position for start (no rounding or transformation)
-            Vec3d eyePos = caster.getEyePos();
-            this.start = eyePos;
+            // Set exact middle of viewpoint for start position
+            Vec3d povDirection = caster.getRotationVector().normalize();
+            Vec3d eyePosition = caster.getEyePos();
 
-            // Use direct rotation vector with no transformation
-            this.direction = caster.getRotationVector().normalize();
-            this.end = eyePos.add(direction.multiply(RANGE));
+            // Update start to realize it from the center direction
+            this.start = eyePosition.add(povDirection.multiply(0.1)); // Slight offset to avoid self-collision
+
+            // Use precise direction vector
+            this.direction = povDirection;
+
+            // Correctly calculate end based on specified range
+            this.end = start.add(direction.multiply(RANGE));
 
             this.beamEntity = null;
         }
@@ -159,25 +164,26 @@ public class SolarBloomSpell implements Spell {
         }
 
         private void updateBeamEntity(World world) {
-            // Get the exact current eye position
-            Vec3d eyePos = caster.getEyePos();
+            // Get exact current eye position and direction
+            Vec3d povDirection = caster.getRotationVector().normalize();
+            Vec3d eyePosition = caster.getEyePos();
 
-            // Update start position to current eye position
-            start = eyePos;
+            // Update start position accurately
+            this.start = eyePosition.add(povDirection.multiply(0.1)); // Small offset to visualize from viewpoint
 
-            // Update direction and end
-            direction = caster.getRotationVector().normalize();
-            end = eyePos.add(direction.multiply(RANGE));
+            // Update direction and end based on player's POV
+            this.direction = povDirection;
+            this.end = start.add(direction.multiply(RANGE));
 
             if (beamEntity == null || beamEntity.isRemoved()) {
-                // Create new beam with precise positions
+                // Create new beam with exact position from player's POV
                 beamEntity = new SolarBeamEntity(ModEntities.SOLAR_BEAM_ENTITY, world);
                 beamEntity.setPosition(start.x, start.y, start.z);
                 beamEntity.setCaster(caster);
                 world.spawnEntity(beamEntity);
 
                 // Debug logging
-                LOGGER.info("Beam created at: " + start + ", end: " + end);
+                LOGGER.info("Beam created at: {} with end: {}", start, end);
             } else {
                 // Update existing beam with precise positions
                 beamEntity.updateBeam(start, end);
@@ -201,34 +207,33 @@ public class SolarBloomSpell implements Spell {
         }
 
         // Get player position and look
-        Vec3d eyePos = player.getEyePos();
-        Vec3d lookVec = player.getRotationVector();
-        Vec3d endPos = eyePos.add(lookVec.multiply(RANGE));
+        Vec3d povDirection = player.getRotationVector().normalize();
+        Vec3d eyePosition = player.getEyePos();
+        Vec3d startPos = eyePosition.add(povDirection.multiply(0.1)); // Slight offset for POV alignment
+        Vec3d endPos = startPos.add(povDirection.multiply(RANGE));
 
         // Create new spell instance
         SpellInstance spellInstance = new SpellInstance(player, DURATION_TICKS);
-        spellInstance.start = eyePos;
-        spellInstance.direction = lookVec;
-        spellInstance.end = endPos;
+        // The constructor now handles position initialization correctly
 
         // Store for client effects
-        START_POS = eyePos;
+        START_POS = eyePosition;
 
         if (!world.isClient) {
             // Create beam entity on server
             SolarBeamEntity beamEntity = new SolarBeamEntity(ModEntities.SOLAR_BEAM_ENTITY, world);
 
             // CRITICAL: Set position BEFORE doing anything else
-            beamEntity.setPosition(eyePos.x, eyePos.y, eyePos.z);
+            beamEntity.setPosition(startPos.x, startPos.y, startPos.z);
 
             // Now set caster and update beam
             beamEntity.setCaster(player);
-            beamEntity.updateBeam(eyePos, endPos);
+            beamEntity.updateBeam(startPos, endPos);
 
             // Verify position is correct before spawning
             if (beamEntity.getX() == 0 && beamEntity.getY() == 0 && beamEntity.getZ() == 0) {
                 LOGGER.error("BEAM POSITION RESET TO ORIGIN BEFORE SPAWN! Fixing...");
-                beamEntity.setPosition(eyePos.x, eyePos.y, eyePos.z);
+                beamEntity.setPosition(startPos.x, startPos.y, startPos.z);
             }
 
             // Spawn the entity
