@@ -33,12 +33,13 @@ public class ModEntities {
     );
 
     // Register the SolarBeamEntity
-    public static final EntityType<end3r.verdant_arcanum.entity.SolarBeamEntity> SOLAR_BEAM_ENTITY = Registry.register(
+    public static final EntityType<SolarBeamEntity> SOLAR_BEAM = Registry.register(
             Registry.ENTITY_TYPE,
-            new Identifier(VerdantArcanum.MOD_ID, "solar_beam_entity"),
-            FabricEntityTypeBuilder.<end3r.verdant_arcanum.entity.SolarBeamEntity>create(SpawnGroup.MISC, (type, world) -> new SolarBeamEntity(type, world))
-                    .dimensions(EntityDimensions.fixed(1.0f, 1.0f)) // Beam has a fixed size
-                    .trackable(128, 10, true) // Set tracking distance and update interval
+            new Identifier(VerdantArcanum.MOD_ID, "solar_beam"),
+            FabricEntityTypeBuilder.<SolarBeamEntity>create(SpawnGroup.MISC, SolarBeamEntity::new)
+                    .dimensions(EntityDimensions.fixed(0.1F, 0.1F)) // Small hitbox
+                    .trackRangeBlocks(128)
+                    .trackedUpdateRate(1)
                     .build()
     );
 
@@ -52,9 +53,12 @@ public class ModEntities {
     }
 
     public static void registerRenderers() {
+        VerdantArcanum.LOGGER.info("Registering Entity Renderers. SOLAR_BEAM id: {}", SOLAR_BEAM.toString());
         EntityRendererRegistry.register(MAGIC_INFUSED_BEE, MagicInfusedBeeRenderer::new);
-        EntityRendererRegistry.register(SOLAR_BEAM_ENTITY, SolarBeamEntityRenderer::new);
-        VerdantArcanum.LOGGER.info("Registering Entity Renderers.");
-
+        EntityRendererRegistry.register(SOLAR_BEAM, context -> {
+            VerdantArcanum.LOGGER.info("Creating SolarBeamEntityRenderer");
+            return new SolarBeamEntityRenderer(context);
+        });
+        VerdantArcanum.LOGGER.info("Entity Renderers registered.");
     }
 }

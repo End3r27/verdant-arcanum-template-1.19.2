@@ -1,12 +1,9 @@
 package end3r.verdant_arcanum;
 
 import end3r.verdant_arcanum.client.ClientEvents;
-import end3r.verdant_arcanum.client.EntitySpawnPacketHandler;
 import end3r.verdant_arcanum.client.gui.MagicHiveScreen;
-import end3r.verdant_arcanum.entity.SolarBeamEntity;
-import end3r.verdant_arcanum.entity.client.SolarBeamEntityRenderer;
 import end3r.verdant_arcanum.client.ui.ManaHudRenderer;
-import end3r.verdant_arcanum.entity.client.MagicInfusedBeeRenderer;
+import end3r.verdant_arcanum.entity.client.SolarBeamEntityRenderer;
 import end3r.verdant_arcanum.magic.ManaSyncPacket;
 import end3r.verdant_arcanum.registry.*;
 import end3r.verdant_arcanum.screen.LivingStaffMk2Screen;
@@ -15,7 +12,6 @@ import end3r.verdant_arcanum.screen.LivingStaffScreen;
 import end3r.verdant_arcanum.item.LivingStaffItem;
 import end3r.verdant_arcanum.magic.ManaParticleSystem;
 import end3r.verdant_arcanum.screen.LivingStaffScreenHandler;
-import end3r.verdant_arcanum.spell.tier2.SolarBloomSpell;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -23,23 +19,28 @@ import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
+import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
 import net.fabricmc.fabric.api.client.screenhandler.v1.ScreenRegistry;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.ingame.HandledScreens;
 import net.minecraft.client.render.RenderLayer;
+import net.minecraft.entity.EntityType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.registry.Registry;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWScrollCallbackI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.UUID;
+
+import static end3r.verdant_arcanum.registry.ModEntities.SOLAR_BEAM;
+
 
 @Environment(EnvType.CLIENT)
 public class VerdantArcanumClient implements ClientModInitializer {
@@ -81,7 +82,7 @@ public class VerdantArcanumClient implements ClientModInitializer {
                 if (hasStaff) {
                     // Create packet with the hand and direction
                     PacketByteBuf buf = PacketByteBufs.create();
-                    buf.writeBoolean(isMainHand); // true for main hand, false for off hand
+                    buf.writeBoolean(isMainHand); // true for main hand, false for offhand
                     buf.writeInt(scrollDirection);
 
                     // Send to server
@@ -123,43 +124,36 @@ public class VerdantArcanumClient implements ClientModInitializer {
 
         HandledScreens.register(ModScreenHandlers.MAGIC_HIVE_SCREEN_HANDLER, MagicHiveScreen::new);
 
-        EntityRendererRegistry.register(ModEntities.SOLAR_BEAM_ENTITY, SolarBeamEntityRenderer::new);
-        System.out.println("Registered SolarBeamEntityRenderer");
+        end3r.verdant_arcanum.network.BeamSyncPacket.registerClient();
+
 
         ModEntities.registerRenderers();
         LOGGER.info("Entity renderers registered");
 
+        // Add in onInitializeClient method
+        ClientPlayNetworking.registerGlobalReceiver(VerdantArcanum.ENTITY_SPAWN_PACKET_ID,
+                (client, handler, buf, responseSender) -> {
+                    EntityType<?> entityType = Registry.ENTITY_TYPE.get(buf.readVarInt());
+                    LOGGER.info("Received spawn packet for entity type: {}", entityType);
 
-        // Register the entity spawn packet handler
-        ClientPlayNetworking.registerGlobalReceiver(
-                new Identifier("verdant_arcanum", "spawn_entity"),
-                EntitySpawnPacketHandler::receiveEntityPacket
-        );
+                    // Only proceed if this is our solar beam entity
+                    if (entityType == ModEntities.SOLAR_BEAM) {
+                        int entityId = buf.readVarInt();
+                        UUID uuid = buf.readUuid();
+                        double x = buf.readDouble();
+                        double y = buf.readDouble();
+                        double z = buf.readDouble();
 
-        // Log that we've registered the handler
-        LOGGER.info("Registered entity spawn packet handler");
+                        client.execute(() -> {
+                            // Code to handle spawn when needed
+                            LOGGER.info("Processing spawn packet for SolarBeamEntity ID: {}", entityId);
+                        });
+                    }
+                });
 
 
 
 
-        ClientPlayNetworking.registerGlobalReceiver(VerdantArcanum.ENTITY_SPAWN_PACKET_ID, (client, handler, buf, responseSender) -> {
-            int id = buf.readVarInt();
-            UUID uuid = buf.readUuid();
-            double x = buf.readDouble();
-            double y = buf.readDouble();
-            double z = buf.readDouble();
-            float pitch = buf.readFloat();
-            float yaw = buf.readFloat();
-
-            // Get the world and spawn the entity
-            client.execute(() -> {
-                SolarBeamEntity entity = new SolarBeamEntity(ModEntities.SOLAR_BEAM_ENTITY, client.world);
-                entity.setId(id);
-                entity.setUuid(uuid);
-                entity.refreshPositionAndAngles(x, y, z, yaw, pitch);
-                client.world.addEntity(id, entity);
-            });
-        });
 
 
 

@@ -5,8 +5,6 @@ import end3r.verdant_arcanum.item.LivingStaffItem;
 import end3r.verdant_arcanum.item.LivingStaffMk2Item;
 import end3r.verdant_arcanum.registry.ModEntities;
 import end3r.verdant_arcanum.registry.ModRegistry;
-import end3r.verdant_arcanum.registry.SpellRegistry;
-import end3r.verdant_arcanum.spell.Spell;
 import end3r.verdant_arcanum.spell.tier2.SolarBloomSpell;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
@@ -67,8 +65,13 @@ public class VerdantArcanum implements ModInitializer {
 	public void onInitialize() {
 		LOGGER.info("Initializing Verdant Arcanum...");
 
+
 		ModEntities.registerModEntities();
 
+		// Register the beam sync packet handler for server-side
+		end3r.verdant_arcanum.network.BeamSyncPacket.registerServer();
+
+		ServerTickEvents.END_SERVER_TICK.register(this::onServerTick);
 
 		// Register all mod components
 		ModRegistry.registerAll();

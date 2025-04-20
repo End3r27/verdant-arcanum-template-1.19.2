@@ -1,17 +1,24 @@
 package end3r.verdant_arcanum.client;
 
+import end3r.verdant_arcanum.entity.SolarBeamEntity;
 import end3r.verdant_arcanum.magic.ClientManaData;
 import end3r.verdant_arcanum.magic.ManaParticleSystem;
 import end3r.verdant_arcanum.magic.ManaSystem;
+import end3r.verdant_arcanum.registry.ModEntities;
+import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.item.ItemStack;
+import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.Identifier;
+
+import static com.mojang.text2speech.Narrator.LOGGER;
 
 public class ClientEvents {
     // Define the identifier for mana regen enchantment (should match your server-side registration)
