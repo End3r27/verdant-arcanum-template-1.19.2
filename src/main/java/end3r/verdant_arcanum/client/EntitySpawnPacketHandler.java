@@ -5,9 +5,13 @@ import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityType;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.registry.Registry;
 import end3r.verdant_arcanum.entity.SolarBeamEntity;
+import end3r.verdant_arcanum.registry.ModEntities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,86 +23,70 @@ public class EntitySpawnPacketHandler {
 
     public static void receiveEntityPacket(MinecraftClient client, ClientPlayNetworkHandler handler,
                                            PacketByteBuf buf, PacketSender responseSender) {
-        // Important: Read ALL data from the buffer BEFORE the client.execute call
-        // because the buffer is only valid during this method call
-
-        // Read entity type and ID data
-        net.minecraft.entity.EntityType<?> entityType = net.minecraft.util.registry.Registry.ENTITY_TYPE.get(buf.readVarInt());
-        UUID entityUUID = buf.readUuid();
-        int entityID = buf.readVarInt();
-
-        // Read position
+        int entityTypeId = buf.readVarInt();
+        UUID uuid = buf.readUuid();
+        int entityId = buf.readVarInt();
         double x = buf.readDouble();
         double y = buf.readDouble();
         double z = buf.readDouble();
 
-        // Pre-read beam-specific data if needed - OUTSIDE the client.execute block
-        // Create containers to hold the data we read
-        Vec3d start = null;
-        Vec3d end = null;
-        double width = 0;
+        EntityType<?> entityType = Registry.ENTITY_TYPE.get(entityTypeId);
 
-        // Try to determine if this is a beam entity by checking entity type
-        boolean isBeamEntity = entityType.toString().contains("solar_beam");
-        if (isBeamEntity) {
-            try {
-                // Read beam data immediately
+        // Log basic entity data
+        LOGGER.info("Received spawn packet for entity type {} at position {},{},{}",
+                entityType.toString(), x, y, z);
+
+        client.execute(() -> {
+            if (client.world == null) return;
+
+            // Check if entity is SolarBeamEntity
+            if (entityType == ModEntities.SOLAR_BEAM_ENTITY) {
+                // Read beam-specific data
                 double startX = buf.readDouble();
                 double startY = buf.readDouble();
                 double startZ = buf.readDouble();
                 double endX = buf.readDouble();
                 double endY = buf.readDouble();
                 double endZ = buf.readDouble();
-                width = buf.readDouble();
+                double width = buf.readDouble();
 
-                // Store it to use later
-                start = new Vec3d(startX, startY, startZ);
-                end = new Vec3d(endX, endY, endZ);
-            } catch (Exception e) {
-                // Handle case where we might not have beam data
-                LOGGER.error("Error reading beam data", e);
+                // Create beam entity
+                SolarBeamEntity beam = new SolarBeamEntity(ModEntities.SOLAR_BEAM_ENTITY, client.world);
+                beam.setId(entityId);
+                beam.setUuid(uuid);
+
+                // Update beam with received data
+                Vec3d start = new Vec3d(startX, startY, startZ);
+                Vec3d end = new Vec3d(endX, endY, endZ);
+
+                LOGGER.info("Setting up beam entity with start={}, end={}, width={}",
+                        start, end, width);
+
+                // Set beam width before updating beam
+                beam.beamWidth = width;
+                beam.updateBeam(start, end);
+
+                // Additional safety check - ensure position matches start
+                if (Math.abs(beam.getX() - startX) > 0.01) {
+                    LOGGER.warn("Position mismatch after creation, forcing correction");
+                    beam.setPosition(startX, startY, startZ);
+                }
+
+                // Add to world
+                client.world.addEntity(entityId, beam);
+
+                LOGGER.info("Added beam entity to world, final position: {},{},{}",
+                        beam.getX(), beam.getY(), beam.getZ());
+            } else {
+                // Handle other entity types
+                Entity entity = entityType.create(client.world);
+                if (entity != null) {
+                    entity.setId(entityId);
+                    entity.setUuid(uuid);
+                    entity.setPosition(x, y, z);
+                    client.world.addEntity(entityId, entity);
+                }
             }
-        }
-
-        // Store final references for lambda
-        final Vec3d finalStart = start;
-        final Vec3d finalEnd = end;
-        final double finalWidth = width;
-
-        // Now we can safely use client.execute - the buffer is no longer accessed inside
-        client.execute(() -> {
-            if (client.world == null)
-                return;
-
-            // Create entity
-            net.minecraft.entity.Entity entity = entityType.create(client.world);
-            if (entity == null) {
-                LOGGER.warn("Failed to create instance of entity type {}", entityType);
-                return;
-            }
-
-            // Set entity data
-            entity.setId(entityID);
-            entity.setUuid(entityUUID);
-
-            // Set position
-            entity.setPos(x, y, z);
-
-            // For beam entities, set their specific data using the pre-read values
-            if (entity instanceof SolarBeamEntity beamEntity && finalStart != null && finalEnd != null) {
-                // Use the pre-read data we captured above
-                beamEntity.updateBeam(finalStart, finalEnd);
-
-                // Additional beam properties if needed
-                // beamEntity.setBeamWidth(finalWidth);
-
-                LOGGER.info("Set beam data: start={}, end={}", finalStart, finalEnd);
-            }
-
-            // Add entity to world
-            client.world.addEntity(entityID, entity);
-            LOGGER.info("Spawned entity {} at {}, {}, {}",
-                    entity.getType().toString(), x, y, z);
         });
     }
 }

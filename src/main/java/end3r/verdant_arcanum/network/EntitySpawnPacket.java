@@ -14,7 +14,7 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.registry.Registry;
 
 public class EntitySpawnPacket {
-    public static Packet<?> create(Entity entity) {
+    public static Packet<?> create(Entity entity, PacketWriter extraData) {
         PacketByteBuf buf = PacketByteBufs.create();
 
         // Write entity type ID, UUID, and entity ID
@@ -27,18 +27,9 @@ public class EntitySpawnPacket {
         buf.writeDouble(entity.getY());
         buf.writeDouble(entity.getZ());
 
-        // Write beam-specific data if applicable
-        if (entity instanceof SolarBeamEntity beam) {
-            Vec3d start = beam.getStartPos();
-            Vec3d end = beam.getEndPos();
-
-            buf.writeDouble(start.x);
-            buf.writeDouble(start.y);
-            buf.writeDouble(start.z);
-            buf.writeDouble(end.x);
-            buf.writeDouble(end.y);
-            buf.writeDouble(end.z);
-            buf.writeDouble(beam.getBeamWidth()); // Assuming this method exists
+        // Write additional data if provided
+        if (extraData != null) {
+            extraData.write(buf);
         }
 
         // Create and return the packet
@@ -46,5 +37,33 @@ public class EntitySpawnPacket {
                 new Identifier("verdant_arcanum", "spawn_entity"),
                 buf
         );
+    }
+
+    // Keep the existing create method for backward compatibility
+    public static Packet<?> create(Entity entity) {
+        // For SolarBeamEntity, use the special handling
+        if (entity instanceof SolarBeamEntity beam) {
+            return create(entity, (buffer) -> {
+                Vec3d start = beam.getStartPos();
+                Vec3d end = beam.getEndPos();
+
+                buffer.writeDouble(start.x);
+                buffer.writeDouble(start.y);
+                buffer.writeDouble(start.z);
+                buffer.writeDouble(end.x);
+                buffer.writeDouble(end.y);
+                buffer.writeDouble(end.z);
+                buffer.writeDouble(beam.getBeamWidth());
+            });
+        }
+
+        // For other entities, use the basic version
+        return create(entity, null);
+    }
+
+    // Define a functional interface for writing extra data
+    @FunctionalInterface
+    public interface PacketWriter {
+        void write(PacketByteBuf buffer);
     }
 }

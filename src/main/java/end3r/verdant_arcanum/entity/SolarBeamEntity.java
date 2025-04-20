@@ -75,116 +75,36 @@ public class SolarBeamEntity extends Entity {
         this.dataTracker.startTracking(END_X, 0.0f);
         this.dataTracker.startTracking(END_Y, 0.0f);
         this.dataTracker.startTracking(END_Z, 0.0f);
-        this.dataTracker.startTracking(BEAM_WIDTH, 1.0f);
+        this.dataTracker.startTracking(BEAM_WIDTH, 0.5f);
     }
+
 
 
     @Override
     public void tick() {
         super.tick();
 
-        // CRITICAL FIX: Check if position is at origin and try to recover
-        if (this.getX() == 0 && this.getY() == 0 && this.getZ() == 0 && this.startPosition != null) {
-            LOGGER.warn("SolarBeamEntity detected at origin (0,0,0), attempting recovery...");
-            this.setPosition(this.startPosition.x, this.startPosition.y, this.startPosition.z);
-        }
-
-
+        // Log positions for debugging
+        LOGGER.info("SolarBeam ticking at {}, {}, {} (age: {})", this.getX(), this.getY(), this.getZ(), this.age);
+        LOGGER.info("Start position: {}, End position: {}", this.getStartPos(), this.getEndPos());
 
         if (world.isClient) {
+            // On client side, ensure position matches the start position
+            Vec3d start = this.getStartPos();
+
+            // Important: Check if entity position doesn't match start position and fix it
+            if (Math.abs(this.getX() - start.x) > 0.01 ||
+                    Math.abs(this.getY() - start.y) > 0.01 ||
+                    Math.abs(this.getZ() - start.z) > 0.01) {
+                LOGGER.info("Client-side position correction: Entity at {},{},{}, Start at {},{},{}",
+                        this.getX(), this.getY(), this.getZ(), start.x, start.y, start.z);
+                this.setPosition(start.x, start.y, start.z);
+            }
+
+            // Client-side rendering helper
+            LOGGER.info("Client-side tick, attempting manual render");
             renderManually();
         }
-
-
-        if (this.age == 1) {
-            if (this.startPosition == null || (this.startPosition.x == 0 && this.startPosition.y == 0 && this.startPosition.z == 0)) {
-                // Initialize positions using the entity's CURRENT position
-                this.startPosition = new Vec3d(this.getX(), this.getY(), this.getZ());
-                this.endPosition = new Vec3d(this.getX(), this.getY() + 5, this.getZ()); // Default 5 blocks up
-
-                // Update the data tracker with these values
-                this.updateBeam(this.startPosition, this.endPosition);
-
-                LOGGER.info("Initialized beam positions on first tick: {} to {}", this.startPosition, this.endPosition);
-            }
-        }
-
-
-        if (this.age <= 5) {
-            LOGGER.info("SolarBeam ticking at {}, {}, {} (age: {})",
-                    this.getX(), this.getY(), this.getZ(), this.age);
-            LOGGER.info("Start position: {}, End position: {}", this.startPosition, this.endPosition);
-        }
-
-
-        // Update cached values from dataTracker
-        this.startPosition = new Vec3d(
-                this.dataTracker.get(START_X),
-                this.dataTracker.get(START_Y),
-                this.dataTracker.get(START_Z)
-        );
-
-        this.endPosition = new Vec3d(
-                this.dataTracker.get(END_X),
-                this.dataTracker.get(END_Y),
-                this.dataTracker.get(END_Z)
-        );
-
-        this.beamWidth = this.dataTracker.get(BEAM_WIDTH);
-
-        // Update bounding box regularly
-        updateBoundingBox();
-
-        // Add this debug log
-        LOGGER.info("SolarBeam ticking at {}, {}, {} (age: {})",
-                this.getX(), this.getY(), this.getZ(), this.age);
-        LOGGER.info("Start position: {}, End position: {}",
-                this.getStartPos(), this.getEndPos());
-
-        // Add this client-side rendering code
-        if (world.isClient) {
-            LOGGER.info("Client-side tick, attempting manual render");
-            MinecraftClient client = MinecraftClient.getInstance();
-
-            // This line will only run on the next frame after the world tick
-            client.execute(() -> {
-                EntityRenderDispatcher dispatcher = client.getEntityRenderDispatcher();
-                LOGGER.info("Looking for renderer for {}", this.getType());
-
-                try {
-                    // Force rendering
-                    MatrixStack matrixStack = new MatrixStack();
-                    float tickDelta = client.getTickDelta();
-
-                    // Get our current renderer
-                    var renderer = dispatcher.getRenderer(this);
-                    if (renderer != null) {
-                        LOGGER.info("Found renderer: {}", renderer.getClass().getName());
-
-                        // Set up matrices for rendering at entity position
-                        matrixStack.push();
-                        Vec3d cameraPos = client.gameRenderer.getCamera().getPos();
-                        matrixStack.translate(getX() - cameraPos.x, getY() - cameraPos.y, getZ() - cameraPos.z);
-
-                        // Manually render
-                        renderer.render(this,
-                                getYaw(tickDelta),
-                                tickDelta,
-                                matrixStack,
-                                client.getBufferBuilders().getEntityVertexConsumers(),
-                                15728880); // Full brightness
-
-                        matrixStack.pop();
-                        LOGGER.info("Manual render attempt completed");
-                    } else {
-                        LOGGER.error("No renderer found for SolarBeamEntity");
-                    }
-                } catch (Exception e) {
-                    LOGGER.error("Error during manual rendering", e);
-                }
-            });
-        }
-
     }
 
 
@@ -194,7 +114,7 @@ public class SolarBeamEntity extends Entity {
      * Enhanced update beam that also updates entity position
      */
     public void updateBeam(Vec3d start, Vec3d end) {
-        // Set tracked data
+        // Update data tracker
         this.dataTracker.set(START_X, (float) start.x);
         this.dataTracker.set(START_Y, (float) start.y);
         this.dataTracker.set(START_Z, (float) start.z);
@@ -205,13 +125,20 @@ public class SolarBeamEntity extends Entity {
         // Update cached values
         this.startPosition = start;
         this.endPosition = end;
+        this.beamWidth = this.dataTracker.get(BEAM_WIDTH);
 
-        // IMPORTANT: Update entity position to match beam start
+        // Critical: Update entity position to match start position
+        // This is the key line that ensures synchronization
         this.setPosition(start.x, start.y, start.z);
 
         // Update bounding box
-        this.updateBoundingBox();
+        updateBoundingBox();
+
+        LOGGER.info("Beam updated - Start: {}, End: {}, Entity position now: {},{},{}",
+                start, end, this.getX(), this.getY(), this.getZ());
     }
+
+
 
 
 
@@ -297,15 +224,14 @@ public class SolarBeamEntity extends Entity {
 
     @Override
     public void setPosition(double x, double y, double z) {
-        // Original implementation first
+        // Call super implementation first
         super.setPosition(x, y, z);
+        LOGGER.info("SolarBeamEntity position set to {},{},{}", x, y, z);
 
-        // If position is at origin (0,0,0) and we have valid start position data, attempt to fix
-        if (x == 0 && y == 0 && z == 0 && this.startPosition != null && !this.startPosition.equals(Vec3d.ZERO)) {
-            LOGGER.warn("Detected position reset to origin (0,0,0), attempting fix...");
-            super.setPosition(this.startPosition.x, this.startPosition.y, this.startPosition.z);
-        }
+        // Update bounding box when position changes
+        updateBoundingBox();
     }
+
 
 
     // This will only work on client side
