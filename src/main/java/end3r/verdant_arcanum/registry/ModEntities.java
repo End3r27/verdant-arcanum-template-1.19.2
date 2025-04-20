@@ -36,7 +36,7 @@ public class ModEntities {
     public static final EntityType<end3r.verdant_arcanum.entity.SolarBeamEntity> SOLAR_BEAM_ENTITY = Registry.register(
             Registry.ENTITY_TYPE,
             new Identifier(VerdantArcanum.MOD_ID, "solar_beam_entity"),
-            FabricEntityTypeBuilder.<end3r.verdant_arcanum.entity.SolarBeamEntity>create(SpawnGroup.MISC, end3r.verdant_arcanum.entity.SolarBeamEntity::new)
+            FabricEntityTypeBuilder.<end3r.verdant_arcanum.entity.SolarBeamEntity>create(SpawnGroup.MISC, (type, world) -> new SolarBeamEntity(type, world))
                     .dimensions(EntityDimensions.fixed(1.0f, 1.0f)) // Beam has a fixed size
                     .trackable(128, 10, true) // Set tracking distance and update interval
                     .build()
@@ -46,8 +46,6 @@ public class ModEntities {
 
     public static void registerModEntities() {
         VerdantArcanum.LOGGER.info("Registering Mod Entities for " + VerdantArcanum.MOD_ID);
-
-
 
         // Register attributes
         FabricDefaultAttributeRegistry.register(MAGIC_INFUSED_BEE, MagicInfusedBee.createMagicInfusedBeeAttributes());

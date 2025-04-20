@@ -108,6 +108,8 @@ public class ModRegistry {
 
         SolarBloomSpell.registerSounds();
 
+        ModCommands.registerCommands();
+
 
     }
 

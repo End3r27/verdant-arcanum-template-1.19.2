@@ -123,7 +123,13 @@ public class VerdantArcanumClient implements ClientModInitializer {
 
         HandledScreens.register(ModScreenHandlers.MAGIC_HIVE_SCREEN_HANDLER, MagicHiveScreen::new);
 
+        EntityRendererRegistry.register(ModEntities.SOLAR_BEAM_ENTITY, SolarBeamEntityRenderer::new);
+        System.out.println("Registered SolarBeamEntityRenderer");
+
         ModEntities.registerRenderers();
+        LOGGER.info("Entity renderers registered");
+
+
 
         EntitySpawnPacketHandler.register();
 
