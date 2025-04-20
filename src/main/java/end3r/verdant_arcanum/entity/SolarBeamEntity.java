@@ -1,6 +1,5 @@
 package end3r.verdant_arcanum.entity;
 
-import end3r.verdant_arcanum.entity.client.SolarBeamEntityRenderer;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.entity.EntityRenderDispatcher;
 import net.minecraft.client.render.entity.EntityRenderer;
@@ -10,18 +9,17 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.entity.data.DataTracker;
 import net.minecraft.entity.data.TrackedData;
 import net.minecraft.entity.data.TrackedDataHandlerRegistry;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.Packet;
-import net.minecraft.network.PacketByteBuf;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
-import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
-import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import end3r.verdant_arcanum.network.EntitySpawnPacket;
-import end3r.verdant_arcanum.registry.ModEntities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.UUID;
 
 public class SolarBeamEntity extends Entity {
     private static final Logger LOGGER = LoggerFactory.getLogger(SolarBeamEntity.class);
@@ -40,23 +38,33 @@ public class SolarBeamEntity extends Entity {
     private Vec3d endPosition;
     public double beamWidth;
 
-    public SolarBeamEntity(EntityType<?> type, World world) {
-        super(type, world);
+    private UUID casterUUID;
 
+
+    public SolarBeamEntity(EntityType<?> entityType, World world) {
+        super(entityType, world);
+
+
+        // Store positions exactly as provided
         this.startPosition = Vec3d.ZERO;
         this.endPosition = Vec3d.ZERO;
-
-        LOGGER.info("Created SolarBeamEntity with default constructor");
-
-
-    }
-
-    public SolarBeamEntity(World world, Vec3d startPosition, Vec3d endPosition, double beamWidth) {
-        super(ModEntities.SOLAR_BEAM_ENTITY, world);
-        this.startPosition = startPosition;
-        this.endPosition = endPosition;
-        this.beamWidth = beamWidth;
+        this.beamWidth = 1.0;
         this.noClip = true; // Pass through blocks
+
+        // Set entity position to start position (no offset)
+        this.setPosition(startPosition.x, startPosition.y, startPosition.z);
+
+        // Initialize data tracker with these exact values
+        this.dataTracker.set(START_X, (float) startPosition.x);
+        this.dataTracker.set(START_Y, (float) startPosition.y);
+        this.dataTracker.set(START_Z, (float) startPosition.z);
+        this.dataTracker.set(END_X, (float) endPosition.x);
+        this.dataTracker.set(END_Y, (float) endPosition.y);
+        this.dataTracker.set(END_Z, (float) endPosition.z);
+        this.dataTracker.set(BEAM_WIDTH, (float) beamWidth);
+
+        // Update bounding box based on these positions
+        this.updateBoundingBox();
     }
 
     @Override
@@ -74,6 +82,14 @@ public class SolarBeamEntity extends Entity {
     @Override
     public void tick() {
         super.tick();
+
+        // CRITICAL FIX: Check if position is at origin and try to recover
+        if (this.getX() == 0 && this.getY() == 0 && this.getZ() == 0 && this.startPosition != null) {
+            LOGGER.warn("SolarBeamEntity detected at origin (0,0,0), attempting recovery...");
+            this.setPosition(this.startPosition.x, this.startPosition.y, this.startPosition.z);
+        }
+
+
 
         if (world.isClient) {
             renderManually();
@@ -174,8 +190,11 @@ public class SolarBeamEntity extends Entity {
 
 
 
+    /**
+     * Enhanced update beam that also updates entity position
+     */
     public void updateBeam(Vec3d start, Vec3d end) {
-        // Update DataTracker (which synchronizes to client)
+        // Set tracked data
         this.dataTracker.set(START_X, (float) start.x);
         this.dataTracker.set(START_Y, (float) start.y);
         this.dataTracker.set(START_Z, (float) start.z);
@@ -183,13 +202,18 @@ public class SolarBeamEntity extends Entity {
         this.dataTracker.set(END_Y, (float) end.y);
         this.dataTracker.set(END_Z, (float) end.z);
 
-        // Also update local fields
+        // Update cached values
         this.startPosition = start;
         this.endPosition = end;
 
+        // IMPORTANT: Update entity position to match beam start
+        this.setPosition(start.x, start.y, start.z);
+
         // Update bounding box
-        updateBoundingBox();
+        this.updateBoundingBox();
     }
+
+
 
     // Calculate and update the entity's bounding box based on start and end positions
     private void updateBoundingBox() {
@@ -219,7 +243,11 @@ public class SolarBeamEntity extends Entity {
                     nbt.getDouble("EndZ")
             );
 
-            double width = nbt.getDouble("BeamWidth");
+            if (nbt.containsUuid("CasterUUID")) {
+                this.casterUUID = nbt.getUuid("CasterUUID");
+            }
+
+                double width = nbt.getDouble("BeamWidth");
 
             // Set through the updateBeam method to ensure everything is updated
             updateBeam(start, end);
@@ -240,6 +268,16 @@ public class SolarBeamEntity extends Entity {
         nbt.putDouble("EndZ", this.endPosition.z);
 
         nbt.putDouble("BeamWidth", this.beamWidth);
+        if (casterUUID != null) {
+            nbt.putUuid("CasterUUID", casterUUID);
+
+        }
+    }
+
+    @Override
+    public Packet<?> createSpawnPacket() {
+        // Use your custom packet system instead of the default Minecraft one
+        return EntitySpawnPacket.create(this);
     }
 
     // Getter methods that use cached values for performance
@@ -255,53 +293,21 @@ public class SolarBeamEntity extends Entity {
         return this.beamWidth;
     }
 
-    @Override
-    public Packet<?> createSpawnPacket() {
-        // Create custom spawn packet that includes our position data
-        PacketByteBuf buf = PacketByteBufs.create();
 
-        // Entity ID and UUID (required)
-        buf.writeVarInt(this.getId());
-        buf.writeUuid(this.getUuid());
-
-        // Entity position (required)
-        buf.writeDouble(this.getX());
-        buf.writeDouble(this.getY());
-        buf.writeDouble(this.getZ());
-
-        // Additional data specific to SolarBeamEntity
-        Vec3d start = this.getStartPos();
-        Vec3d end = this.getEndPos();
-
-        buf.writeDouble(start.x);
-        buf.writeDouble(start.y);
-        buf.writeDouble(start.z);
-
-        buf.writeDouble(end.x);
-        buf.writeDouble(end.y);
-        buf.writeDouble(end.z);
-
-        buf.writeFloat((float) this.getBeamWidth());
-
-        return ServerPlayNetworking.createS2CPacket(EntitySpawnPacket.ID, buf);
-    }
 
     @Override
     public void setPosition(double x, double y, double z) {
+        // Original implementation first
         super.setPosition(x, y, z);
 
-        // If this is a fresh entity (no positions set), update the beam
-        if ((this.startPosition == null || (this.startPosition.x == 0 && this.startPosition.y == 0 && this.startPosition.z == 0))) {
-            this.startPosition = new Vec3d(x, y, z);
-            this.endPosition = new Vec3d(x, y + 5, z); // Default 5 blocks up
-
-            // Only update the tracker if we're not in constructor (world might be null)
-            if (this.world != null) {
-                this.updateBeam(this.startPosition, this.endPosition);
-                LOGGER.info("Updated beam positions on setPosition: {} to {}", this.startPosition, this.endPosition);
-            }
+        // If position is at origin (0,0,0) and we have valid start position data, attempt to fix
+        if (x == 0 && y == 0 && z == 0 && this.startPosition != null && !this.startPosition.equals(Vec3d.ZERO)) {
+            LOGGER.warn("Detected position reset to origin (0,0,0), attempting fix...");
+            super.setPosition(this.startPosition.x, this.startPosition.y, this.startPosition.z);
         }
     }
+
+
     // This will only work on client side
     private void renderManually() {
         if (!world.isClient) return;
@@ -347,4 +353,10 @@ public class SolarBeamEntity extends Entity {
             LOGGER.error("Error during manual rendering", e);
         }
     }
+    public void setCaster(PlayerEntity player) {
+        if (player != null) {
+            this.casterUUID = player.getUuid();
+        }
+    }
+
 }

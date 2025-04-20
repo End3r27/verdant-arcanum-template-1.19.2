@@ -130,8 +130,16 @@ public class VerdantArcanumClient implements ClientModInitializer {
         LOGGER.info("Entity renderers registered");
 
 
+        // Register the entity spawn packet handler
+        ClientPlayNetworking.registerGlobalReceiver(
+                new Identifier("verdant_arcanum", "spawn_entity"),
+                EntitySpawnPacketHandler::receiveEntityPacket
+        );
 
-        EntitySpawnPacketHandler.register();
+        // Log that we've registered the handler
+        LOGGER.info("Registered entity spawn packet handler");
+
+
 
 
         ClientPlayNetworking.registerGlobalReceiver(VerdantArcanum.ENTITY_SPAWN_PACKET_ID, (client, handler, buf, responseSender) -> {

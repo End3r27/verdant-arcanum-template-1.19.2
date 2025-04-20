@@ -4,6 +4,7 @@ import end3r.verdant_arcanum.VerdantArcanum;
 import end3r.verdant_arcanum.entity.SolarBeamEntity;
 import end3r.verdant_arcanum.registry.ModEntities;
 import end3r.verdant_arcanum.spell.Spell;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
@@ -51,64 +52,6 @@ public class SolarBloomSpell implements Spell {
         return MANA_COST;
     }
 
-    @Override
-    public void cast(World world, PlayerEntity player) {
-        // Create or update spell instance for this player
-        UUID playerId = player.getUuid();
-
-        // Check if player already has an active spell
-        if (activeSpells.containsKey(playerId)) {
-            // Cancel existing spell
-            activeSpells.remove(playerId);
-            player.sendMessage(Text.translatable("spell.verdant_arcanum.solar_bloom.canceled").formatted(Formatting.GOLD), true);
-        }
-
-        // Get player eye position and look vector
-        Vec3d eyePos = player.getEyePos();
-        Vec3d lookVec = player.getRotationVector();
-
-        // Calculate beam end position
-        Vec3d endPos = eyePos.add(lookVec.multiply(RANGE));
-
-        // Create new spell instance
-        SpellInstance spellInstance = new SpellInstance(player, DURATION_TICKS);
-        spellInstance.start = eyePos;
-        spellInstance.direction = lookVec;
-        spellInstance.end = endPos;
-
-        // Store the start position for client effects
-        START_POS = eyePos;
-
-        // Create SolarBeamEntity on the server
-        if (!world.isClient) {
-            // Create the beam entity
-            SolarBeamEntity beamEntity = new SolarBeamEntity(ModEntities.SOLAR_BEAM_ENTITY, world);
-
-            // Set position and beam properties
-            beamEntity.setPos(eyePos.x, eyePos.y, eyePos.z);
-            beamEntity.updateBeam(eyePos, endPos);
-
-            // Spawn the entity in the world
-            world.spawnEntity(beamEntity);
-
-            // Store the entity reference in spell instance
-            spellInstance.beamEntity = beamEntity;
-
-            // Log to confirm entity creation
-            LOGGER.info("Server created SolarBeamEntity at pos={}, start={}, end={}",
-                    eyePos, eyePos, endPos);
-
-            // Play sound effect
-            world.playSound(null, player.getX(), player.getY(), player.getZ(),
-                    SOLAR_BEAM_SOUND, SoundCategory.PLAYERS, 1.0F, 1.0F);
-
-            // Add the active spell
-            activeSpells.put(playerId, spellInstance);
-        }
-    }
-
-
-
 
     @Override
     public void playClientEffects(World world, PlayerEntity player) {
@@ -122,21 +65,39 @@ public class SolarBloomSpell implements Spell {
     }
 
     public static void tickActiveSpells(World world, Object o) {
+        // Don't process if no active spells
+        if (activeSpells.isEmpty()) {
+            return;
+        }
+
+        // Use iterator to safely remove while iterating
         Iterator<Map.Entry<UUID, SpellInstance>> iterator = activeSpells.entrySet().iterator();
+
         while (iterator.hasNext()) {
             Map.Entry<UUID, SpellInstance> entry = iterator.next();
             SpellInstance instance = entry.getValue();
 
+            // Tick the spell instance
+            instance.tick(world);
+
+            // Remove expired spells
             if (instance.isExpired()) {
+                // Make sure the beam entity is removed
+                if (instance.beamEntity != null && instance.beamEntity.isAlive()) {
+                    instance.beamEntity.kill();
+                    LOGGER.info("Final cleanup of SolarBeamEntity on spell expiration");
+                }
+
+                // Remove spell from active list
                 iterator.remove();
-            } else {
-                instance.tick(world);
+                LOGGER.info("Removed expired SolarBloomSpell for player: {}", entry.getKey());
             }
         }
     }
 
-    public static class SpellInstance {
+    public class SpellInstance {
         private final PlayerEntity caster;
+        private final UUID casterUUID; // Add this field
         private int remainingTicks;
         private SolarBeamEntity beamEntity;
 
@@ -146,13 +107,18 @@ public class SolarBloomSpell implements Spell {
 
         public SpellInstance(PlayerEntity caster, int duration) {
             this.caster = caster;
+            this.casterUUID = caster.getUuid();
             this.remainingTicks = duration;
-            SolarBloomSpell.START_POS = this.start;
 
-            // Initialize start, direction, and end
-            this.start = caster.getEyePos(); // The starting position
-            this.direction = caster.getRotationVec(1.0F).normalize(); // Caster's facing direction
-            this.end = this.start.add(this.direction.multiply(SolarBloomSpell.RANGE)); // Calculate beam's endpoint
+            // Set exact eye position for start (no rounding or transformation)
+            Vec3d eyePos = caster.getEyePos();
+            this.start = eyePos;
+
+            // Use direct rotation vector with no transformation
+            this.direction = caster.getRotationVector().normalize();
+            this.end = eyePos.add(direction.multiply(RANGE));
+
+            this.beamEntity = null;
         }
 
 
@@ -161,76 +127,124 @@ public class SolarBloomSpell implements Spell {
         }
 
         public void tick(World world) {
+            // Decrease remaining time
+            remainingTicks--;
+
+
+            // Update start position to match player's current position
+            start = new Vec3d(caster.getX(), caster.getY() + caster.getStandingEyeHeight(), caster.getZ());
+            direction = caster.getRotationVector().normalize();
+            end = start.add(direction.multiply(RANGE));
+
+            // Always update the beam entity with current positions
+            updateBeamEntity(world);
+
+
+
             if (!isExpired()) {
-                this.remainingTicks--;
+                // On server side, always ensure beam entity exists and is correctly positioned
+                if (!world.isClient) {
+                    updateBeamEntity(world);
+                }
 
-                // Calculate/update the beam positions based on caster
-                this.start = caster.getEyePos();
-                this.direction = caster.getRotationVec(1.0F).normalize();
-                this.end = this.start.add(this.direction.multiply(SolarBloomSpell.RANGE));
-
-                // Update the static field if you're using it (not recommended long-term)
-                SolarBloomSpell.START_POS = this.start;
-
-                // Create or update the beam entity
-                updateBeamEntity(world);
-
-                // Log current positions for debugging
-                LOGGER.info("SpellInstance tick - start: {}, end: {}", this.start, this.end);
-
+                // Process damage and effects
+                // Your existing code...
             } else {
-                // Expire the beam after the duration is over
+                // When expired, remove the beam entity
                 if (beamEntity != null) {
-                    beamEntity.discard();
+                    beamEntity.remove(Entity.RemovalReason.DISCARDED);
+                    beamEntity = null;
                 }
             }
         }
 
         private void updateBeamEntity(World world) {
-            // Update beam entity position and properties
-            if (beamEntity != null && beamEntity.isAlive()) {
-                // Calculate new beam end position based on caster's current look
-                Vec3d eyePos = caster.getEyePos();
-                Vec3d lookVec = caster.getRotationVector();
-                Vec3d endPos = eyePos.add(lookVec.multiply(RANGE));
+            // Get the exact current eye position
+            Vec3d eyePos = caster.getEyePos();
 
-                // Update beam entity
-                beamEntity.setPos(eyePos.x, eyePos.y, eyePos.z);
-                beamEntity.updateBeam(eyePos, endPos);
+            // Update start position to current eye position
+            start = eyePos;
 
-                // Update stored values
-                start = eyePos;
-                direction = lookVec;
-                end = endPos;
-            } else if (!world.isClient) {
-                // Create a new beam entity if the old one is gone
-                SolarBeamEntity entity = new SolarBeamEntity(ModEntities.SOLAR_BEAM_ENTITY, world);
+            // Update direction and end
+            direction = caster.getRotationVector().normalize();
+            end = eyePos.add(direction.multiply(RANGE));
 
-                // Calculate beam properties
-                Vec3d eyePos = caster.getEyePos();
-                Vec3d lookVec = caster.getRotationVector();
-                Vec3d endPos = eyePos.add(lookVec.multiply(RANGE));
+            if (beamEntity == null || beamEntity.isRemoved()) {
+                // Create new beam with precise positions
+                beamEntity = new SolarBeamEntity(ModEntities.SOLAR_BEAM_ENTITY, world);
+                beamEntity.setPosition(start.x, start.y, start.z);
+                beamEntity.setCaster(caster);
+                world.spawnEntity(beamEntity);
 
-                // Set entity properties
-                entity.setPos(eyePos.x, eyePos.y, eyePos.z);
-                entity.updateBeam(eyePos, endPos);
-
-                // Spawn the entity in the world
-                world.spawnEntity(entity);
-
-                // Update reference
-                beamEntity = entity;
-
-                // Update stored values
-                start = eyePos;
-                direction = lookVec;
-                end = endPos;
-
-                LOGGER.info("Re-created SolarBeamEntity for continuing spell");
+                // Debug logging
+                LOGGER.info("Beam created at: " + start + ", end: " + end);
+            } else {
+                // Update existing beam with precise positions
+                beamEntity.updateBeam(start, end);
             }
         }
+
     }
 
+    @Override
+    public void cast(World world, PlayerEntity player) {
+        // Create or update spell instance
+        UUID playerId = player.getUuid();
+
+        // Cancel existing spell if active
+        if (activeSpells.containsKey(playerId)) {
+            SpellInstance oldSpell = activeSpells.remove(playerId);
+            if (oldSpell.beamEntity != null && !oldSpell.beamEntity.isRemoved()) {
+                oldSpell.beamEntity.remove(Entity.RemovalReason.DISCARDED);
+            }
+            player.sendMessage(Text.translatable("spell.verdant_arcanum.solar_bloom.canceled").formatted(Formatting.GOLD), true);
+        }
+
+        // Get player position and look
+        Vec3d eyePos = player.getEyePos();
+        Vec3d lookVec = player.getRotationVector();
+        Vec3d endPos = eyePos.add(lookVec.multiply(RANGE));
+
+        // Create new spell instance
+        SpellInstance spellInstance = new SpellInstance(player, DURATION_TICKS);
+        spellInstance.start = eyePos;
+        spellInstance.direction = lookVec;
+        spellInstance.end = endPos;
+
+        // Store for client effects
+        START_POS = eyePos;
+
+        if (!world.isClient) {
+            // Create beam entity on server
+            SolarBeamEntity beamEntity = new SolarBeamEntity(ModEntities.SOLAR_BEAM_ENTITY, world);
+
+            // CRITICAL: Set position BEFORE doing anything else
+            beamEntity.setPosition(eyePos.x, eyePos.y, eyePos.z);
+
+            // Now set caster and update beam
+            beamEntity.setCaster(player);
+            beamEntity.updateBeam(eyePos, endPos);
+
+            // Verify position is correct before spawning
+            if (beamEntity.getX() == 0 && beamEntity.getY() == 0 && beamEntity.getZ() == 0) {
+                LOGGER.error("BEAM POSITION RESET TO ORIGIN BEFORE SPAWN! Fixing...");
+                beamEntity.setPosition(eyePos.x, eyePos.y, eyePos.z);
+            }
+
+            // Spawn the entity
+            world.spawnEntity(beamEntity);
+
+            // Store reference
+            spellInstance.beamEntity = beamEntity;
+
+            // Sound and other effects
+            world.playSound(null, player.getX(), player.getY(), player.getZ(),
+                    SOLAR_BEAM_SOUND, SoundCategory.PLAYERS, 1.0F, 1.0F);
+
+            // Store active spell
+            activeSpells.put(playerId, spellInstance);
+        }
+    }
     public static void registerSounds() {
         Registry.register(Registry.SOUND_EVENT, SOLAR_BEAM_SOUND_ID, SOLAR_BEAM_SOUND);
     }
