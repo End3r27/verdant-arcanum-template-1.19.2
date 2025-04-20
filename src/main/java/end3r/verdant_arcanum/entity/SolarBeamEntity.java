@@ -44,17 +44,16 @@ public class SolarBeamEntity extends Entity {
     public SolarBeamEntity(EntityType<?> entityType, World world) {
         super(entityType, world);
 
-
-        // Store positions exactly as provided
+        // Initialize startPosition and endPosition to a default value
         this.startPosition = Vec3d.ZERO;
         this.endPosition = Vec3d.ZERO;
         this.beamWidth = 1.0;
         this.noClip = true; // Pass through blocks
 
-        // Set entity position to start position (no offset)
+        // Set entity position consistent with start position
         this.setPosition(startPosition.x, startPosition.y, startPosition.z);
 
-        // Initialize data tracker with these exact values
+        // Initialize data tracker with default starting values
         this.dataTracker.set(START_X, (float) startPosition.x);
         this.dataTracker.set(START_Y, (float) startPosition.y);
         this.dataTracker.set(START_Z, (float) startPosition.z);
@@ -63,8 +62,10 @@ public class SolarBeamEntity extends Entity {
         this.dataTracker.set(END_Z, (float) endPosition.z);
         this.dataTracker.set(BEAM_WIDTH, (float) beamWidth);
 
-        // Update bounding box based on these positions
-        this.updateBoundingBox();
+        // Defensive check for bounding box update
+        if (startPosition != null && endPosition != null) {
+            this.updateBoundingBox();
+        }
     }
 
     @Override
@@ -114,6 +115,11 @@ public class SolarBeamEntity extends Entity {
      * Enhanced update beam that also updates entity position
      */
     public void updateBeam(Vec3d start, Vec3d end) {
+        if (start == null || end == null) {
+            LOGGER.error("Cannot update beam with null positions");
+            return;
+        }
+        
         // Update data tracker
         this.dataTracker.set(START_X, (float) start.x);
         this.dataTracker.set(START_Y, (float) start.y);
@@ -144,6 +150,12 @@ public class SolarBeamEntity extends Entity {
 
     // Calculate and update the entity's bounding box based on start and end positions
     private void updateBoundingBox() {
+        if (startPosition == null || endPosition == null) {
+            // Log an error or handle the case appropriately here
+            LOGGER.error("Cannot update bounding box because one of the positions is null");
+            return;
+        }
+        
         double minX = Math.min(startPosition.x, endPosition.x) - beamWidth / 2;
         double minY = Math.min(startPosition.y, endPosition.y) - beamWidth / 2;
         double minZ = Math.min(startPosition.z, endPosition.z) - beamWidth / 2;
