@@ -10,6 +10,7 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.Vec3d;
 
 import end3r.verdant_arcanum.event.StrongWindsEvent;
+import end3r.verdant_arcanum.event.OvergrowthEvent;
 import end3r.verdant_arcanum.event.WorldEventManager;
 
 public class CommandRegistry {
@@ -194,6 +195,79 @@ public class CommandRegistry {
                 )
         );
 
+        // Overgrowth command
+        dispatcher.register(CommandManager.literal("startovergrowth")
+                .requires(source -> source.hasPermissionLevel(2)) // OP level 2+
+                .executes(context -> {
+                    ServerCommandSource source = context.getSource();
+                    ServerWorld world = source.getWorld();
+
+                    OvergrowthEvent event = new OvergrowthEvent();
+                    WorldEventManager.getInstance().startEvent(world, event);
+
+                    source.sendFeedback(Text.literal("🌱 Manually started Overgrowth event."), true);
+                    return 1;
+                })
+
+                // Add duration parameter (in seconds)
+                .then(CommandManager.literal("duration")
+                        .then(CommandManager.argument("seconds", IntegerArgumentType.integer(5, 600))
+                                .executes(context -> {
+                                    ServerCommandSource source = context.getSource();
+                                    ServerWorld world = source.getWorld();
+                                    int seconds = IntegerArgumentType.getInteger(context, "seconds");
+
+                                    OvergrowthEvent event = new OvergrowthEvent();
+                                    event.setDuration(seconds * 20); // Convert to ticks
+                                    WorldEventManager.getInstance().startEvent(world, event);
+
+                                    source.sendFeedback(Text.literal("🌱 Started Overgrowth event with " + seconds + " seconds duration."), true);
+                                    return 1;
+                                })
+                        )
+                )
+
+                // Add intensity parameter
+                .then(CommandManager.literal("intensity")
+                        .then(CommandManager.argument("level", IntegerArgumentType.integer(1, 3))
+                                .executes(context -> {
+                                    ServerCommandSource source = context.getSource();
+                                    ServerWorld world = source.getWorld();
+                                    int intensity = IntegerArgumentType.getInteger(context, "level");
+
+                                    OvergrowthEvent event = new OvergrowthEvent();
+                                    event.setIntensity(intensity);
+                                    WorldEventManager.getInstance().startEvent(world, event);
+
+                                    String intensityText = intensity == 1 ? "mild" : intensity == 2 ? "moderate" : "intense";
+                                    source.sendFeedback(Text.literal("🌱 Started " + intensityText + " Overgrowth event."), true);
+                                    return 1;
+                                })
+
+                                // Combined intensity and duration
+                                .then(CommandManager.literal("duration")
+                                        .then(CommandManager.argument("seconds", IntegerArgumentType.integer(5, 600))
+                                                .executes(context -> {
+                                                    ServerCommandSource source = context.getSource();
+                                                    ServerWorld world = source.getWorld();
+                                                    int intensity = IntegerArgumentType.getInteger(context, "level");
+                                                    int seconds = IntegerArgumentType.getInteger(context, "seconds");
+
+                                                    OvergrowthEvent event = new OvergrowthEvent();
+                                                    event.setIntensity(intensity);
+                                                    event.setDuration(seconds * 20); // Convert to ticks
+                                                    WorldEventManager.getInstance().startEvent(world, event);
+
+                                                    String intensityText = intensity == 1 ? "mild" : intensity == 2 ? "moderate" : "intense";
+                                                    source.sendFeedback(Text.literal("🌱 Started " + intensityText + " Overgrowth event for " + seconds + " seconds."), true);
+                                                    return 1;
+                                                })
+                                        )
+                                )
+                        )
+                )
+        );
+
         // Add a command to stop the wind
         dispatcher.register(CommandManager.literal("stopwind")
                 .requires(source -> source.hasPermissionLevel(2)) // OP level 2+
@@ -204,6 +278,20 @@ public class CommandRegistry {
                     WorldEventManager.getInstance().stopEvent(world, StrongWindsEvent.ID);
 
                     source.sendFeedback(Text.literal("🌬️ Manually stopped Strong Winds event."), true);
+                    return 1;
+                })
+        );
+        
+        // Add a command to stop the overgrowth
+        dispatcher.register(CommandManager.literal("stopovergrowth")
+                .requires(source -> source.hasPermissionLevel(2)) // OP level 2+
+                .executes(context -> {
+                    ServerCommandSource source = context.getSource();
+                    ServerWorld world = source.getWorld();
+
+                    WorldEventManager.getInstance().stopEvent(world, OvergrowthEvent.ID);
+
+                    source.sendFeedback(Text.literal("🌱 Manually stopped Overgrowth event."), true);
                     return 1;
                 })
         );
