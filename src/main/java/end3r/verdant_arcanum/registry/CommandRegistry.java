@@ -3,6 +3,7 @@ package end3r.verdant_arcanum.registry;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
+import end3r.verdant_arcanum.event.*;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.text.Text;
@@ -11,15 +12,98 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.Formatting;
 import net.minecraft.world.World;
 
-import end3r.verdant_arcanum.event.StrongWindsEvent;
-import end3r.verdant_arcanum.event.OvergrowthEvent;
-import end3r.verdant_arcanum.event.FireRainEvent;
-import end3r.verdant_arcanum.event.WorldEventManager;
-
 public class CommandRegistry {
 
     public static void register(CommandDispatcher<ServerCommandSource> dispatcher) {
         // Basic command (original functionality)
+
+        dispatcher.register(CommandManager.literal("startendveil")
+                .requires(source -> source.hasPermissionLevel(2)) // OP level 2+
+                .executes(context -> {
+                    ServerCommandSource source = context.getSource();
+                    ServerWorld world = source.getWorld();
+
+                    EndVeilEvent event = new EndVeilEvent();
+                    WorldEventManager.getInstance().startEvent(world, event);
+
+                    source.sendFeedback(Text.literal("🌀 Manually started End Veil event.").formatted(Formatting.DARK_PURPLE), true);
+                    return 1;
+                })
+
+                // Add duration parameter (in seconds)
+                .then(CommandManager.literal("duration")
+                        .then(CommandManager.argument("seconds", IntegerArgumentType.integer(5, 900))
+                                .executes(context -> {
+                                    ServerCommandSource source = context.getSource();
+                                    ServerWorld world = source.getWorld();
+                                    int seconds = IntegerArgumentType.getInteger(context, "seconds");
+
+                                    EndVeilEvent event = new EndVeilEvent();
+                                    event.setDuration(seconds * 20); // Convert to ticks
+                                    WorldEventManager.getInstance().startEvent(world, event);
+
+                                    source.sendFeedback(Text.literal("🌀 Started End Veil event with " + seconds + " seconds duration.").formatted(Formatting.DARK_PURPLE), true);
+                                    return 1;
+                                })
+                        )
+                )
+
+                // Add intensity parameter
+                .then(CommandManager.literal("intensity")
+                        .then(CommandManager.argument("level", IntegerArgumentType.integer(1, 3))
+                                .executes(context -> {
+                                    ServerCommandSource source = context.getSource();
+                                    ServerWorld world = source.getWorld();
+                                    int intensity = IntegerArgumentType.getInteger(context, "level");
+
+                                    EndVeilEvent event = new EndVeilEvent();
+                                    event.setIntensity(intensity);
+                                    WorldEventManager.getInstance().startEvent(world, event);
+
+                                    String intensityText = intensity == 1 ? "mild" : intensity == 2 ? "moderate" : "intense";
+                                    source.sendFeedback(Text.literal("🌀 Started " + intensityText + " End Veil event.").formatted(Formatting.DARK_PURPLE), true);
+                                    return 1;
+                                })
+
+                                // Combined intensity and duration
+                                .then(CommandManager.literal("duration")
+                                        .then(CommandManager.argument("seconds", IntegerArgumentType.integer(5, 900))
+                                                .executes(context -> {
+                                                    ServerCommandSource source = context.getSource();
+                                                    ServerWorld world = source.getWorld();
+                                                    int intensity = IntegerArgumentType.getInteger(context, "level");
+                                                    int seconds = IntegerArgumentType.getInteger(context, "seconds");
+
+                                                    EndVeilEvent event = new EndVeilEvent();
+                                                    event.setIntensity(intensity);
+                                                    event.setDuration(seconds * 20); // Convert to ticks
+                                                    WorldEventManager.getInstance().startEvent(world, event);
+
+                                                    String intensityText = intensity == 1 ? "mild" : intensity == 2 ? "moderate" : "intense";
+                                                    source.sendFeedback(Text.literal("🌀 Started " + intensityText + " End Veil event for " + seconds + " seconds.").formatted(Formatting.DARK_PURPLE), true);
+                                                    return 1;
+                                                })
+                                        )
+                                )
+                        )
+                )
+        );
+
+// Add a command to stop the end veil
+        dispatcher.register(CommandManager.literal("stopendveil")
+                .requires(source -> source.hasPermissionLevel(2)) // OP level 2+
+                .executes(context -> {
+                    ServerCommandSource source = context.getSource();
+                    ServerWorld world = source.getWorld();
+
+                    WorldEventManager.getInstance().stopEvent(world, EventRegistry.END_VEIL_ID);
+
+                    source.sendFeedback(Text.literal("🌀 Manually stopped End Veil event.").formatted(Formatting.DARK_PURPLE), true);
+                    return 1;
+                })
+        );
+
+
         dispatcher.register(CommandManager.literal("startwind")
                 .requires(source -> source.hasPermissionLevel(2)) // OP level 2+
                 .executes(context -> {
@@ -411,6 +495,7 @@ public class CommandRegistry {
         );
     }
 
+
     /**
      * Helper method to set wind direction from string input
      */
@@ -448,6 +533,10 @@ public class CommandRegistry {
                 return;
         }
 
+
+
         event.setWindDirection(dirVector);
     }
+
+
 }

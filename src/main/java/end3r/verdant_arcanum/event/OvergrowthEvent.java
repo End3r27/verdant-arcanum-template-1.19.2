@@ -39,7 +39,7 @@ public class OvergrowthEvent implements CustomWorldEvent {
     // Rootgrasp seed particle configuration
     private static final Vec3f ROOTGRASP_SEED_PARTICLE_COLOR = new Vec3f(0.2f, 0.8f, 0.2f); // Green color
     private static final float ROOTGRASP_SEED_PARTICLE_SIZE = 1.5f; // Increased size for better visibility
-    private static final int ROOTGRASP_SEED_SPAWN_CHANCE = 10; // Increased chance (1 in X)
+    private static final int ROOTGRASP_SEED_SPAWN_CHANCE = 50; // Increased chance (1 in X)
     private static final double ROOTGRASP_SEED_COLLECTION_RADIUS = 1.5; // Increased radius for easier collection
 
     // Track active rootgrasp seed particles - stores BlockPos to ensure they stay on the ground
