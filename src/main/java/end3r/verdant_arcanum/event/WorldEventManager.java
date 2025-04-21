@@ -8,7 +8,7 @@ import net.minecraft.text.Text;
 import java.util.Random;
 
 public class WorldEventManager {
-    private static final int CHECK_INTERVAL = 20 * 30; // Check every 30 seconds
+    private static final int CHECK_INTERVAL = 20 * 30 * 20; // Check every 10 minutes
     private int tickCounter = 0;
 
     private CustomWorldEvent currentEvent;
@@ -23,7 +23,6 @@ public class WorldEventManager {
     public void tick(ServerWorld world) {
 
         if (currentEvent != null && currentEvent.isComplete()) {
-            System.out.println("Removing completed event: " + currentEvent.getId());
             currentEvent = null;
         }
 

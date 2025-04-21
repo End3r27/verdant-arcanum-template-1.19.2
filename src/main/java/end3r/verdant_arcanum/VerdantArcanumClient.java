@@ -1,9 +1,10 @@
 package end3r.verdant_arcanum;
 
 import end3r.verdant_arcanum.client.ClientEvents;
+import end3r.verdant_arcanum.client.event.WindParticleHandler;
 import end3r.verdant_arcanum.client.gui.MagicHiveScreen;
 import end3r.verdant_arcanum.client.ui.ManaHudRenderer;
-import end3r.verdant_arcanum.entity.client.SolarBeamEntityRenderer;
+import end3r.verdant_arcanum.event.StrongWindsEvent;
 import end3r.verdant_arcanum.magic.ManaSyncPacket;
 import end3r.verdant_arcanum.registry.*;
 import end3r.verdant_arcanum.screen.LivingStaffMk2Screen;
@@ -19,7 +20,6 @@ import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
-import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
 import net.fabricmc.fabric.api.client.screenhandler.v1.ScreenRegistry;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.minecraft.client.MinecraftClient;
@@ -36,10 +36,9 @@ import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWScrollCallbackI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import net.minecraft.util.math.Vec3d;
 
 import java.util.UUID;
-
-import static end3r.verdant_arcanum.registry.ModEntities.SOLAR_BEAM;
 
 
 @Environment(EnvType.CLIENT)
@@ -129,6 +128,28 @@ public class VerdantArcanumClient implements ClientModInitializer {
         HandledScreens.register(ModScreenHandlers.MAGIC_HIVE_SCREEN_HANDLER, MagicHiveScreen::new);
 
         end3r.verdant_arcanum.network.BeamSyncPacket.registerClient();
+
+        WindParticleHandler.init();
+
+        ClientPlayNetworking.registerGlobalReceiver(StrongWindsEvent.WIND_PACKET_ID, (client, handler, buf, responseSender) -> {
+            // Read wind data from packet
+            double windX = buf.readDouble();
+            double windY = buf.readDouble();
+            double windZ = buf.readDouble();
+            float strength = buf.readFloat();
+            boolean active = buf.readBoolean();
+
+            Vec3d windDirection = new Vec3d(windX, windY, windZ);
+
+            // Apply on main thread
+            client.execute(() -> {
+                if (active) {
+                    WindParticleHandler.setWindDirection(windDirection, strength);
+                } else {
+                    WindParticleHandler.setWindDirection(Vec3d.ZERO, 0);
+                }
+            });
+        });
 
 
         ModEntities.registerRenderers();
