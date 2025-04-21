@@ -72,7 +72,7 @@ public class EndVeilEvent implements CustomWorldEvent {
 
     public EndVeilEvent() {
         Random random = Random.create();
-        this.duration = MIN_DURATION + random.nextInt(MAX_DURATION - MIN_DURATION);
+        this.duration = MIN_DURATION;
         this.nextTimeShift = TIME_SHIFT_MIN_INTERVAL + random.nextInt(TIME_SHIFT_MAX_INTERVAL - TIME_SHIFT_MIN_INTERVAL);
     }
 
