@@ -9,4 +9,6 @@ public interface CustomWorldEvent {
     void tick(ServerWorld world);
     boolean isComplete();
     Identifier getId();
+    int getDuration();
+
 }

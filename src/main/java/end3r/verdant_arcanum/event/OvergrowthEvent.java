@@ -835,4 +835,9 @@ public class OvergrowthEvent implements CustomWorldEvent {
     public Identifier getId() {
         return ID;
     }
+
+    @Override
+    public int getDuration() {
+        return 400;
+    }
 }

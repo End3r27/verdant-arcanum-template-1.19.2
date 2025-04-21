@@ -33,8 +33,8 @@ public class EndVeilEvent implements CustomWorldEvent {
     private static final Identifier ID = new Identifier("verdant_arcanum", "end_veil");
 
     // Event duration settings
-    private static final int MIN_DURATION = 20 * 60 * 5; // 5 minutes minimum
-    private static final int MAX_DURATION = 20 * 60 * 10; // 15 minutes maximum
+    private static final int MIN_DURATION = 20 * 60 * 5;
+    private static final int MAX_DURATION = 20 * 60 * 5;
     private int duration;
     private int ticks = 0;
 
@@ -873,6 +873,11 @@ public class EndVeilEvent implements CustomWorldEvent {
     @Override
     public Identifier getId() {
         return ID;
+    }
+
+    @Override
+    public int getDuration() {
+        return 20 * 60 * 5;
     }
 
     // Class to track and update levitating blocks

@@ -754,6 +754,11 @@ public class StrongWindsEvent implements CustomWorldEvent {
         return ID;
     }
 
+    @Override
+    public int getDuration() {
+        return 250 * 32;
+    }
+
     private void sendWindDataToClients(ServerWorld world) {
         // Create packet with wind direction and strength
         PacketByteBuf buf = PacketByteBufs.create();

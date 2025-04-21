@@ -803,4 +803,9 @@ public class FireRainEvent implements CustomWorldEvent {
     public Identifier getId() {
         return ID;
     }
+
+    @Override
+    public int getDuration() {
+        return 20 * 60 * 2;
+    }
 }
