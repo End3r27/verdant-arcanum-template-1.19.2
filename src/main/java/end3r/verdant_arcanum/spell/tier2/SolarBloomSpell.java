@@ -33,7 +33,7 @@ public class SolarBloomSpell implements Spell {
     private static final Logger LOGGER = LoggerFactory.getLogger(SolarBloomSpell.class);
 
     private static final int MANA_COST = 200;
-    private static final int DURATION_TICKS = 150; // 7.5 seconds
+    private static final int DURATION_TICKS = 300; //
     private static final double RANGE = 64.0;
     private static final double WIDTH = 2.5;
     private static final float DAMAGE_PER_TICK = 6f;
@@ -95,6 +95,7 @@ public class SolarBloomSpell implements Spell {
             } else {
                 LOGGER.info("SolarBloomSpell: No beam entity found for this player");
             }
+
         }
 
         for (int i = 0; i < 20; i++) {
@@ -229,30 +230,28 @@ public class SolarBloomSpell implements Spell {
                 beamEntity.setOwner(caster);
                 world.spawnEntity(beamEntity);
 
-                // Log entity creation
                 LOGGER.info("Created SolarBeamEntity with ID {} on {}",
                         beamEntity.getId(),
                         world.isClient ? "CLIENT" : "SERVER");
             }
 
-            // Update beam entity properties
+            // Update beam properties for both client and server
             beamEntity.setStart(start);
             beamEntity.setEnd(end);
             beamEntity.setBeamWidth((float) WIDTH);
 
-            // Log updates
             LOGGER.info("Updated beam entity {} at {} -> {} on {}",
                     beamEntity.getId(),
                     start,
                     end,
                     world.isClient ? "CLIENT" : "SERVER");
 
-            // Send sync packet to all players tracking this entity
+            // Only send sync to clients if on server
             if (!world.isClient && caster instanceof ServerPlayerEntity) {
-                // If we're on the server, send sync packet to all nearby players
-                for (ServerPlayerEntity player : ((ServerWorld)world).getPlayers()) {
+                for (ServerPlayerEntity player : ((ServerWorld) world).getPlayers()) {
                     if (player.squaredDistanceTo(caster) < 256 * 256) { // 256 block radius
                         end3r.verdant_arcanum.network.BeamSyncPacket.sendToClient(player, beamEntity);
+                        LOGGER.info("sent packets to " + player.getDisplayName().getString());
                     }
                 }
             }

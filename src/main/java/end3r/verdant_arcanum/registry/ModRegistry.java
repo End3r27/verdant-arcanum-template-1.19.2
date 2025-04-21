@@ -56,6 +56,7 @@ public class ModRegistry {
 
                 // Add magical tools
                 stacks.add(new ItemStack(ModItems.LIVING_STAFF));
+                stacks.add(new ItemStack(ModItems.LIVING_STAFF_MK2));
 
                 stacks.add(new ItemStack(ModItems.MAGIC_INFUSED_BEE_SPAWN_EGG));
                 stacks.add(new ItemStack(ModBlocks.MAGIC_BEE_SPAWNER));

@@ -17,10 +17,6 @@ import net.minecraft.util.registry.Registry;
 
 public class ModEntities {
 
-    // Helper to get raw entity type ID
-    public static int getRawId(EntityType<?> type) {
-        return Registry.ENTITY_TYPE.getRawId(type);
-    }
 
 
     public static final EntityType<MagicInfusedBee> MAGIC_INFUSED_BEE = Registry.register(
@@ -36,7 +32,7 @@ public class ModEntities {
     public static final EntityType<SolarBeamEntity> SOLAR_BEAM = Registry.register(
             Registry.ENTITY_TYPE,
             new Identifier(VerdantArcanum.MOD_ID, "solar_beam"),
-            FabricEntityTypeBuilder.<SolarBeamEntity>create(SpawnGroup.MISC, SolarBeamEntity::new)
+            FabricEntityTypeBuilder.create(SpawnGroup.MISC, SolarBeamEntity::new)
                     .dimensions(EntityDimensions.fixed(0.1F, 0.1F)) // Small hitbox
                     .trackRangeBlocks(128)
                     .trackedUpdateRate(1)

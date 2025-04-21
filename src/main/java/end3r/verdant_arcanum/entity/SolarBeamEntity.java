@@ -9,6 +9,8 @@ import net.minecraft.entity.data.TrackedDataHandlerRegistry;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.Packet;
 import net.minecraft.network.packet.s2c.play.EntitySpawnS2CPacket;
+import net.minecraft.particle.ParticleTypes;
+import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
@@ -39,6 +41,9 @@ public class SolarBeamEntity extends Entity {
             // Client-side particle effects can be added here
             spawnParticles();
         }
+        
+        // Update the bounding box each tick to match the beam's position and size
+        this.updateBoundingBox();
     }
 
     private void spawnParticles() {
@@ -47,6 +52,7 @@ public class SolarBeamEntity extends Entity {
             Vec3d direction = end.subtract(start).normalize();
             double length = end.distanceTo(start);
 
+            // Create a beam using end rod particles
             for (int i = 0; i < Math.min(length * 2, 40); i++) {
                 double progress = world.random.nextDouble() * length;
                 Vec3d particlePos = start.add(direction.multiply(progress));
@@ -66,6 +72,39 @@ public class SolarBeamEntity extends Entity {
                         (world.random.nextDouble() - 0.5) * 0.02
                 );
             }
+            
+            // Explosion effect at the end of the beam
+            for (int i = 0; i < 50; i++) {  // Adjust number of particles for explosion density
+                Vec3d explosionParticlePos = end.add(
+                        (world.random.nextDouble() - 0.5) * getBeamWidth(),
+                        (world.random.nextDouble() - 0.5) * getBeamWidth(),
+                        (world.random.nextDouble() - 0.5) * getBeamWidth()
+                );
+
+                world.addParticle(
+                        ParticleTypes.END_ROD,  // Explosion at the end
+                        explosionParticlePos.x, explosionParticlePos.y, explosionParticlePos.z,
+                        (world.random.nextDouble() - 0.5) * 0.5,
+                        (world.random.nextDouble() - 0.5) * 0.5,
+                        (world.random.nextDouble() - 0.5) * 0.5
+                );
+            }
+        }
+    }
+    
+    /**
+     * Updates the bounding box to match the beam's dimensions
+     */
+    protected void updateBoundingBox() {
+        if (start != null && end != null) {
+            double minX = Math.min(start.x, end.x) - this.getBeamWidth() / 2;
+            double minY = Math.min(start.y, end.y) - this.getBeamWidth() / 2;
+            double minZ = Math.min(start.z, end.z) - this.getBeamWidth() / 2;
+            double maxX = Math.max(start.x, end.x) + this.getBeamWidth() / 2;
+            double maxY = Math.max(start.y, end.y) + this.getBeamWidth() / 2;
+            double maxZ = Math.max(start.z, end.z) + this.getBeamWidth() / 2;
+
+            this.setBoundingBox(new Box(minX, minY, minZ, maxX, maxY, maxZ));
         }
     }
 

@@ -9,11 +9,11 @@ import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
+import net.minecraft.client.world.ClientWorld;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.World;
 
 public class BeamSyncPacket {
     // Identifier for the packet channel
@@ -76,7 +76,7 @@ public class BeamSyncPacket {
 
         // Execute on main client thread
         client.execute(() -> {
-            World world = client.world;
+            ClientWorld world = client.world;
             if (world == null) return;
 
             // Try to find existing entity
@@ -87,7 +87,8 @@ public class BeamSyncPacket {
                 beamEntity = new SolarBeamEntity(ModEntities.SOLAR_BEAM, world);
                 beamEntity.setId(entityId);
                 beamEntity.updatePosition(startX, startY, startZ);
-                ((net.minecraft.client.world.ClientWorld) world).addEntity(entityId, beamEntity);
+                world.spawnEntity(beamEntity);
+                world.addEntity(entityId, beamEntity);
                 VerdantArcanum.LOGGER.info("Created SolarBeamEntity on client with ID: {}", entityId);
             }
 
