@@ -1,8 +1,18 @@
 {
   "solar_beam": {
+    "subtitle": "Solar Beam",
     "sounds": [
       {
         "name": "verdant_arcanum:solar_beam",
+        "stream": false
+      }
+    ]
+  },
+  "ambient.strong_wind": {
+    "subtitle": "Strong Wind",
+    "sounds": [
+      {
+        "name": "verdant_arcanum:ambient/strong_wind",
         "stream": false
       }
     ]

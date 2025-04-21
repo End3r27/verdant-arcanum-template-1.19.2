@@ -5,6 +5,7 @@ import end3r.verdant_arcanum.magic.ManaEventHandler;
 import end3r.verdant_arcanum.magic.ManaSyncPacket;
 import end3r.verdant_arcanum.spell.tier2.SolarBloomSpell;
 import net.fabricmc.fabric.api.client.itemgroup.FabricItemGroupBuilder;
+import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Identifier;
@@ -104,6 +105,15 @@ public class ModRegistry {
         ManaSyncPacket.registerServer();
 
         SolarBloomSpell.registerSounds();
+
+        EventRegistry.registerAll();
+
+        ModSoundRegistry.registerSounds();
+
+        CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
+            CommandRegistry.register(dispatcher);
+        });
+
 
 
 

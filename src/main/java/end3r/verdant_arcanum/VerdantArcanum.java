@@ -1,6 +1,7 @@
 // VerdantArcanum.java
 package end3r.verdant_arcanum;
 
+import end3r.verdant_arcanum.event.WorldEventManager;
 import end3r.verdant_arcanum.item.LivingStaffItem;
 import end3r.verdant_arcanum.item.LivingStaffMk2Item;
 import end3r.verdant_arcanum.registry.ModEntities;
@@ -66,6 +67,8 @@ public class VerdantArcanum implements ModInitializer {
 		LOGGER.info("Initializing Verdant Arcanum...");
 
 
+
+
 		ModEntities.registerModEntities();
 
 		// Register the beam sync packet handler for server-side
@@ -77,6 +80,16 @@ public class VerdantArcanum implements ModInitializer {
 		ModRegistry.registerAll();
 
 		ServerTickEvents.END_SERVER_TICK.register(this::onServerTick);
+
+		ServerTickEvents.END_WORLD_TICK.register(world -> {
+			if (!world.isClient()) {
+				WorldEventManager.getInstance().tick((ServerWorld) world);
+			}
+		});
+
+
+
+
 
 		ServerPlayNetworking.registerGlobalReceiver(STAFF_SPELL_CHANGE_CHANNEL,
 				(server, player, handler, buf, responseSender) -> {
