@@ -40,14 +40,28 @@ public class WorldEventManager {
         if (tickCounter >= CHECK_INTERVAL) {
             tickCounter = 0;
 
-            if (RANDOM.nextFloat() < 0.25f) {
-                startStrongWinds(world);
+            float eventChance = RANDOM.nextFloat();
+            if (eventChance < 0.25f) {
+                // 50% chance for strong winds, 50% chance for overgrowth when an event triggers
+                if (RANDOM.nextBoolean()) {
+                    startStrongWinds(world);
+                } else {
+                    startOvergrowth(world);
+                }
             }
         }
     }
 
     private void startStrongWinds(ServerWorld world) {
         CustomWorldEvent event = EventRegistry.get(EventRegistry.STRONG_WINDS_ID);
+        if (event != null) {
+            currentEvent = event;
+            currentEvent.start(world);
+        }
+    }
+    
+    private void startOvergrowth(ServerWorld world) {
+        CustomWorldEvent event = EventRegistry.get(EventRegistry.OVERGROWTH_ID);
         if (event != null) {
             currentEvent = event;
             currentEvent.start(world);
