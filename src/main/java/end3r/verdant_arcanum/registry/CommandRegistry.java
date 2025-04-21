@@ -8,9 +8,12 @@ import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.text.Text;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.Formatting;
+import net.minecraft.world.World;
 
 import end3r.verdant_arcanum.event.StrongWindsEvent;
 import end3r.verdant_arcanum.event.OvergrowthEvent;
+import end3r.verdant_arcanum.event.FireRainEvent;
 import end3r.verdant_arcanum.event.WorldEventManager;
 
 public class CommandRegistry {
@@ -292,6 +295,117 @@ public class CommandRegistry {
                     WorldEventManager.getInstance().stopEvent(world, OvergrowthEvent.ID);
 
                     source.sendFeedback(Text.literal("🌱 Manually stopped Overgrowth event."), true);
+                    return 1;
+                })
+        );
+        
+        // Add a command to start the fire rain
+        dispatcher.register(CommandManager.literal("startfirerain")
+                .requires(source -> source.hasPermissionLevel(2)) // OP level 2+
+                .executes(context -> {
+                    ServerCommandSource source = context.getSource();
+                    ServerWorld world = source.getWorld();
+                    
+                    // Check if we're in the Nether
+                    if (world.getRegistryKey() != World.NETHER) {
+                        source.sendFeedback(Text.literal("This event can only be started in the Nether.").formatted(Formatting.RED), false);
+                        return 0;
+                    }
+                    
+                    FireRainEvent event = new FireRainEvent();
+                    WorldEventManager.getInstance().startEvent(world, event);
+                    
+                    source.sendFeedback(Text.literal("🔥 Manually started Fire Rain event.").formatted(Formatting.RED), true);
+                    return 1;
+                })
+                
+                // Add duration parameter (in seconds)
+                .then(CommandManager.literal("duration")
+                        .then(CommandManager.argument("seconds", IntegerArgumentType.integer(5, 120))
+                                .executes(context -> {
+                                    ServerCommandSource source = context.getSource();
+                                    ServerWorld world = source.getWorld();
+                                    int seconds = IntegerArgumentType.getInteger(context, "seconds");
+                                    
+                                    // Check if we're in the Nether
+                                    if (world.getRegistryKey() != World.NETHER) {
+                                        source.sendFeedback(Text.literal("This event can only be started in the Nether.").formatted(Formatting.RED), false);
+                                        return 0;
+                                    }
+                                    
+                                    FireRainEvent event = new FireRainEvent();
+                                    event.setDuration(seconds * 20); // Convert to ticks
+                                    WorldEventManager.getInstance().startEvent(world, event);
+                                    
+                                    source.sendFeedback(Text.literal("🔥 Started Fire Rain event with " + seconds + " seconds duration.").formatted(Formatting.RED), true);
+                                    return 1;
+                                })
+                        )
+                )
+                
+                // Add intensity parameter
+                .then(CommandManager.literal("intensity")
+                        .then(CommandManager.argument("level", IntegerArgumentType.integer(1, 3))
+                                .executes(context -> {
+                                    ServerCommandSource source = context.getSource();
+                                    ServerWorld world = source.getWorld();
+                                    int intensity = IntegerArgumentType.getInteger(context, "level");
+                                    
+                                    // Check if we're in the Nether
+                                    if (world.getRegistryKey() != World.NETHER) {
+                                        source.sendFeedback(Text.literal("This event can only be started in the Nether.").formatted(Formatting.RED), false);
+                                        return 0;
+                                    }
+                                    
+                                    FireRainEvent event = new FireRainEvent();
+                                    event.setIntensity(intensity);
+                                    WorldEventManager.getInstance().startEvent(world, event);
+                                    
+                                    String intensityText = intensity == 1 ? "mild" : intensity == 2 ? "moderate" : "intense";
+                                    source.sendFeedback(Text.literal("🔥 Started " + intensityText + " Fire Rain event.").formatted(Formatting.RED), true);
+                                    return 1;
+                                })
+                                
+                                // Combined intensity and duration
+                                .then(CommandManager.literal("duration")
+                                        .then(CommandManager.argument("seconds", IntegerArgumentType.integer(5, 120))
+                                                .executes(context -> {
+                                                    ServerCommandSource source = context.getSource();
+                                                    ServerWorld world = source.getWorld();
+                                                    int intensity = IntegerArgumentType.getInteger(context, "level");
+                                                    int seconds = IntegerArgumentType.getInteger(context, "seconds");
+                                                    
+                                                    // Check if we're in the Nether
+                                                    if (world.getRegistryKey() != World.NETHER) {
+                                                        source.sendFeedback(Text.literal("This event can only be started in the Nether.").formatted(Formatting.RED), false);
+                                                        return 0;
+                                                    }
+                                                    
+                                                    FireRainEvent event = new FireRainEvent();
+                                                    event.setIntensity(intensity);
+                                                    event.setDuration(seconds * 20); // Convert to ticks
+                                                    WorldEventManager.getInstance().startEvent(world, event);
+                                                    
+                                                    String intensityText = intensity == 1 ? "mild" : intensity == 2 ? "moderate" : "intense";
+                                                    source.sendFeedback(Text.literal("🔥 Started " + intensityText + " Fire Rain event for " + seconds + " seconds.").formatted(Formatting.RED), true);
+                                                    return 1;
+                                                })
+                                        )
+                                )
+                        )
+                )
+        );
+        
+        // Add a command to stop the fire rain
+        dispatcher.register(CommandManager.literal("stopfirerain")
+                .requires(source -> source.hasPermissionLevel(2)) // OP level 2+
+                .executes(context -> {
+                    ServerCommandSource source = context.getSource();
+                    ServerWorld world = source.getWorld();
+                    
+                    WorldEventManager.getInstance().stopEvent(world, FireRainEvent.ID);
+                    
+                    source.sendFeedback(Text.literal("🔥 Manually stopped Fire Rain event.").formatted(Formatting.GOLD), true);
                     return 1;
                 })
         );

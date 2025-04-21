@@ -1,11 +1,10 @@
+
 package end3r.verdant_arcanum.event;
 
 import net.minecraft.block.*;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.ChunkPos;
-import net.minecraft.world.chunk.WorldChunk;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.particle.DustParticleEffect;
 import net.minecraft.util.math.random.Random;
@@ -16,31 +15,36 @@ import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.item.ItemStack;
 import end3r.verdant_arcanum.registry.ModItems;
+import net.minecraft.text.Text;
+import net.minecraft.util.Formatting;
 
 import java.util.*;
 
 public class OvergrowthEvent implements CustomWorldEvent {
     public static final Identifier ID = new Identifier("verdant_arcanum", "overgrowth");
-    private static final int DEFAULT_EVENT_DURATION = 20 * 60 * 5; // 5 minutes
-    private static final int BLOCKS_PER_TICK = 25;
-    private static final int GROWTH_TICK_INTERVAL = 20; // Apply growth every second
-    
+    private static final int DEFAULT_EVENT_DURATION = 400; // 10 seconds
+
     private int ticksRemaining = DEFAULT_EVENT_DURATION;
     private int growthCounter = 0;
     private int intensity = 2; // Default medium intensity (1=mild, 2=moderate, 3=intense)
-    
+
+    // Debugging counters
+    private int blockTransformations = 0;
+    private int seedParticlesSpawned = 0;
+    private int seedsCollected = 0;
+
     // Map for block transformations
     private static final Map<Block, Block> MOSS_TRANSFORMATIONS = new HashMap<>();
-    
+
     // Rootgrasp seed particle configuration
     private static final Vec3f ROOTGRASP_SEED_PARTICLE_COLOR = new Vec3f(0.2f, 0.8f, 0.2f); // Green color
-    private static final float ROOTGRASP_SEED_PARTICLE_SIZE = 1.2f;
-    private static final int ROOTGRASP_SEED_SPAWN_CHANCE = 15; // 1 in X chance per spawn cycle
-    private static final double ROOTGRASP_SEED_COLLECTION_RADIUS = 1.0; // Player must be this close to collect
-    
+    private static final float ROOTGRASP_SEED_PARTICLE_SIZE = 1.5f; // Increased size for better visibility
+    private static final int ROOTGRASP_SEED_SPAWN_CHANCE = 10; // Increased chance (1 in X)
+    private static final double ROOTGRASP_SEED_COLLECTION_RADIUS = 1.5; // Increased radius for easier collection
+
     // Track active rootgrasp seed particles - stores BlockPos to ensure they stay on the ground
     private final Map<UUID, BlockPos> activeRootgraspSeedParticles = new HashMap<>();
-    
+
     static {
         MOSS_TRANSFORMATIONS.put(Blocks.COBBLESTONE, Blocks.MOSSY_COBBLESTONE);
         MOSS_TRANSFORMATIONS.put(Blocks.STONE_BRICKS, Blocks.MOSSY_STONE_BRICKS);
@@ -60,7 +64,7 @@ public class OvergrowthEvent implements CustomWorldEvent {
     public void setDuration(int ticks) {
         this.ticksRemaining = Math.max(20, ticks); // Minimum 1 second
     }
-    
+
     /**
      * Set the intensity of the overgrowth event
      * @param intensity 1=mild, 2=moderate, 3=intense
@@ -71,6 +75,17 @@ public class OvergrowthEvent implements CustomWorldEvent {
 
     @Override
     public void start(ServerWorld world) {
+        // Reset debug counters
+        blockTransformations = 0;
+        seedParticlesSpawned = 0;
+        seedsCollected = 0;
+
+        // Reset active seed particles
+        activeRootgraspSeedParticles.clear();
+
+        // Ensure intensity is valid
+        intensity = Math.max(1, Math.min(3, intensity));
+
         // Adjust message based on intensity
         String intensityDesc;
         switch (intensity) {
@@ -84,19 +99,102 @@ public class OvergrowthEvent implements CustomWorldEvent {
                 intensityDesc = "Strong";
                 break;
         }
-        
-        world.getPlayers().forEach(player -> 
-            player.sendMessage(net.minecraft.text.Text.literal("🌱 " + intensityDesc + " nature's power surges! An Overgrowth event has begun."), true)
+
+
+        // Send message to players
+        world.getPlayers().forEach(player ->
+                player.sendMessage(Text.literal("🌱 " + intensityDesc + " nature's power surges! An Overgrowth event has begun.")
+                        .formatted(Formatting.GREEN, Formatting.BOLD), true)
         );
+
+
+        // Force immediate effects for visibility when starting
+        applyImmediateEffects(world);
+    }
+
+    /**
+     * Apply some immediate effects when the event starts so players can see something happening
+     */
+    private void applyImmediateEffects(ServerWorld world) {
+        // Apply effects around each player
+        for (PlayerEntity player : world.getPlayers()) {
+            BlockPos playerPos = player.getBlockPos();
+
+            // Spawn lots of particles around the player
+            for (int i = 0; i < 50; i++) {
+                double x = playerPos.getX() + world.getRandom().nextGaussian() * 5;
+                double y = playerPos.getY() + world.getRandom().nextGaussian() * 3 + 1;
+                double z = playerPos.getZ() + world.getRandom().nextGaussian() * 5;
+                world.spawnParticles(ParticleTypes.HAPPY_VILLAGER, x, y, z,
+                        1, 0.1, 0.1, 0.1, 0.02);
+            }
+
+            // Force spawn seed particles near player
+            for (int attempt = 0; attempt < 3; attempt++) {
+                int offsetX = world.getRandom().nextInt(6) - 3;
+                int offsetZ = world.getRandom().nextInt(6) - 3;
+                BlockPos targetPos = playerPos.add(offsetX, 0, offsetZ);
+
+                BlockPos groundPos = findGroundPos(world, targetPos);
+                if (groundPos != null) {
+                    // Create a seed particle
+                    UUID particleId = UUID.randomUUID();
+                    activeRootgraspSeedParticles.put(particleId, groundPos);
+                    seedParticlesSpawned++;
+
+                    // Spawn extra visible particles at this location
+                    Vec3d particlePos = new Vec3d(
+                            groundPos.getX() + 0.5,
+                            groundPos.getY() + 0.1,
+                            groundPos.getZ() + 0.5
+                    );
+
+                    for (int i = 0; i < 10; i++) {
+                        world.spawnParticles(
+                                new DustParticleEffect(ROOTGRASP_SEED_PARTICLE_COLOR, ROOTGRASP_SEED_PARTICLE_SIZE),
+                                particlePos.x, particlePos.y, particlePos.z,
+                                1, 0.1, 0.1, 0.1, 0
+                        );
+
+                        world.spawnParticles(
+                                ParticleTypes.HAPPY_VILLAGER,
+                                particlePos.x, particlePos.y + 0.2, particlePos.z,
+                                1, 0.2, 0.2, 0.2, 0.01
+                        );
+                    }
+
+                    // Play a sound
+                    world.playSound(
+                            null, groundPos, SoundEvents.BLOCK_GRASS_PLACE, SoundCategory.BLOCKS,
+                            1.0f, 0.8f + (world.getRandom().nextFloat() * 0.2f)
+                    );
+
+                    // Success
+                    break;
+                }
+            }
+
+            // Apply some guaranteed transformations near the player
+            applyGuaranteedEffectsNearPlayer(world, player, world.getRandom());
+        }
+
     }
 
     @Override
     public void tick(ServerWorld world) {
+        // Add debug counter to track ticks
+        int tickCounter = 0;
+        tickCounter++;
+
+        // Decrement remaining time
         ticksRemaining--;
-        
+
+        if (tickCounter % 20 == 0) {
+
+        }
         // Adjust particle frequency based on intensity
         float particleChance = 0.1f + (intensity * 0.1f); // 0.2 for mild, 0.3 for moderate, 0.4 for intense
-        
+
         // Create ambient particles
         if (world.getRandom().nextFloat() < particleChance) {
             world.getPlayers().forEach(player -> {
@@ -111,33 +209,46 @@ public class OvergrowthEvent implements CustomWorldEvent {
                 }
             });
         }
-        
+
         // Spawn rootgrasp seed particles - frequency increases with intensity
-        if (ticksRemaining % (60 - (intensity * 15)) == 0) { // 45, 30, or 15 ticks based on intensity
+        // Run more frequently for better player experience
+        if (ticksRemaining % (20 - (intensity * 5)) == 0) { // 15, 10, or 5 ticks based on intensity
             spawnRootgraspSeedParticles(world);
         }
-        
-        // Check for players collecting rootgrasp seed particles
+
+        // Check for players collecting rootgrasp seed particles EVERY tick
+        // This is critical to ensure responsive collection
         checkRootgraspSeedCollection(world);
-        
-        // Accelerate crop growth and moss transformation
+
         growthCounter++;
-        // Growth tick interval decreases with intensity (faster growth at higher intensity)
-        int adjustedGrowthInterval = Math.max(5, GROWTH_TICK_INTERVAL - ((intensity - 1) * 5));
-        if (growthCounter >= adjustedGrowthInterval) {
-            growthCounter = 0;
+
+        // IMPORTANT: Growth cycle with simplified, fixed interval
+        // Use a static counter to ensure it keeps advancing
+        growthCounter++;
+
+        // Log growth counter occasionally
+        if (growthCounter % 20 == 0) {
+
+        }
+
+        // Apply growth effects every 20 ticks (1 second)
+        if (growthCounter % 20 == 0) {
             applyOvergrowthEffects(world);
         }
-        
+
         // Notify players when the event is halfway through and near completion
         if (ticksRemaining == DEFAULT_EVENT_DURATION / 2 && ticksRemaining > 600) {
-            world.getPlayers().forEach(player -> 
-                player.sendMessage(net.minecraft.text.Text.literal("The Overgrowth continues to spread..."), true)
+            world.getPlayers().forEach(player ->
+                    player.sendMessage(Text.literal("The Overgrowth continues to spread...").formatted(Formatting.GREEN), true)
             );
         } else if (ticksRemaining == 200) { // 10 seconds remaining
-            world.getPlayers().forEach(player -> 
-                player.sendMessage(net.minecraft.text.Text.literal("The Overgrowth is beginning to subside..."), true)
+            world.getPlayers().forEach(player ->
+                    player.sendMessage(Text.literal("The Overgrowth is beginning to subside...").formatted(Formatting.YELLOW), true)
             );
+        }
+
+        // Debug messages for operators every minute
+        if (ticksRemaining % 1200 == 0 || ticksRemaining <= 10) {
         }
     }
 
@@ -146,121 +257,193 @@ public class OvergrowthEvent implements CustomWorldEvent {
      */
     private void spawnRootgraspSeedParticles(ServerWorld world) {
         // Cap the maximum number of active rootgrasp seed particles - scales with intensity
-        int maxParticles = 5 + (intensity * 5);
+        int maxParticles = 8 + (intensity * 7); // Increased max particles
         if (activeRootgraspSeedParticles.size() >= maxParticles) {
             return;
         }
 
+        // Track attempts and success for troubleshooting
+        int attempts = 0;
+        int successes = 0;
+
         // Generate particles around players - chance improves with intensity
-        int adjustedSpawnChance = Math.max(5, ROOTGRASP_SEED_SPAWN_CHANCE - ((intensity - 1) * 5));
+        int adjustedSpawnChance = Math.max(3, ROOTGRASP_SEED_SPAWN_CHANCE - ((intensity - 1) * 3));
 
         // Generate particles around players
         for (PlayerEntity player : world.getPlayers()) {
-            // Skip if random chance fails
-            if (world.getRandom().nextInt(adjustedSpawnChance) != 0) {
-                continue;
-            }
+            // Force at least one attempt per player
+            for (int forcedAttempt = 0; forcedAttempt < 5; forcedAttempt++) { // Increased attempts
+                attempts++;
+                BlockPos playerPos = player.getBlockPos();
 
-            BlockPos playerPos = player.getBlockPos();
+                // Generate particle at a random position around the player
+                int radius = 6 + world.getRandom().nextInt(10); // Adjusted range: 6-16 blocks
+                int offsetX = world.getRandom().nextInt(radius * 2) - radius;
+                int offsetZ = world.getRandom().nextInt(radius * 2) - radius;
 
-            // Generate particle at a random position around the player
-            int radius = 10 + world.getRandom().nextInt(10); // 10-20 blocks away
-            int offsetX = world.getRandom().nextInt(radius * 2) - radius;
-            int offsetZ = world.getRandom().nextInt(radius * 2) - radius;
-
-            // Find the top solid block at this x,z position
-            BlockPos groundPos = findGroundPos(world, playerPos.add(offsetX, 0, offsetZ));
-            
-            // Skip if no suitable ground was found
-            if (groundPos == null) {
-                continue;
-            }
-
-            // Create a UUID for this particle to track it
-            UUID particleId = UUID.randomUUID();
-            activeRootgraspSeedParticles.put(particleId, groundPos);
-
-            // Spawn visible green particle slightly above the ground
-            Vec3d particlePos = new Vec3d(
-                groundPos.getX() + 0.5,
-                groundPos.getY() + 0.1, // Just above the ground
-                groundPos.getZ() + 0.5
-            );
-
-            world.spawnParticles(
-                // Green colored dust particle
-                new DustParticleEffect(ROOTGRASP_SEED_PARTICLE_COLOR, ROOTGRASP_SEED_PARTICLE_SIZE),
-                particlePos.x, particlePos.y, particlePos.z,
-                1, // count - just one per location
-                0.0, 0.0, 0.0, // no random motion
-                0 // speed factor
-            );
-
-            // Add "glittering" effect around the main particle
-            for (int i = 0; i < 5; i++) {
-                world.spawnParticles(
-                    new DustParticleEffect(new Vec3f(0.1f, 0.9f, 0.1f), 0.5f),
-                    particlePos.x + (world.getRandom().nextDouble() - 0.5) * 0.3,
-                    particlePos.y + world.getRandom().nextDouble() * 0.3,
-                    particlePos.z + (world.getRandom().nextDouble() - 0.5) * 0.3,
-                    1,
-                    (world.getRandom().nextDouble() - 0.5) * 0.01,
-                    world.getRandom().nextDouble() * 0.05,
-                    (world.getRandom().nextDouble() - 0.5) * 0.01,
-                    0.01f
-                );
-            }
-            
-            // Add small root-like particles coming out of the ground
-            for (int i = 0; i < 3; i++) {
-                double rootX = particlePos.x + (world.getRandom().nextDouble() - 0.5) * 0.5;
-                double rootZ = particlePos.z + (world.getRandom().nextDouble() - 0.5) * 0.5;
-                
-                for (int j = 0; j < 3; j++) {
-                    world.spawnParticles(
-                        new DustParticleEffect(new Vec3f(0.3f, 0.7f, 0.3f), 0.3f),
-                        rootX, particlePos.y + (j * 0.1), rootZ,
-                        1,
-                        0.0, 0.01, 0.0,
-                        0.0f
-                    );
+                // Log attempt details
+                if (forcedAttempt == 0) {
                 }
+
+                // Find the top solid block at this x,z position
+                BlockPos targetPos = playerPos.add(offsetX, 0, offsetZ);
+                BlockPos groundPos = findGroundPos(world, targetPos);
+
+                // Skip if no suitable ground was found
+                if (groundPos == null) {
+                    if (forcedAttempt == 0) {
+                    }
+                    continue;
+                }
+
+                // Create a UUID for this particle to track it
+                UUID particleId = UUID.randomUUID();
+                activeRootgraspSeedParticles.put(particleId, groundPos);
+                seedParticlesSpawned++;
+                successes++;
+
+
+                // Spawn visible green particle with extra particles for visibility
+                Vec3d particlePos = new Vec3d(
+                        groundPos.getX() + 0.5,
+                        groundPos.getY() + 0.15, // Slightly higher for better visibility
+                        groundPos.getZ() + 0.5
+                );
+
+                try {
+                    // Spawn more particles to make them more visible
+                    for (int i = 0; i < 8; i++) { // Increased particle count
+                        world.spawnParticles(
+                                new DustParticleEffect(ROOTGRASP_SEED_PARTICLE_COLOR, ROOTGRASP_SEED_PARTICLE_SIZE),
+                                particlePos.x, particlePos.y, particlePos.z,
+                                1, 0.1, 0.1, 0.1, 0
+                        );
+                    }
+
+                    // Also spawn vanilla particles for better visibility
+                    world.spawnParticles(
+                            ParticleTypes.HAPPY_VILLAGER,
+                            particlePos.x, particlePos.y + 0.2, particlePos.z,
+                            8, 0.2, 0.2, 0.2, 0.01
+                    );
+                    
+                    // Play a sound to make it more noticeable
+                    world.playSound(
+                            null,
+                            groundPos,
+                            SoundEvents.BLOCK_GRASS_PLACE,
+                            SoundCategory.BLOCKS,
+                            0.8f,
+                            1.0f + (world.getRandom().nextFloat() * 0.3f)
+                    );
+                } catch (Exception e) {
+                }
+
+                // Successfully spawned, break out of the forced attempts loop
+                break;
             }
         }
+
     }
 
     /**
-     * Find the top solid block at a given x,z position
+     * Find the top solid block at a given x,z position with improved logging
      */
     private BlockPos findGroundPos(ServerWorld world, BlockPos startPos) {
-        // Search from player Y level down to find ground
+        // Check if the chunk is loaded first
+        if (!world.isChunkLoaded(startPos)) {
+            return null;
+        }
+
+        // Start at player level and search up and down
         int startY = startPos.getY();
-        int minY = Math.max(world.getBottomY(), startY - 10);
-        int maxY = Math.min(world.getTopY(), startY + 10);
-        
+        int minY = Math.max(world.getBottomY(), startY - 15);
+        int maxY = Math.min(world.getTopY(), startY + 15);
+
+        // Debug logging for troubleshooting
+        boolean verbose = world.getRandom().nextInt(20) == 0; // 5% chance to log details
+        if (verbose) {
+        }
+
+        // Search downward first (more likely to find ground)
         for (int y = startY; y >= minY; y--) {
             BlockPos checkPos = new BlockPos(startPos.getX(), y, startPos.getZ());
-            
-            // Skip if the chunk isn't loaded
+
             if (!world.isChunkLoaded(checkPos)) {
-                return null;
+                continue; // Skip unloaded chunks
             }
-            
-            BlockState state = world.getBlockState(checkPos);
-            
-            // Check if this block is solid and the block above is air
-            if (state.isFullCube(world, checkPos) && 
-                !state.isOf(Blocks.WATER) && 
-                !state.isOf(Blocks.LAVA) &&
-                world.getBlockState(checkPos.up()).isAir()) {
-                
-                return checkPos;
+
+            try {
+                BlockState state = world.getBlockState(checkPos);
+                BlockState aboveState = world.getBlockState(checkPos.up());
+
+                // Log some samples
+                if (verbose && (y == startY || y % 5 == 0)) {
+                }
+
+                // Check for a suitable ground block (solid blocks with air above)
+                if (isSuitableGround(state) &&
+                        (aboveState.isAir() || aboveState.getBlock() instanceof PlantBlock)) {
+                    if (verbose) {
+                    }
+                    return checkPos;
+                }
+            } catch (Exception e) {
+                if (verbose) {
+                }
             }
         }
-        
-        // No suitable ground found
+
+        // If not found, search upward
+        for (int y = startY + 1; y <= maxY; y++) {
+            BlockPos checkPos = new BlockPos(startPos.getX(), y, startPos.getZ());
+
+            if (!world.isChunkLoaded(checkPos)) {
+                continue;
+            }
+
+            try {
+                BlockState state = world.getBlockState(checkPos);
+                BlockState aboveState = world.getBlockState(checkPos.up());
+
+                // Check for a suitable ground block (solid blocks with air above)
+                if (isSuitableGround(state) &&
+                        (aboveState.isAir() || aboveState.getBlock() instanceof PlantBlock)) {
+                    if (verbose) {
+                    }
+                    return checkPos;
+                }
+            } catch (Exception e) {
+                // Skip problematic blocks
+            }
+        }
+
+        if (verbose) {
+        }
         return null;
     }
+
+    /**
+     * Check if a block state is suitable to be considered "ground"
+     */
+    private boolean isSuitableGround(BlockState state) {
+        Block block = state.getBlock();
+
+        // Include more valid ground types - with Material.SOLID check removed since it doesn't exist
+        return state.getMaterial().blocksMovement() ||
+                block == Blocks.GRASS_BLOCK ||
+                block == Blocks.DIRT ||
+                block == Blocks.COARSE_DIRT ||
+                block == Blocks.PODZOL ||
+                block == Blocks.MYCELIUM ||
+                block == Blocks.FARMLAND ||
+                block == Blocks.MOSS_BLOCK ||
+                block == Blocks.STONE ||
+                block == Blocks.DEEPSLATE ||
+                block == Blocks.CALCITE ||
+                MOSS_TRANSFORMATIONS.containsKey(block);
+    }
+
 
     /**
      * Check if players are standing on rootgrasp seed particles to collect them
@@ -271,6 +454,11 @@ public class OvergrowthEvent implements CustomWorldEvent {
             return;
         }
 
+        // Debug occasionally
+        boolean debugThisTick = world.getRandom().nextInt(100) == 0;
+        if (debugThisTick) {
+        }
+
         // Tick each particle
         Iterator<Map.Entry<UUID, BlockPos>> iterator = activeRootgraspSeedParticles.entrySet().iterator();
 
@@ -278,28 +466,53 @@ public class OvergrowthEvent implements CustomWorldEvent {
             Map.Entry<UUID, BlockPos> entry = iterator.next();
             UUID particleId = entry.getKey();
             BlockPos seedPos = entry.getValue();
+
+            // Skip if the chunk isn't loaded
+            if (!world.isChunkLoaded(seedPos)) {
+                if (world.getRandom().nextFloat() < 0.05f) { // 5% chance to remove unloaded particles
+                    iterator.remove();
+                }
+                continue;
+            }
             
-            // Generate particle effects every tick to make it more visible
-            if (ticksRemaining % 5 == 0) {
-                Vec3d particlePos = new Vec3d(
+            // Additional safety check for chunk access
+            try {
+                world.getChunk(seedPos);
+            } catch (Exception e) {
+                // Remove particles in problematic chunks
+                iterator.remove();
+                continue;
+            }
+
+            // Generate particle effects EVERY tick to make it more visible
+            Vec3d particlePos = new Vec3d(
                     seedPos.getX() + 0.5,
-                    seedPos.getY() + 0.1,
+                    seedPos.getY() + 0.15, // Slightly higher for better visibility
                     seedPos.getZ() + 0.5
-                );
-                
-                // Main particle
-                world.spawnParticles(
+            );
+
+            // Main particle - MORE particles for increased visibility
+            world.spawnParticles(
                     new DustParticleEffect(ROOTGRASP_SEED_PARTICLE_COLOR, ROOTGRASP_SEED_PARTICLE_SIZE),
                     particlePos.x, particlePos.y, particlePos.z,
-                    1,
-                    0.0, 0.0, 0.0,
+                    2, // Spawn 2 at once
+                    0.1, 0.1, 0.1,
                     0
-                );
-                
-                // Small "pulsing" particles
-                if (world.getRandom().nextBoolean()) {
-                    for (int i = 0; i < 2; i++) {
-                        world.spawnParticles(
+            );
+
+            // Add vanilla particles for better visibility EVERY tick
+            world.spawnParticles(
+                    ParticleTypes.HAPPY_VILLAGER,
+                    particlePos.x, particlePos.y + 0.2, particlePos.z,
+                    1,
+                    0.1, 0.1, 0.1,
+                    0.0
+            );
+
+            // Small "pulsing" particles - keep these for visual effect
+            if (world.getRandom().nextInt(2) == 0) {
+                for (int i = 0; i < 2; i++) {
+                    world.spawnParticles(
                             new DustParticleEffect(new Vec3f(0.1f, 0.9f, 0.1f), 0.5f),
                             particlePos.x + (world.getRandom().nextDouble() - 0.5) * 0.3,
                             particlePos.y + world.getRandom().nextDouble() * 0.2,
@@ -309,31 +522,37 @@ public class OvergrowthEvent implements CustomWorldEvent {
                             world.getRandom().nextDouble() * 0.03,
                             (world.getRandom().nextDouble() - 0.5) * 0.01,
                             0.01f
-                        );
-                    }
+                    );
                 }
             }
 
-            // Randomly remove particles over time (20% chance every 5 seconds)
-            if (ticksRemaining % 100 == 0 && world.getRandom().nextFloat() < 0.2f) {
+            // Randomly remove particles over time (5% chance every 5 seconds)
+            if (ticksRemaining % 100 == 0 && world.getRandom().nextFloat() < 0.05f) {
                 iterator.remove();
                 continue;
             }
 
             // Check if any player is standing on or very close to the particle
             for (PlayerEntity player : world.getPlayers()) {
-                BlockPos playerPos = player.getBlockPos();
                 Vec3d playerExactPos = player.getPos();
-                
-                // Check if player is within 1 block horizontally and at most 2 blocks vertically
-                if (Math.abs(playerPos.getX() - seedPos.getX()) <= 1 &&
-                    Math.abs(playerPos.getZ() - seedPos.getZ()) <= 1 &&
-                    Math.abs(playerExactPos.y - (seedPos.getY() + 1)) <= 1.5) {
-                    
+
+                // Check if player is within collection radius horizontally and at most 2 blocks vertically
+                double dx = playerExactPos.x - (seedPos.getX() + 0.5);
+                double dz = playerExactPos.z - (seedPos.getZ() + 0.5);
+                double horizontalDistSq = dx * dx + dz * dz;
+
+                if (horizontalDistSq <= ROOTGRASP_SEED_COLLECTION_RADIUS * ROOTGRASP_SEED_COLLECTION_RADIUS &&
+                        Math.abs(playerExactPos.y - (seedPos.getY() + 1.5)) <= 2.0) {
+
                     // Player collected the rootgrasp seed!
                     collectRootgraspSeed(player, seedPos, world);
                     iterator.remove();
                     break;
+                }
+                
+                // Debug player distances occasionally
+                if (debugThisTick && horizontalDistSq < 25) { // Only if within 5 blocks
+
                 }
             }
         }
@@ -343,152 +562,269 @@ public class OvergrowthEvent implements CustomWorldEvent {
      * Give a player a rootgrasp seed when they collect a particle
      */
     private void collectRootgraspSeed(PlayerEntity player, BlockPos seedPos, ServerWorld world) {
-        // Create 1-3 rootgrasp seeds based on intensity
-        int seedCount = Math.min(1, world.getRandom().nextInt(intensity) + 1);
-        ItemStack rootgraspSeed = new ItemStack(ModItems.ROOTGRASP_FLOWER_SEEDS, seedCount);
-        
-        // Add the item to player inventory or drop it if inventory is full
-        if (!player.getInventory().insertStack(rootgraspSeed)) {
-            player.dropItem(rootgraspSeed, false);
+        try {
+            // Create 1-3 rootgrasp seeds based on intensity
+            int seedCount = 1 + world.getRandom().nextInt(intensity);
+
+            // Get the item from the ModItems registry
+            if (ModItems.ROOTGRASP_FLOWER_SEEDS != null) {
+                ItemStack rootgraspSeed = new ItemStack(ModItems.ROOTGRASP_FLOWER_SEEDS, seedCount);
+
+                // Add the item to player inventory or drop it if inventory is full
+                if (!player.getInventory().insertStack(rootgraspSeed)) {
+                    player.dropItem(rootgraspSeed, false);
+                }
+
+                // Send message to player
+                player.sendMessage(Text.literal("You collected " +
+                                (seedCount > 1 ? seedCount + " Rootgrasp Seeds!" : "a Rootgrasp Seed!"))
+                        .formatted(Formatting.GREEN, Formatting.BOLD), true);
+
+                // Track collection for debugging
+                seedsCollected += seedCount;
+            } else {
+                // Log failure if the item isn't available
+                player.sendMessage(Text.literal("You try to collect a rootgrasp seed, but it crumbles away...")
+                        .formatted(Formatting.RED), true);
+
+            }
+        } catch (Exception e) {
+            // Fallback message if there's an error
+            player.sendMessage(Text.literal("You try to collect a rootgrasp seed, but something went wrong...")
+                    .formatted(Formatting.RED), true);
         }
-        
-        // Send message to player
-        player.sendMessage(net.minecraft.text.Text.literal("You collected " + 
-                           (seedCount > 1 ? seedCount + " Rootgrasp Seeds!" : "a Rootgrasp Seed!")), true);
-        
-        // Play sound and particles for collection
+
+        // Play sound and particles for collection regardless of success
         world.playSound(
-            null,
-            seedPos,
-            SoundEvents.BLOCK_GRASS_BREAK,
-            SoundCategory.BLOCKS,
-            1.0f,
-            1.0f + (world.getRandom().nextFloat() * 0.3f)
+                null,
+                seedPos,
+                SoundEvents.BLOCK_GRASS_BREAK,
+                SoundCategory.BLOCKS,
+                1.0f,
+                1.0f + (world.getRandom().nextFloat() * 0.3f)
         );
-        
+
         // Create particle burst effect
         Vec3d burstPos = new Vec3d(seedPos.getX() + 0.5, seedPos.getY() + 0.1, seedPos.getZ() + 0.5);
-        
+
         // Green particle burst - more particles at higher intensity
         int particleCount = 10 + (intensity * 5);
         for (int i = 0; i < particleCount; i++) {
             world.spawnParticles(
-                new DustParticleEffect(new Vec3f(0.2f, 0.8f, 0.2f), world.getRandom().nextFloat() * 0.5f + 0.5f),
-                burstPos.x, burstPos.y, burstPos.z,
-                1,
-                (world.getRandom().nextDouble() - 0.5) * 0.3,
-                world.getRandom().nextDouble() * 0.3,
-                (world.getRandom().nextDouble() - 0.5) * 0.3,
-                0.05f
+                    new DustParticleEffect(new Vec3f(0.2f, 0.8f, 0.2f), world.getRandom().nextFloat() * 0.5f + 0.5f),
+                    burstPos.x, burstPos.y, burstPos.z,
+                    1,
+                    (world.getRandom().nextDouble() - 0.5) * 0.3,
+                    world.getRandom().nextDouble() * 0.3,
+                    (world.getRandom().nextDouble() - 0.5) * 0.3,
+                    0.05f
             );
         }
-        
+
         // Add some vanilla particles too
         world.spawnParticles(
-            ParticleTypes.HAPPY_VILLAGER,
-            burstPos.x, burstPos.y + 0.5, burstPos.z,
-            intensity * 5,
-            0.3, 0.3, 0.3,
-            0.02
+                ParticleTypes.HAPPY_VILLAGER,
+                burstPos.x, burstPos.y + 0.5, burstPos.z,
+                intensity * 5,
+                0.3, 0.3, 0.3,
+                0.02
         );
     }
 
     private void applyOvergrowthEffects(ServerWorld world) {
-        // Process loaded chunks around players
-        for (var player : world.getPlayers()) {
+        // Track transformation statistics for debugging
+        int transformAttempts = 0;
+        int transformSuccess = 0;
+
+
+        // Process blocks near each player
+        for (PlayerEntity player : world.getPlayers()) {
             BlockPos playerPos = player.getBlockPos();
-            ChunkPos chunkPos = new ChunkPos(playerPos);
-            
-            // Range scales with intensity
-            int chunkRange = intensity;
-            List<WorldChunk> nearbyChunks = new ArrayList<>();
-            for (int x = -chunkRange; x <= chunkRange; x++) {
-                for (int z = -chunkRange; z <= chunkRange; z++) {
-                    WorldChunk chunk = world.getChunk(chunkPos.x + x, chunkPos.z + z);
-                    if (chunk != null) {
-                        nearbyChunks.add(chunk);
+
+            // Process a specific number of random blocks near the player
+            int blocksToProcess = 15 * intensity; // 15, 30, or 45 blocks per player
+
+
+            // Process random blocks near the player
+            for (int i = 0; i < blocksToProcess; i++) {
+                // Choose a random position near the player
+                int radius = 8; // Fixed, reasonable radius
+                int x = playerPos.getX() + world.getRandom().nextInt(radius * 2) - radius;
+                int y = playerPos.getY() + world.getRandom().nextInt(8) - 4; // Up to 4 blocks up/down
+                int z = playerPos.getZ() + world.getRandom().nextInt(radius * 2) - radius;
+                BlockPos pos = new BlockPos(x, y, z);
+
+                // Skip if chunk isn't loaded
+                if (!world.isChunkLoaded(pos)) {
+                    continue;
+                }
+
+                transformAttempts++;
+
+                try {
+                    // Get the block and attempt transformation
+                    BlockState state = world.getBlockState(pos);
+                    Block block = state.getBlock();
+
+                    // Log some sample blocks (10% chance)
+                    if (world.getRandom().nextInt(10) == 0) {
                     }
+
+                    boolean transformed = false;
+
+                    // 1. Try moss transformations - guaranteed success
+                    if (MOSS_TRANSFORMATIONS.containsKey(block)) {
+                        Block mossyVariant = MOSS_TRANSFORMATIONS.get(block);
+                        world.setBlockState(pos, mossyVariant.getDefaultState(), Block.NOTIFY_ALL);
+                        transformed = true;
+
+
+                        // Visual feedback
+                        world.spawnParticles(ParticleTypes.HAPPY_VILLAGER,
+                                pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5,
+                                8, 0.3, 0.3, 0.3, 0.01);
+                    }
+                    // 2. Try dirt/stone/grass to moss - high success rate
+                    else if ((block == Blocks.DIRT || block == Blocks.STONE ||
+                            block == Blocks.GRASS_BLOCK) &&
+                            world.getBlockState(pos.up()).isAir()) {
+                        // 50% chance
+                        if (world.getRandom().nextFloat() < 0.5f) {
+                            world.setBlockState(pos, Blocks.MOSS_BLOCK.getDefaultState(), Block.NOTIFY_ALL);
+                            transformed = true;
+
+
+
+                            // Visual feedback
+                            world.spawnParticles(ParticleTypes.HAPPY_VILLAGER,
+                                    pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5,
+                                    8, 0.3, 0.3, 0.3, 0.01);
+                        }
+                    }
+                    // 3. Try crop growth
+                    else if (block instanceof CropBlock) {
+                        CropBlock crop = (CropBlock) block;
+                        if (!crop.isMature(state)) {
+                            try {
+                                int age = state.get(CropBlock.AGE);
+                                int maxAge = crop.getMaxAge();
+
+                                // Force growth of 1-2 stages
+                                int newAge = Math.min(maxAge, age + 1 + world.getRandom().nextInt(intensity));
+
+                                // Update the block
+                                world.setBlockState(pos, state.with(CropBlock.AGE, newAge), Block.NOTIFY_ALL);
+                                transformed = true;
+
+
+
+                                // Visual feedback
+                                world.spawnParticles(ParticleTypes.HAPPY_VILLAGER,
+                                        pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5,
+                                        5, 0.3, 0.3, 0.3, 0.01);
+                            } catch (Exception e) {
+
+                            }
+                        }
+                    }
+
+                    // Track successful transformations
+                    if (transformed) {
+                        transformSuccess++;
+                        blockTransformations++;
+                    }
+                } catch (Exception e) {
+
                 }
             }
-            
-            // Select random blocks from nearby chunks - scale with intensity
-            int blocksToProcess = BLOCKS_PER_TICK * intensity;
-            Random random = world.getRandom();
-            for (int i = 0; i < blocksToProcess; i++) {
-                if (nearbyChunks.isEmpty()) continue;
-                
-                WorldChunk chunk = nearbyChunks.get(random.nextInt(nearbyChunks.size()));
-                int x = random.nextInt(16);
-                int z = random.nextInt(16);
-                int y = 50 + random.nextInt(100); // Adjust y-range as needed
-                
-                BlockPos pos = new BlockPos(chunk.getPos().getStartX() + x, y, chunk.getPos().getStartZ() + z);
-                
-                // Try to find a valid block
-                if (world.isChunkLoaded(pos)) {
-                    BlockState state = world.getBlockState(pos);
-                    
-                    // Accelerate crop growth - chance increases with intensity
-                    if (state.getBlock() instanceof CropBlock) {
-                        CropBlock crop = (CropBlock) state.getBlock();
-                        if (!crop.isMature(state)) {
-                            int age = state.get(CropBlock.AGE);
-                            float growChance = 0.5f + (intensity * 0.1f); // 0.6, 0.7, 0.8 based on intensity
-                            if (random.nextFloat() < growChance) {
-                                // Higher intensity might advance multiple stages
-                                int advancement = intensity > 2 ? 
-                                    Math.min(crop.getMaxAge() - age, 2) : 
-                                    Math.min(crop.getMaxAge() - age, 1);
-                                world.setBlockState(pos, state.with(CropBlock.AGE, age + advancement));
-                            }
-                        }
-                    } 
-                    // Transform saplings - chance increases with intensity
-                    else if (state.getBlock() instanceof SaplingBlock) {
-                        SaplingBlock sapling = (SaplingBlock) state.getBlock();
-                        float growChance = 0.3f + (intensity * 0.1f); // 0.4, 0.5, 0.6 based on intensity
-                        if (random.nextFloat() < growChance) {
-                            sapling.grow(world, world.getRandom(), pos, state);
-                        }
+
+            // Always do guaranteed effects for each player
+            applyGuaranteedEffectsNearPlayer(world, player, world.getRandom());
+        }
+
+    }
+
+    /**
+     * Apply guaranteed effects very close to a player
+     * This ensures players can see the event working even in difficult terrain
+     */
+    private void applyGuaranteedEffectsNearPlayer(ServerWorld world, PlayerEntity player, Random random) {
+        BlockPos playerPos = player.getBlockPos();
+
+        // Try several positions very close to the player
+        for (int i = 0; i < 5; i++) {
+            int range = 3 + (intensity * 2); // 5, 7, or 9 block range
+            int x = playerPos.getX() + random.nextInt(range * 2) - range;
+            int z = playerPos.getZ() + random.nextInt(range * 2) - range;
+
+            // Try various heights
+            for (int yOffset : new int[]{0, -1, 1, -2, 2, -3, 3}) {
+                int y = playerPos.getY() + yOffset;
+                BlockPos pos = new BlockPos(x, y, z);
+
+                if (!world.isChunkLoaded(pos)) continue;
+
+                // Additional safety check for chunk access
+                try {
+                    world.getChunk(pos);
+                } catch (Exception e) {
+                    // Skip this position if there's any issue accessing the chunk
+                    continue;
+                }
+
+                BlockState state = world.getBlockState(pos);
+                Block block = state.getBlock();
+
+                // Guaranteed moss transformation
+                if (MOSS_TRANSFORMATIONS.containsKey(block)) {
+                    Block mossyVariant = MOSS_TRANSFORMATIONS.get(block);
+                    world.setBlockState(pos, mossyVariant.getDefaultState());
+                    blockTransformations++;
+
+                    // Visual and sound feedback
+                    world.spawnParticles(ParticleTypes.HAPPY_VILLAGER,
+                            pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5,
+                            8, 0.3, 0.3, 0.3, 0.01);
+
+                    if (random.nextBoolean()) {
+                        world.playSound(
+                                null, pos, SoundEvents.BLOCK_MOSS_PLACE, SoundCategory.BLOCKS,
+                                0.5f, 0.8f + (random.nextFloat() * 0.4f)
+                        );
                     }
-                    // Apply moss transformations - chance increases with intensity
-                    else if (MOSS_TRANSFORMATIONS.containsKey(state.getBlock())) {
-                        float transformChance = 0.1f + (intensity * 0.05f); // 0.15, 0.2, 0.25
-                        if (random.nextFloat() < transformChance) {
-                            Block mossyVariant = MOSS_TRANSFORMATIONS.get(state.getBlock());
-                            world.setBlockState(pos, mossyVariant.getDefaultState());
-                            world.spawnParticles(ParticleTypes.HAPPY_VILLAGER, 
-                                pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, 
-                                5, 0.25, 0.25, 0.25, 0.01);
-                        }
+
+                    // Success, no need to check more Y levels
+                    break;
+                }
+                // Grass/dirt/stone to moss blocks
+                else if ((block == Blocks.DIRT || block == Blocks.STONE || block == Blocks.GRASS_BLOCK) &&
+                        world.getBlockState(pos.up()).isAir()) {
+                    world.setBlockState(pos, Blocks.MOSS_BLOCK.getDefaultState());
+                    blockTransformations++;
+
+                    // Visual and sound feedback
+                    world.spawnParticles(ParticleTypes.HAPPY_VILLAGER,
+                            pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5,
+                            8, 0.3, 0.3, 0.3, 0.01);
+
+                    if (random.nextBoolean()) {
+                        world.playSound(
+                                null, pos, SoundEvents.BLOCK_MOSS_PLACE, SoundCategory.BLOCKS,
+                                0.5f, 0.8f + (random.nextFloat() * 0.4f)
+                        );
                     }
-                    // Spread moss to dirt and stone - chance increases with intensity
-                    else if ((state.getBlock() == Blocks.DIRT || state.getBlock() == Blocks.STONE) 
-                            && world.getBlockState(pos.up()).isAir()) {
-                        float mossChance = 0.03f + (intensity * 0.02f); // 0.05, 0.07, 0.09
-                        if (random.nextFloat() < mossChance) {
-                            world.setBlockState(pos, Blocks.MOSS_BLOCK.getDefaultState());
-                            
-                            // At highest intensity, sometimes add moss carpet on adjacent blocks
-                            if (intensity == 3 && random.nextFloat() < 0.2f) {
-                                for (int dx = -1; dx <= 1; dx++) {
-                                    for (int dz = -1; dz <= 1; dz++) {
-                                        if (dx == 0 && dz == 0) continue;
-                                        
-                                        BlockPos adjacentPos = pos.add(dx, 0, dz);
-                                        if (world.getBlockState(adjacentPos).isAir() && 
-                                            !world.getBlockState(adjacentPos.down()).isAir()) {
-                                            world.setBlockState(adjacentPos, Blocks.MOSS_CARPET.getDefaultState());
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
+
+                    // Success, no need to check more Y levels
+                    break;
                 }
             }
         }
     }
+
+    /**
+     * Send a debug message to server operators
+     */
+
 
     @Override
     public boolean isComplete() {

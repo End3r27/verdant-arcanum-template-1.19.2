@@ -1,6 +1,7 @@
 package end3r.verdant_arcanum.registry;
 
 import end3r.verdant_arcanum.event.CustomWorldEvent;
+import end3r.verdant_arcanum.event.FireRainEvent;
 import end3r.verdant_arcanum.event.OvergrowthEvent;
 import net.minecraft.util.Identifier;
 
@@ -13,13 +14,14 @@ public class EventRegistry {
 
     public static final Identifier STRONG_WINDS_ID = new Identifier("verdant_arcanum", "strong_winds");
     public static final Identifier OVERGROWTH_ID = new Identifier("verdant_arcanum", "overgrowth");
+    public static final Identifier FIRE_RAIN_ID = new Identifier("verdant_arcanum", "fire_rain");
 
     public static void registerAll() {
         register(STRONG_WINDS_ID, new end3r.verdant_arcanum.event.StrongWindsEvent());
         register(OVERGROWTH_ID, new end3r.verdant_arcanum.event.OvergrowthEvent());
+        register(FIRE_RAIN_ID, new end3r.verdant_arcanum.event.FireRainEvent());
 
         // Add more as you create them:
-        // register(new Identifier("verdant_arcanum", "fire_rain"), new FireRainEvent());
         // register(new Identifier("verdant_arcanum", "end_veil"), new EndVeilEvent());
     }
 

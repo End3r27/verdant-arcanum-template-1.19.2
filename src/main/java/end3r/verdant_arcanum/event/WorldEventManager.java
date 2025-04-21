@@ -4,12 +4,16 @@ import end3r.verdant_arcanum.registry.EventRegistry;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.Identifier;
 import net.minecraft.text.Text;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.world.World;
 
 import java.util.Random;
 
 public class WorldEventManager {
-    private static final int CHECK_INTERVAL = 20 * 30 * 20; // Check every 10 minutes
+    private static final int CHECK_INTERVAL = 20 * 30 * 20; // Check every 10 minutes (20 ticks/sec * 60 sec * 10 min)
+    private static final int NETHER_CHECK_INTERVAL = 20 * 30 * 20; // Also 10 minutes for Nether
     private int tickCounter = 0;
+    private int netherTickCounter = 0;
 
     private CustomWorldEvent currentEvent;
     private static final Random RANDOM = new Random();
@@ -21,33 +25,84 @@ public class WorldEventManager {
     }
 
     public void tick(ServerWorld world) {
+        if (currentEvent != null) {
+            try {
+                // Debug event ticking
+                if (world.getTime() % 100 == 0) {
+                    for (PlayerEntity player : world.getPlayers()) {
 
-        if (currentEvent != null && currentEvent.isComplete()) {
-            currentEvent = null;
+                        }
+                    }
+
+                
+                // Tick the event
+                currentEvent.tick(world);
+                
+                // Check if it's complete
+                if (currentEvent.isComplete()) {
+                    // Notify players the event is ending
+                    for (PlayerEntity player : world.getPlayers()) {
+                        String eventName = formatEventName(currentEvent.getId().getPath());
+                        player.sendMessage(Text.literal("The " + eventName + " is subsiding..."), true);
+                    }
+                    
+                    currentEvent = null;
+                }
+                
+                // Skip the rest of the method since we have an active event
+                return;
+            } catch (Exception e) {
+                // Log any errors in the event ticking
+                for (PlayerEntity player : world.getPlayers()) {
+                    if (player.hasPermissionLevel(2)) { // Op level 2+
+                        player.sendMessage(Text.literal("[Debug] Error in event tick: " + e.getMessage()), false);
+                    }
+                }
+                
+                // Prevent buggy events from crashing the server - cancel the event
+                currentEvent = null;
+            }
         }
 
         tickCounter++;
-
-        if (currentEvent != null) {
-            currentEvent.tick(world);
-            if (currentEvent.isComplete()) {
-                currentEvent = null;
-            }
-            return;
+        
+        // Separate counter for nether events
+        if (world.getRegistryKey() == World.NETHER) {
+            netherTickCounter++;
         }
 
-        // Try triggering a new event
-        if (tickCounter >= CHECK_INTERVAL) {
+        // Only trigger Overworld events in the Overworld
+        if (world.getRegistryKey() == World.OVERWORLD && tickCounter >= CHECK_INTERVAL) {
             tickCounter = 0;
 
             float eventChance = RANDOM.nextFloat();
             if (eventChance < 0.25f) {
                 // 50% chance for strong winds, 50% chance for overgrowth when an event triggers
+                String eventType = RANDOM.nextBoolean() ? "Strong Winds" : "Overgrowth";
+                
+                // Notify players about the new event
+                for (PlayerEntity player : world.getPlayers()) {
+                    player.sendMessage(Text.literal("A magical " + eventType.toLowerCase() + " begins to manifest..."), true);
+                }
                 if (RANDOM.nextBoolean()) {
                     startStrongWinds(world);
                 } else {
                     startOvergrowth(world);
                 }
+            }
+        }
+        
+        // Only trigger Nether events in the Nether
+        if (world.getRegistryKey() == World.NETHER && netherTickCounter >= NETHER_CHECK_INTERVAL) {
+            netherTickCounter = 0;
+            
+            float eventChance = RANDOM.nextFloat();
+            if (eventChance < 0.25f) {
+                // Notify players about the new event
+                for (PlayerEntity player : world.getPlayers()) {
+                    player.sendMessage(Text.literal("A magical fire rain begins to manifest..."), true);
+                }
+                startFireRain(world);
             }
         }
     }
@@ -57,6 +112,13 @@ public class WorldEventManager {
         if (event != null) {
             currentEvent = event;
             currentEvent.start(world);
+        } else {
+            // Debug message if event couldn't be found
+            for (PlayerEntity player : world.getPlayers()) {
+                if (player.hasPermissionLevel(2)) {
+                    player.sendMessage(Text.literal("[Debug] Failed to start Strong Winds event: not found in registry"), false);
+                }
+            }
         }
     }
     
@@ -65,6 +127,33 @@ public class WorldEventManager {
         if (event != null) {
             currentEvent = event;
             currentEvent.start(world);
+        } else {
+            // Debug message if event couldn't be found
+            for (PlayerEntity player : world.getPlayers()) {
+                if (player.hasPermissionLevel(2)) {
+                    player.sendMessage(Text.literal("[Debug] Failed to start Overgrowth event: not found in registry"), false);
+                }
+            }
+        }
+    }
+    
+    private void startFireRain(ServerWorld world) {
+        // Only start fire rain in the Nether
+        if (world.getRegistryKey() != World.NETHER) {
+            return;
+        }
+        
+        CustomWorldEvent event = EventRegistry.get(EventRegistry.FIRE_RAIN_ID);
+        if (event != null) {
+            currentEvent = event;
+            currentEvent.start(world);
+        } else {
+            // Debug message if event couldn't be found
+            for (PlayerEntity player : world.getPlayers()) {
+                if (player.hasPermissionLevel(2)) {
+                    player.sendMessage(Text.literal("[Debug] Failed to start Fire Rain event: not found in registry"), false);
+                }
+            }
         }
     }
 
@@ -85,6 +174,12 @@ public class WorldEventManager {
 
         this.currentEvent = event;
         event.start(world);
+        
+        // Notify players about the new event
+        String eventName = formatEventName(event.getId().getPath());
+        for (PlayerEntity player : world.getPlayers()) {
+            player.sendMessage(Text.literal("A magical " + eventName.toLowerCase() + " begins to manifest..."), true);
+        }
     }
 
     /**
@@ -121,6 +216,11 @@ public class WorldEventManager {
             // Clean up event
             currentEvent = null;
             tickCounter = 0; // Reset tick counter
+            
+            // Reset Nether tick counter if it was a Nether event
+            if (eventId.equals(EventRegistry.FIRE_RAIN_ID)) {
+                netherTickCounter = 0;
+            }
         }
     }
 
