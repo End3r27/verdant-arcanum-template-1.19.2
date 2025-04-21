@@ -1,0 +1,6 @@
+{
+  "parent": "block/crop",
+  "textures": {
+    "crop": "verdant_arcanum:block/rootgrasp_flower_stage1"
+  }
+}

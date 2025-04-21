@@ -1,0 +1,6 @@
+{
+  "parent": "block/crop",
+  "textures": {
+    "crop": "verdant_arcanum:block/flame_flower_stage2"
+  }
+}

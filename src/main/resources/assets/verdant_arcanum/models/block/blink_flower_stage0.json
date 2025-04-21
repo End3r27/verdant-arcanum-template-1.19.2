@@ -1,0 +1,6 @@
+{
+  "parent": "block/crop",
+  "textures": {
+    "crop": "verdant_arcanum:block/blink_flower_stage0"
+  }
+}
