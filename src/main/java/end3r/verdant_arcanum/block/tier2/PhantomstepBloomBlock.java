@@ -35,15 +35,8 @@ public class PhantomstepBloomBlock extends PlacedBloomBlock {
         }
 
         if (!world.isClient && entity instanceof LivingEntity) {
-            // Set the entity on fire for 6 seconds
             ((LivingEntity)entity).addStatusEffect(new StatusEffectInstance(StatusEffects.GLOWING, 60, 1));
-            // Optional: Add flame particles for visual effect
-            if (world instanceof ServerWorld) {
-                ((ServerWorld)world).spawnParticles(ParticleTypes.FLAME,
-                        entity.getX(), entity.getY(), entity.getZ(),
-                        10, 0.2, 0.1, 0.2, 0.05);
-                world.playSound(null, pos, SoundEvents.BLOCK_FIRE_AMBIENT, SoundCategory.BLOCKS, 0.5F, 1.0F);
-            }
+
         }
 
         super.onEntityCollision(state, world, pos, entity);

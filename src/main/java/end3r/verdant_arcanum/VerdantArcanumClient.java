@@ -115,6 +115,10 @@ public class VerdantArcanumClient implements ClientModInitializer {
 
 
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.FLAME_FLOWER, RenderLayer.getCutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.BLINK_FLOWER, RenderLayer.getCutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.GUST_FLOWER, RenderLayer.getCutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.ROOTGRASP_FLOWER, RenderLayer.getCutout());
+
 
         ManaSyncPacket.registerClient();
 

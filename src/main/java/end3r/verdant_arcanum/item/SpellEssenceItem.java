@@ -169,6 +169,8 @@ public class SpellEssenceItem extends Item {
             case "timestop" -> Formatting.GOLD;
             case "breezevine" -> Formatting.BLUE;
             case "solarbloom" -> Formatting.YELLOW;
+            case "phantomstep" -> Formatting.BLUE;
+
             default -> Formatting.GRAY;
         };
     }

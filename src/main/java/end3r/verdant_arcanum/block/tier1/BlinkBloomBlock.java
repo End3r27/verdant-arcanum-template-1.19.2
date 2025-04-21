@@ -17,6 +17,7 @@ import net.minecraft.util.math.random.Random;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldView;
 
+@SuppressWarnings("ALL")
 public class BlinkBloomBlock extends PlacedBloomBlock {
     public BlinkBloomBlock(Settings settings) {
         super(settings);
