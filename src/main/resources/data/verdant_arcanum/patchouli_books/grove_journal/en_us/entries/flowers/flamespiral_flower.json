@@ -1,0 +1,33 @@
+{
+  "name": "Flamespiral Flower",
+  "category": "verdant_arcanum:flowers",
+  "icon": "verdant_arcanum:flamespiral_flower_bloom",
+  "sortnum": 6,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "The $(thing)Flamespiral Flower$() represents the pinnacle of fire-attuned botanical magic, with an intricate spiral pattern of petals that contain swirling flames that never consume the plant itself.$(br2)This advanced magical flower generates remarkable heat in a controlled, focused pattern."
+    },
+    {
+      "type": "patchouli:text",
+      "text": "$(bold)Cultivation Notes:$()$(br)- Must be planted on Grove Soil infused with Flame Essence$(br)- Thrives in hot environments$(br)- Growth accelerated by nearby lava or fire$(br)- When mature, emits focused heat in a specific direction rather than radiating it outward"
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "verdant_arcanum:flamespiral",
+      "title": "Creating Flamespiral",
+      "text": "Flamespiral can be created through specialized magical processes that tame and control raw fire magic. The resulting plant maintains disciplined, spiraling flame patterns."
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "verdant_arcanum:flamespiral_flower_bloom",
+      "title": "Bloom Properties",
+      "text": "Harvested Flamespiral blooms continue to generate intense heat in a controlled pattern. Unlike the common Flame Flower which produces wild, unpredictable fire energy, the Flamespiral creates disciplined, directed heat."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "Advanced Applications",
+      "text": "$(li)Focused heat for magical forging and precision metalwork$(li)Controlled burning and targeted incineration without spread$(li)Heat-based wards and protective barriers$(li)Enchanting items with advanced fire resistance properties$(li)Precision fire-based offensive magic$(br2)$(italic)The essence is particularly dangerous in untrained hands - handle with extreme caution and proper fire protection.$() "
+    }
+  ]
+}

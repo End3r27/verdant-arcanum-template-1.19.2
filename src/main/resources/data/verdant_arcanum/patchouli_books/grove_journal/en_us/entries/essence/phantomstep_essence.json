@@ -1,0 +1,33 @@
+{
+  "name": "Phantomstep Essence",
+  "category": "verdant_arcanum:essences",
+  "icon": "verdant_arcanum:spell_essence_phantomstep",
+  "sortnum": 8,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "$(thing)Phantomstep Essence$() is perhaps the most mysterious of all botanical magical substances. This ethereal essence exists partially between dimensions, appearing ghostly and translucent even when contained.$(br2)Unlike Blink Essence which enables teleportation, Phantomstep Essence grants the ability to pass through solid matter by temporarily shifting into a semi-ethereal state."
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "verdant_arcanum:spell_essence_phantomstep",
+      "text": "This rare essence can only be extracted from Phantomstep Flowers that have grown in areas with dimensional anomalies or strong End energy.$(br2)The essence appears to shift in and out of reality, sometimes seeming solid and other times nearly invisible."
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "verdant_arcanum:phantomstep",
+      "title": "Essence Creation",
+      "text": "Phantomstep Essence is created through a specialized magical process that harnesses dimensional shifting energies. The essence retains the phase-shifting properties of the Phantomstep plant."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "Magical Properties",
+      "text": "$(li)Grants temporary incorporeality to objects or entities$(li)Allows passage through solid objects without damaging either$(li)Creates semi-permeable magical barriers$(li)Enhances invisibility and stealth enchantments$(li)Protects against physical damage"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "Usage Notes",
+      "text": "Phantomstep Essence should be used with extreme caution. Improper use can result in partially phased objects or, in worst cases, permanent incorporeality.$(br2)$(italic)Warning: Never consume or directly apply Phantomstep Essence to living beings without proper magical containment spells. Doing so could result in permanent phase shifting of body parts.$() "
+    }
+  ]
+}

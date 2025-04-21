@@ -1,0 +1,23 @@
+{
+  "name": "The End Veil",
+  "category": "verdant_arcanum:world_events",
+  "icon": "minecraft:end_stone",
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "$(thing)The End Veil$() is a rare cosmic event where the barrier between our dimension and The End temporarily weakens. During this phenomenon, reality itself becomes unstable, manifesting various strange effects throughout the affected region.$(br2)Those attuned to magical forces may find this event both dangerous and potentially rewarding."
+    },
+    {
+      "type": "patchouli:text",
+      "text": "$(bold)Observable Effects:$()$(li)Mysterious particles resembling those of The End appear around you$(li)Sporadic teleportation similar to chorus fruit consumption$(li)Unpredictable changes in day/night cycles$(li)Objects occasionally defying gravity$(li)Terrain temporarily 'flickering' between states"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "$(bold)Blink Vortexes:$()$(br)A particularly noteworthy phenomenon during End Veil events is the appearance of swirling vortexes of End energy. These concentrated manifestations contain essence that can be harvested for magical purposes.$(br2)Approaching these vortexes may yield Blink Flower Seeds - an otherwise difficult resource to obtain."
+    },
+    {
+      "type": "patchouli:text",
+      "text": "$(bold)Duration:$()$(br)End Veil events typically last for approximately 5 minutes, though the intensity and exact duration may vary.$(br2)$(italic)Note: While initially disorienting, this event provides a rare opportunity to collect magical resources influenced by End energies. Exercise caution but don't miss the opportunity it presents.$() "
+    }
+  ]
+}

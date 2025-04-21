@@ -1,0 +1,24 @@
+{
+  "name": "Living Staff Mk2",
+  "category": "verdant_arcanum:tools",
+  "icon": "verdant_arcanum:living_staff_mk2",
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "The $(thing)Living Staff Mk2$() represents the pinnacle of botanical magic focusing tools. This advanced staff is not merely a conduit for magical energy, but a true living artifact that forms a symbiotic relationship with its wielder.$(br2)Crafted with rare materials and infused with multiple magical essences, this staff significantly enhances all aspects of nature magic."
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "verdant_arcanum:living_staff_mk2",
+      "text": "Unlike the basic Living Staff, the Mk2 version features enhanced storage capacity for magical energy and can channel multiple spell types simultaneously.$(br2)The staff is also fireproof, allowing it to safely handle even the most volatile fire and solar magics without risk of damage."
+    },
+    {
+      "type": "patchouli:text",
+      "text": "$(bold)Enhanced Capabilities:$()$(li)Significantly increased mana capacity$(li)Faster mana regeneration rate$(li)Ability to store multiple spell types$(li)Reduced essence consumption$(li)Enhanced spell range and potency$(li)Improved natural growth acceleration"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "$(bold)Usage Notes:$()$(br)The Living Staff Mk2 adapts to its wielder over time, becoming more attuned to your specific magical style. Regular use strengthens this bond, potentially unlocking additional capabilities.$(br2)$(italic)Advanced practitioners have reported that with sufficient practice, the staff may develop unique properties based on the types of magic most frequently channeled through it.$() "
+    }
+  ]
+}

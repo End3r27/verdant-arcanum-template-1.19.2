@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "GGG",
+    "GRG",
+    "GGG"
+  ],
+  "key": {
+    "G": {
+      "item": "verdant_arcanum:spell_essence_gust"
+    },
+    "R": {
+      "item": "verdant_arcanum:rootgrasp_flower_bloom"
+    }
+  },
+  "result": {
+    "item": "verdant_arcanum:breezevine_bloom",
+    "count": 2
+  }
+}

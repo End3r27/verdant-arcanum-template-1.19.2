@@ -1,0 +1,33 @@
+{
+  "name": "Solarbloom Flower",
+  "category": "verdant_arcanum:flowers",
+  "icon": "verdant_arcanum:solarbloom_flower_bloom",
+  "sortnum": 5,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "The $(thing)Solarbloom Flower$() is a rare and powerful magical plant that harnesses and concentrates the energy of the sun itself.$(br2)With radiant golden petals that seem to glow from within, this remarkable bloom stores solar energy and can release it in concentrated bursts."
+    },
+    {
+      "type": "patchouli:text",
+      "text": "$(bold)Cultivation Notes:$()$(br)- Must be planted on Grove Soil infused with Flame Essence$(br)- Requires direct sunlight to grow$(br)- Will not grow properly in shade or underground$(br)- When mature, emits light and grants temporary fire resistance to nearby entities"
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "verdant_arcanum:spell_essence_solarbloom",
+      "title": "Essence Crafting",
+      "text": "Solarbloom Essence combines the heat of fire with the movement of air. This crafting method produces essences using a Gust bloom surrounded by Flame essences."
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "verdant_arcanum:solarbloom_flower_bloom",
+      "title": "Bloom Properties",
+      "text": "Harvested Solarbloom blooms continue to radiate light and warmth. Unlike Flame Flowers which produce destructive heat, Solarbloom creates cleansing, purifying light that can be used for more refined magical applications."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "Advanced Applications",
+      "text": "$(li)Creating permanent magical light sources$(li)Purification rituals to cleanse corrupted materials$(li)Enhanced growing environments for other magical plants$(li)Solar-powered magical devices that work continuously$(li)Protection against darkness-based magic and entities$(br2)$(italic)Due to its rarity and power, handle Solarbloom with appropriate caution and respect.$() "
+    }
+  ]
+}

@@ -33,8 +33,7 @@ public class EndVeilEvent implements CustomWorldEvent {
     private static final Identifier ID = new Identifier("verdant_arcanum", "end_veil");
 
     // Event duration settings
-    private static final int MIN_DURATION = 20 * 60 * 5;
-    private static final int MAX_DURATION = 20 * 60 * 5;
+    private static final int DURATION = 20 * 60 * 5;
     private int duration;
     private int ticks = 0;
 
@@ -72,7 +71,7 @@ public class EndVeilEvent implements CustomWorldEvent {
 
     public EndVeilEvent() {
         Random random = Random.create();
-        this.duration = MIN_DURATION;
+        this.duration = DURATION;
         this.nextTimeShift = TIME_SHIFT_MIN_INTERVAL + random.nextInt(TIME_SHIFT_MAX_INTERVAL - TIME_SHIFT_MIN_INTERVAL);
     }
 

@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "FFF",
+    "FGF",
+    "FFF"
+  ],
+  "key": {
+    "F": {
+      "item": "verdant_arcanum:spell_essence_flame"
+    },
+    "G": {
+      "item": "verdant_arcanum:gust_flower_bloom"
+    }
+  },
+  "result": {
+    "item": "verdant_arcanum:solarbloom_bloom",
+    "count": 2
+  }
+}

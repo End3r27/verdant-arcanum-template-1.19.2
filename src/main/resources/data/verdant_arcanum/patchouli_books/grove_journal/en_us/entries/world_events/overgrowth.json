@@ -1,0 +1,23 @@
+{
+  "name": "Overgrowth",
+  "category": "verdant_arcanum:world_events",
+  "icon": "minecraft:oak_sapling",
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "$(thing)The Overgrowth$() is a fascinating magical event where the natural world's growth cycles accelerate dramatically. During this phenomenon, the vital energy of plants surges, causing rapid and sometimes uncontrollable growth throughout the affected region.$(br2)For botanical mages, this presents an extraordinary opportunity to observe and harness natural magic at its most potent."
+    },
+    {
+      "type": "patchouli:text",
+      "text": "$(bold)Observable Effects:$()$(li)Accelerated plant growth in the surrounding area$(li)Spontaneous flowering and fruiting of plants$(li)Vines and roots extending at visible speeds$(li)Dense foliage appearing in previously sparse areas$(li)Increased effectiveness of bone meal and other growth enhancers"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "$(bold)Magical Botanical Opportunities:$()$(br)During an Overgrowth event, several rare phenomena occur that can benefit magical practitioners:$(li)Magical flowers produce more essence when harvested$(li)Rootgrasp and other plant-based magical seeds appear more frequently$(li)Tree growth patterns may reveal natural ley lines"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "$(bold)Risks and Management:$()$(br)While generally less dangerous than other magical events, the Overgrowth can still present challenges:$(li)Structures may become damaged by intrusive roots$(li)Dense undergrowth can impede movement$(li)Certain magical plants may develop aggressive tendencies$(br2)$(italic)Properly managed, an Overgrowth event provides an excellent opportunity to cultivate rare magical flora that would otherwise take significant time and resources.$() "
+    }
+  ]
+}

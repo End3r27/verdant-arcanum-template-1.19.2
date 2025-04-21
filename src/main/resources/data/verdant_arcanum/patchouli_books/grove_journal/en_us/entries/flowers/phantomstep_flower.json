@@ -1,0 +1,33 @@
+{
+  "name": "Phantomstep Flower",
+  "category": "verdant_arcanum:flowers",
+  "icon": "verdant_arcanum:phantomstep_flower_bloom",
+  "sortnum": 7,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "The $(thing)Phantomstep Flower$() is a mysterious and ethereal plant that exists partially between dimensions, appearing to phase in and out of reality as it grows.$(br2)With translucent petals that seem to shift between solid and incorporeal states, this remarkable magical bloom challenges our understanding of botanical existence."
+    },
+    {
+      "type": "patchouli:text",
+      "text": "$(bold)Cultivation Notes:$()$(br)- Must be planted on Grove Soil infused with Blink Essence$(br)- Grows best near dimensional anomalies or End energy$(br)- Appears to shift between realities during growth$(br)- When mature, entities that step on it become temporarily incorporeal"
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "verdant_arcanum:spell_essence_phantomstep",
+      "title": "Phantomstep Essence Crafting",
+      "text": "Phantomstep Essence combines teleportation magic with the transformative nature of fire. This specialized process produces two essences using a Flame bloom surrounded by Blink essences."
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "verdant_arcanum:phantomstep_flower_bloom",
+      "title": "Bloom Properties",
+      "text": "Harvested Phantomstep blooms continue to exist partially between dimensions. Unlike Blink Flowers which enable teleportation, the Phantomstep maintains a constant semi-phased state allowing for incorporeality."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "Advanced Applications",
+      "text": "$(li)Temporarily phasing through solid objects without damage$(li)Creating semi-permeable magical barriers and filters$(li)Protection against physical attacks via partial incorporeality$(li)Accessing hidden or enclosed spaces without breaking barriers$(li)Performing ethereal state magical rituals$(br2)$(italic)Warning: Phantomstep magic is unpredictable and potentially dangerous if used improperly or by the inexperienced.$() "
+    }
+  ]
+}

@@ -1,0 +1,24 @@
+{
+  "name": "World Events Overview",
+  "category": "verdant_arcanum:world_events",
+  "icon": "minecraft:clock",
+  "priority": true,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "The natural world is occasionally subject to extraordinary magical phenomena known as $(thing)World Events$(). These rare occurrences represent times when the veil between our world and the pure magical forces becomes momentarily thin.$(br2)For the magical practitioner, these events are both opportunities and challenges - times when the normal rules bend and new possibilities emerge."
+    },
+    {
+      "type": "patchouli:text",
+      "text": "$(bold)Common Characteristics:$()$(li)World Events typically affect a large area$(li)They are temporary, usually lasting 5-15 minutes$(li)Each has unique effects on the environment$(li)They may make certain magical resources temporarily available$(li)Most events present both dangers and opportunities"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "$(bold)Known World Events:$()$(li)$(thing)The End Veil$() - Reality distortions from The End$(li)$(thing)Fire Rain$() - Flaming precipitation and heat anomalies$(li)$(thing)Overgrowth$() - Accelerated plant growth and vitality$(li)$(thing)Strong Winds$() - Powerful gusts charged with air magic"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "$(bold)Preparing for World Events:$()$(br)While unpredictable, certain signs may precede these events:$(li)Unusual animal behavior$(li)Minor magical fluctuations$(li)Changes in local weather patterns$(li)Faint colorations in the sky$(br2)$(italic)The wise mage prepares for all possibilities and remains alert to these subtle warnings. When properly understood, world events can greatly accelerate one's magical studies.$() "
+    }
+  ]
+}

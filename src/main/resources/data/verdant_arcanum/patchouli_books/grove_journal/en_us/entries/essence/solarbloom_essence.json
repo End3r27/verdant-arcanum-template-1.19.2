@@ -1,0 +1,33 @@
+{
+  "name": "Solarbloom Essence",
+  "category": "verdant_arcanum:essences",
+  "icon": "verdant_arcanum:spell_essence_solarbloom",
+  "sortnum": 6,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "$(thing)Solarbloom Essence$() represents one of the most powerful forms of light magic available to botanical mages. This radiant essence glows with an inner light that never dims, containing concentrated solar energy in its purest magical form.$(br2)Unlike Flame Essence which produces destructive heat, Solarbloom Essence creates cleansing, purifying light."
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "verdant_arcanum:spell_essence_solarbloom",
+      "text": "This powerful essence can be extracted from fully matured Solarbloom Flowers harvested at the height of daylight.$(br2)The essence appears as a golden, luminous substance that radiates warmth and light continuously without being consumed."
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "verdant_arcanum:solarbloom",
+      "title": "Essence Creation",
+      "text": "Solarbloom Essence is created through a specialized magical process that harnesses raw solar energy. The essence retains the purifying, radiant properties of the Solarbloom plant."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "Magical Properties",
+      "text": "$(li)Creates permanent magical light sources$(li)Purifies corrupted materials and entities$(li)Enhances growth of other magical plants$(li)Weakens shadow and undead entities$(li)Powers sun-based enchantments and devices"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "Usage Notes",
+      "text": "Due to its rarity and power, Solarbloom Essence should be used sparingly. It works particularly well in purification rituals and can be combined with Rootgrasp Essence to create powerful growth-enhancing spells.$(br2)$(italic)Warning: Solarbloom Essence's light can attract attention from hostile mobs in dark places. It also reacts violently if combined directly with water essence.$() "
+    }
+  ]
+}

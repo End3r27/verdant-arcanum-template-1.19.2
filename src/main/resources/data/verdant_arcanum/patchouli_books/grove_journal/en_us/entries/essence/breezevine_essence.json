@@ -1,29 +1,33 @@
 {
-  "name": "Breezevine Spell Essence",
+  "name": "Breezevine Essence",
   "icon": "verdant_arcanum:spell_essence_breezevine",
   "category": "verdant_arcanum:essences",
   "sortnum": 5,
   "pages": [
     {
-      "type": "patchouli:spotlight",
-      "item": "verdant_arcanum:spell_essence_breezevine",
-      "text": "Breezevine Spell Essence contains the concentrated magical properties of directional wind. Extracted from the Breezevine Flower Bloom, it embodies the focused nature of controlled air currents."
+      "type": "patchouli:text",
+      "text": "$(thing)Breezevine Essence$() is an advanced form of air magic extracted from the Breezevine Flower. This essence manifests as a swirling, constantly moving substance that appears to be perpetually in motion, even when contained.$(br2)Unlike basic Gust Essence, Breezevine Essence creates sustained, controlled air currents rather than brief gusts."
     },
     {
-      "type": "patchouli:text",
-      "title": "Properties",
-      "text": "When cast directly, Breezevine Essence propels you backwards with a powerful gust of wind while granting brief fall protection, making it excellent for mobility and escape.$(br2)Mana Cost: [value]$(br)Single-use when cast directly"
+      "type": "patchouli:spotlight",
+      "item": "verdant_arcanum:spell_essence_breezevine",
+      "text": "This essence can be extracted from Breezevine Flower blooms through careful magical processing.$(br2)The resulting magical material maintains its potency indefinitely if properly stored, though exposure to extreme heat may cause it to dissipate prematurely."
     },
     {
       "type": "patchouli:crafting",
-      "recipe": "verdant_arcanum:spell_essence_breezevine",
-      "title": "Extraction",
-      "text": "The extraction process requires a Breezevine Flower Bloom and special directional catalysts to focus the wind properties during transformation."
+      "recipe": "verdant_arcanum:breezevine",
+      "title": "Essence Creation",
+      "text": "Breezevine Essence is created through specialized processes that combine magical components in precise proportions. The resulting essence retains the sustained air movement properties of the Breezevine plant."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "Magical Properties",
+      "text": "$(li)Creates persistent air currents$(li)When cast directly, propels you backwards with a powerful gust$(li)Grants brief fall protection during use$(li)Enhances mobility and levitation effects$(li)Sustains wind-based spells for extended durations$(br2)Mana Cost: [value]$(br)Single-use when cast directly"
     },
     {
       "type": "patchouli:text",
       "title": "Applications",
-      "text": "- Direct casting for mobility$(br)- Grafting onto a Living Staff$(br)- Creating propulsion devices$(br)- As a component in directional air-based magical items$(br)- Used in crafting items that provide fall protection"
+      "text": "$(li)Direct casting for mobility and escape$(li)Grafting onto a Living Staff$(li)Creating propulsion devices$(li)Component in directional air-based magical items$(li)Crafting items that provide fall protection$(br2)$(italic)Caution: When working with Breezevine Essence, secure loose objects in your workspace, as the constant air currents can displace lightweight items.$() "
     }
   ]
 }

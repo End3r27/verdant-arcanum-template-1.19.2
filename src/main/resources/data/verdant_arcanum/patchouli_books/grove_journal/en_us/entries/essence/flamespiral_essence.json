@@ -1,0 +1,33 @@
+{
+  "name": "Flamespiral Essence",
+  "category": "verdant_arcanum:essences",
+  "icon": "verdant_arcanum:spell_essence_flamespiral",
+  "sortnum": 7,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "$(thing)Flamespiral Essence$() represents the mastery of controlled fire magic. Unlike basic Flame Essence, which burns wild and free, Flamespiral Essence contains intricate spiraling patterns of fire that can be directed with exceptional precision.$(br2)This advanced essence appears as a swirling vortex of concentrated flame held in perfect balance."
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "verdant_arcanum:spell_essence_flamespiral",
+      "text": "This powerful essence can be extracted from Flamespiral Flower blooms through a complex process requiring significant magical skill.$(br2)The resulting essence is fireproof itself and can be safely contained despite its incredible heat potential."
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "verdant_arcanum:flamespiral",
+      "title": "Essence Creation",
+      "text": "Flamespiral Essence is created through a specialized magical process that tames and controls raw fire energy. The essence maintains the precision and controlled heat of the Flamespiral plant."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "Magical Properties",
+      "text": "$(li)Creates precise, controlled flames$(li)Generates intense heat without spreading fire$(li)Can target specific materials while leaving others untouched$(li)Excellent for enchanting items with fire properties$(li)Powers advanced fire-based magical devices"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "Usage Notes",
+      "text": "Flamespiral Essence works particularly well for magical forging and precision heat applications. It combines effectively with metal components to create heat-channeling devices.$(br2)$(italic)Caution: Despite its controlled nature, Flamespiral Essence is extremely dangerous. Always work with proper protective equipment and fire resistance effects.$() "
+    }
+  ]
+}

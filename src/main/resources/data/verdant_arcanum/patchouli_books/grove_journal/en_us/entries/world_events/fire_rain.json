@@ -1,0 +1,23 @@
+{
+  "name": "Fire Rain",
+  "category": "verdant_arcanum:world_events",
+  "icon": "minecraft:fire_charge",
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "$(thing)Fire Rain$() is a meteorological anomaly where the very skies ignite, raining down embers and flame. This rare event occurs when elemental fire magic accumulates in the atmosphere, creating a spectacular but dangerous phenomenon.$(br2)During Fire Rain, the world becomes a more treacherous place, but it also presents unique opportunities for those seeking fire-based magical components."
+    },
+    {
+      "type": "patchouli:text",
+      "text": "$(bold)Observable Effects:$()$(li)Fireballs falling from the sky$(li)Increased ambient temperature$(li)Spontaneous combustion of flammable materials$(li)Fire resistance potions become more potent$(li)Water evaporates more quickly$(li)Enhanced fire-based magic"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "$(bold)Flame Essence Gathering:$()$(br)The Fire Rain event provides a rare opportunity to collect concentrated Flame Essence. When fireballs impact the ground, they sometimes leave behind crystallized fire magic that can be harvested and used for powerful spells.$(br2)Areas scorched by fire rain may yield Flame Flower Seeds for some time after the event concludes."
+    },
+    {
+      "type": "patchouli:text",
+      "text": "$(bold)Protection:$()$(br)During Fire Rain events, it is advised to remain in non-flammable shelters. Fire Protection enchantments and potions of Fire Resistance are highly recommended if venturing outside is necessary.$(br2)$(italic)Caution: While tempting to observe, the Fire Rain is extremely dangerous to the unprepared. Magical practitioners may find it worth the risk, but proper protection is essential.$() "
+    }
+  ]
+}

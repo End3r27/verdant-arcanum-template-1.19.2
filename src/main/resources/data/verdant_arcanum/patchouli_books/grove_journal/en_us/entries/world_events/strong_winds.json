@@ -1,0 +1,23 @@
+{
+  "name": "Strong Winds",
+  "category": "verdant_arcanum:world_events",
+  "icon": "minecraft:feather",
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "$(thing)Strong Winds$() are elemental disturbances where the very air becomes charged with magical energy. These are not ordinary storms, but powerful manifestations of air magic that can dramatically affect the surrounding environment.$(br2)Wind mages consider these events particularly significant, as they allow observation of air magic in its purest, most concentrated form."
+    },
+    {
+      "type": "patchouli:text",
+      "text": "$(bold)Observable Effects:$()$(li)Powerful gusts that can move entities and loose objects$(li)Enhanced movement speed when traveling with the wind$(li)Dramatically increased jump distances$(li)Flying creatures struggling against the currents$(li)Projectiles behaving erratically, affected by the magical winds"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "$(bold)Air Magic Collection:$()$(br)During Strong Winds events, practitioners of air magic can collect concentrated wind essence:$(li)Gust Flower blooms yield more essence than usual$(li)Wind-charged crystals may form naturally on exposed mountaintops$(li)The event may spread Gust Flower seeds to new locations"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "$(bold)Practical Applications:$()$(br)Skilled mages can use Strong Winds events to their advantage:$(li)Enhanced travel using Elytra or wind magic spells$(li)Wind-charged crafting yields more powerful air artifacts$(li)Certain rituals are more effective when performed during these events$(br2)$(italic)While generally less destructive than other magical weather phenomena, Strong Winds can still pose dangers to the unprepared. Secure loose objects and be cautious when navigating elevated areas.$() "
+    }
+  ]
+}

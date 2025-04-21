@@ -1,0 +1,20 @@
+{
+  "name": "Book Contents",
+  "category": "verdant_arcanum:basics",
+  "icon": "minecraft:book",
+  "priority": true,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "$(thing)The Grove Journal$() contains all the knowledge a budding botanist and mage needs to begin their journey into the mystical arts of natural magic.$(br2)This journal is organized into various sections to help you navigate the many aspects of magical practice."
+    },
+    {
+      "type": "patchouli:text",
+      "text": "$(bold)Main Categories:$()$(li)$(thing)Introduction$() - Basic concepts and getting started$(li)$(thing)Magical Flora$() - Information about magical plants and their properties$(li)$(thing)Magical Tools$() - Tools and implements for the practicing mage$(li)$(thing)World Events$() - Rare magical phenomena and their effects$(li)$(thing)Spell Crafting$() - The art of creating and casting spells"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "As you progress in your studies, you may discover additional knowledge that will be automatically added to this journal.$(br2)$(italic)Remember that true understanding comes not just from reading, but from practical application. Experiment with what you learn here, and you may discover secrets not recorded in these pages.$() "
+    }
+  ]
+}

@@ -7,7 +7,28 @@
     {
       "type": "patchouli:spotlight",
       "item": "verdant_arcanum:breezevine_flower_bloom",
-      "text": "The Breezevine Flower is a unique magical plant that harnesses the power of wind to create directional gusts. Its vine-like structure allows it to channel air in specific patterns."
+      "text": "The $(thing)Breezevine Flower$() is a unique magical plant that harnesses the power of wind to create directional gusts. Its vine-like structure allows it to channel air in specific patterns, creating sustained currents."
+    },
+    {
+      "type": "patchouli:text",
+      "text": "$(bold)Cultivation Notes:$()$(br)- Must be planted on Grove Soil infused with Gust Essence$(br)- Grows best at high elevations where air currents are stronger$(br)- Requires open space to develop fully$(br)- When mature, creates a constant directional breeze that can propel entities"
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "verdant_arcanum:spell_essence_breezevine",
+      "title": "Essence Crafting",
+      "text": "The magic of Breezevine combines the properties of air (Gust) and stability (Rootgrasp). This crafting method produces essence using a Rootgrasp bloom and Gust essences, capturing the plant's wind-channeling properties."
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "verdant_arcanum:breezevine_flower_bloom",
+      "title": "Bloom Properties",
+      "text": "Breezevine blooms harness constant, directional wind energy. Unlike the more chaotic Gust Flower, Breezevine creates sustained air currents that can be precisely controlled and maintained for extended periods."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "Advanced Applications",
+      "text": "$(li)Creation of wind tunnels and air flow control systems$(li)Enhanced air-based transportation methods$(li)Long-term wind barriers and shields$(li)Propulsion systems for magical devices$(li)Weather manipulation when used in sufficient quantities$(br2)$(italic)Note: Breezevine essence is particularly useful for sustained aerial effects where control is more important than raw power.$() "
     }
   ]
 }

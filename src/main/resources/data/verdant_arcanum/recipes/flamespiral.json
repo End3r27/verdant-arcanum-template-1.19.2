@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "FFF",
+    "FBF",
+    "FFF"
+  ],
+  "key": {
+    "F": {
+      "item": "verdant_arcanum:spell_essence_flame"
+    },
+    "B": {
+      "item": "verdant_arcanum:blink_flower_bloom"
+    }
+  },
+  "result": {
+    "item": "verdant_arcanum:flamespiral_bloom",
+    "count": 2
+  }
+}
