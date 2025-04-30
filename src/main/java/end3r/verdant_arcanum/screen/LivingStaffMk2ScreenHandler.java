@@ -116,13 +116,13 @@ public class LivingStaffMk2ScreenHandler extends ScreenHandler {
         // Add player inventory slots
         for (int y = 0; y < 3; ++y) {
             for (int x = 0; x < 9; ++x) {
-                this.addSlot(new Slot(playerInventory, x + y * 9 + 9, 8 + x * 18, 71 + y * 18));
+                this.addSlot(new Slot(playerInventory, x + y * 9 + 9, 9 + x * 18, 71 + y * 18));
             }
         }
 
         // Add player hotbar slots
         for (int i = 0; i < 9; ++i) {
-            this.addSlot(new Slot(playerInventory, i, 8 + i * 18, 129));
+            this.addSlot(new Slot(playerInventory, i, 8 + i * 18, 142));
         }
 
         // Add property delegate for tracking active slot

@@ -32,7 +32,7 @@ public class SolarBloomSpell implements Spell {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SolarBloomSpell.class);
 
-    private static final int MANA_COST = 200;
+    private static final int MANA_COST = 150;
     private static final int DURATION_TICKS = 300; //
     private static final double RANGE = 64.0;
     private static final double WIDTH = 2.5;
